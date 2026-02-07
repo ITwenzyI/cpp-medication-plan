@@ -18,6 +18,8 @@ public:
 
     [[nodiscard]] sqlite3_stmt* get() const;
 
+    [[nodiscard]] int stepRaw();
+
 private:
     sqlite3_stmt* stmt_;
 };

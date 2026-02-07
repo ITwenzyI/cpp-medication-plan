@@ -30,3 +30,10 @@ Statement& Statement::operator=(Statement&& other) noexcept {
 [[nodiscard]] sqlite3_stmt* Statement::get() const {
     return stmt_;
 }
+
+int Statement::stepRaw() {
+    if (stmt_ == nullptr) {
+        throw std::logic_error("Step fehlgeschlagen.");
+    }
+    return sqlite3_step(stmt_);
+}

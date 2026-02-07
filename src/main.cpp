@@ -6,6 +6,19 @@ int main() {
         Database db("data/medication.db");
 
         sqlite3* handle = db.get();
+        auto stmt = db.prepare("SELECT 1;");
+        int rc = stmt.stepRaw();
+
+        // Little test
+        if (rc == SQLITE_ROW) {
+            std::cout << "ROW\n";
+        }
+        rc = stmt.stepRaw();
+        if (rc == SQLITE_DONE) {
+            std::cout << "DONE";
+        }
+
+
     }
     catch (const std::exception& e) {
         std::cout << e.what() << std::endl;
