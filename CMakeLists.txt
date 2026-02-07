@@ -7,6 +7,7 @@ add_executable(medication_plan
         src/main.cpp
         src/db/database.cpp
         src/db/statement.cpp
+        src/db/init_db.cpp
 )
 
 target_compile_features(medication_plan PRIVATE cxx_std_20)
