@@ -5,6 +5,8 @@
 #include <string>
 #include <stdexcept>
 
+#include "statement.hpp"
+
 class Database {
 public:
     // Öffnet bestehende Datenbank oder erstellt neue Datei
@@ -23,6 +25,8 @@ public:
     // Verschieben erlauben
     Database(Database&& other) noexcept;
     Database& operator=(Database&& other) noexcept;
+
+    Statement prepare(const char *sql);
 
 private:
     sqlite3* db;

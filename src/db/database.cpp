@@ -37,3 +37,21 @@ Database &Database::operator=(Database &&other) noexcept {
         }
         return *this;
 }
+
+
+Statement Database::prepare(const char *sql) {
+    sqlite3_stmt* stmt = nullptr;
+
+    if (!db) {
+        throw std::logic_error("Datenbank nicht geöffnet.");
+    }
+
+
+    const int rc = sqlite3_prepare_v2(db, sql, -1, &stmt, nullptr);
+    if (rc != SQLITE_OK) {
+        const std::string fehler = sqlite3_errmsg(db);
+        throw std::runtime_error("Prepare fehlgeschlagen: " + fehler);
+    }
+
+    return Statement(stmt);
+}
