@@ -5,6 +5,8 @@ add_subdirectory(external/sqlite)
 
 add_executable(medication_plan
         src/main.cpp
+        src/db/database.cpp
+        src/db/statement.cpp
 )
 
 target_compile_features(medication_plan PRIVATE cxx_std_20)
