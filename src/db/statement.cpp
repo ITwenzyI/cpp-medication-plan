@@ -1,4 +1,5 @@
 #include "statement.hpp"
+#include <stdexcept>
 
 Statement::Statement(sqlite3_stmt* stmt)
     : stmt_(stmt) {

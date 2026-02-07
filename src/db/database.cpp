@@ -1,4 +1,5 @@
 #include "database.hpp"
+#include <stdexcept>
 
 
 Database::Database(const std::string& dbPfad) : db(nullptr) {

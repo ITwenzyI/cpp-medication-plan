@@ -3,7 +3,6 @@
 
 #include <sqlite3.h>
 #include <string>
-#include <stdexcept>
 
 #include "statement.hpp"
 

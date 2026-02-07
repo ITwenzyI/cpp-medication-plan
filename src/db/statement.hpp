@@ -2,8 +2,6 @@
 #define  STATEMENT_HPP
 
 #include <sqlite3.h>
-#include <string>
-#include <stdexcept>
 
 class Statement {
 public:
