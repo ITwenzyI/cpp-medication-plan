@@ -30,7 +30,7 @@ public:
     void execute(const char* sql);
 
 private:
-    sqlite3* db;
+    sqlite3* db_;
 };
 
 

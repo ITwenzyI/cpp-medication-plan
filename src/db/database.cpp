@@ -2,39 +2,39 @@
 #include <stdexcept>
 
 
-Database::Database(const std::string& dbPfad) : db(nullptr) {
-    if (sqlite3_open(dbPfad.c_str(), &db) != SQLITE_OK) {
-        std::string fehler = sqlite3_errmsg(db);
-        sqlite3_close(db);
-        db = nullptr;
+Database::Database(const std::string& dbPfad) : db_(nullptr) {
+    if (sqlite3_open(dbPfad.c_str(), &db_) != SQLITE_OK) {
+        std::string fehler = sqlite3_errmsg(db_);
+        sqlite3_close(db_);
+        db_ = nullptr;
         throw std::runtime_error("Datenbank konnte nicht geöffnet werden: " + fehler);
     }
 }
 
 
 Database::~Database() {
-        if (db) {
-            sqlite3_close(db);
-            db = nullptr;
+        if (db_) {
+            sqlite3_close(db_);
+            db_ = nullptr;
         }
 }
 
 
 [[nodiscard]] sqlite3 *Database::get() const{
-        return db;
+        return db_;
 }
 
-Database::Database(Database &&other) noexcept : db(other.db) {
-        other.db = nullptr;
+Database::Database(Database &&other) noexcept : db_(other.db_) {
+        other.db_ = nullptr;
 }
 
 Database &Database::operator=(Database &&other) noexcept {
         if (this != &other) {
-            if (db) {
-                sqlite3_close(db);
+            if (db_) {
+                sqlite3_close(db_);
             }
-            db = other.db;
-            other.db = nullptr;
+            db_ = other.db_;
+            other.db_ = nullptr;
         }
         return *this;
 }
@@ -43,14 +43,14 @@ Database &Database::operator=(Database &&other) noexcept {
 Statement Database::prepare(const char *sql) {
     sqlite3_stmt* stmt = nullptr;
 
-    if (!db) {
+    if (!db_) {
         throw std::logic_error("Datenbank nicht geöffnet.");
     }
 
 
-    const int rc = sqlite3_prepare_v2(db, sql, -1, &stmt, nullptr);
+    const int rc = sqlite3_prepare_v2(db_, sql, -1, &stmt, nullptr);
     if (rc != SQLITE_OK) {
-        const std::string fehler = sqlite3_errmsg(db);
+        const std::string fehler = sqlite3_errmsg(db_);
         throw std::runtime_error("Prepare fehlgeschlagen: " + fehler);
     }
 
@@ -58,12 +58,12 @@ Statement Database::prepare(const char *sql) {
 }
 
 void Database::execute(const char *sql) {
-    if (db == nullptr) {
+    if (db_ == nullptr) {
         throw std::logic_error("Datenbank nicht geöffnet.");
     }
 
     char* errMsg = nullptr;
-    int rc = sqlite3_exec(db, sql, nullptr, nullptr, &errMsg);
+    int rc = sqlite3_exec(db_, sql, nullptr, nullptr, &errMsg);
 
     if (rc != SQLITE_OK) {
         std::string fehler;
@@ -72,7 +72,7 @@ void Database::execute(const char *sql) {
             fehler = errMsg;
             sqlite3_free(errMsg);
         } else {
-            fehler = sqlite3_errmsg(db);
+            fehler = sqlite3_errmsg(db_);
         }
 
         throw std::runtime_error("Execute fehlgeschlagen: " + fehler);
