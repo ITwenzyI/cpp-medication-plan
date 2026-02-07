@@ -1,0 +1,10 @@
+@startuml
+skinparam classAttributeIconSize 0
+
+
+
+class PatientRepository {
+
+}
+
+@enduml

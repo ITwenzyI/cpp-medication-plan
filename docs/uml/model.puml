@@ -1,0 +1,11 @@
+@startuml
+skinparam classAttributeIconSize 0
+
+struct Patient {
+  + id : int
+  + name : string
+  + birth_date : string
+  + nationality : string
+}
+
+@enduml
