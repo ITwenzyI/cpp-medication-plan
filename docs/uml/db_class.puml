@@ -3,16 +3,18 @@ skinparam classAttributeIconSize 0
 
 class Database {
   - db : sqlite3*
-  + open(path : string) : DbError
-  + close() : void
-  + prepare(sql : string) : Statement
+  + Database(path : string)
+  + ~Database()
+  + prepare(sql : const char*) : Statement
+  + execute(sql : const char*) : void
 }
 
 class Statement {
-  - stmt : sqlite3_stmt*
-  + bindInt(index : int, value : int) : DbError
-  + step() : DbError
-  + reset() : void
+  - stmt_ : sqlite3_stmt*
+  + Statement(stmt : sqlite3_stmt*)
+  + ~Statement()
+  + get() : sqlite3_stmt*
+  + stepRaw() : int
 }
 
 enum DbError {
