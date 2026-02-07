@@ -55,3 +55,25 @@ Statement Database::prepare(const char *sql) {
 
     return Statement(stmt);
 }
+
+void Database::execute(const char *sql) {
+    if (db == nullptr) {
+        throw std::logic_error("Datenbank nicht geöffnet.");
+    }
+
+    char* errMsg = nullptr;
+    int rc = sqlite3_exec(db, sql, nullptr, nullptr, &errMsg);
+
+    if (rc != SQLITE_OK) {
+        std::string fehler;
+
+        if (errMsg != nullptr) {
+            fehler = errMsg;
+            sqlite3_free(errMsg);
+        } else {
+            fehler = sqlite3_errmsg(db);
+        }
+
+        throw std::runtime_error("Execute fehlgeschlagen: " + fehler);
+    }
+}

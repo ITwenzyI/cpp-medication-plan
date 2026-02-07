@@ -28,6 +28,8 @@ public:
 
     Statement prepare(const char *sql);
 
+    void execute(const char* sql);
+
 private:
     sqlite3* db;
 };

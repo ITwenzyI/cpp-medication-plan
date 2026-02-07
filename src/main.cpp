@@ -9,14 +9,7 @@ int main() {
         auto stmt = db.prepare("SELECT 1;");
         int rc = stmt.stepRaw();
 
-        // Little test
-        if (rc == SQLITE_ROW) {
-            std::cout << "ROW\n";
-        }
-        rc = stmt.stepRaw();
-        if (rc == SQLITE_DONE) {
-            std::cout << "DONE";
-        }
+        db.execute("TEST;");
 
 
     }
