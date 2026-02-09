@@ -16,7 +16,9 @@ public:
 
     [[nodiscard]] sqlite3_stmt* get() const;
 
-    [[nodiscard]] int stepRaw();
+    [[nodiscard]] int stepRaw() const;
+
+    void reset() const;
 
 private:
     sqlite3_stmt* stmt_;

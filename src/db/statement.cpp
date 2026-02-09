@@ -32,9 +32,17 @@ Statement& Statement::operator=(Statement&& other) noexcept {
     return stmt_;
 }
 
-int Statement::stepRaw() {
+int Statement::stepRaw() const {
     if (stmt_ == nullptr) {
         throw std::logic_error("Step fehlgeschlagen.");
     }
     return sqlite3_step(stmt_);
+}
+
+void Statement::reset() const {
+    if (stmt_ == nullptr) {
+        throw std::logic_error("Reset fehlgeschlagen.");
+    }
+
+    sqlite3_reset(stmt_);
 }
