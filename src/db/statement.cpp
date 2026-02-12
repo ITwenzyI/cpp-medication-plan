@@ -46,3 +46,23 @@ void Statement::reset() const {
 
     sqlite3_reset(stmt_);
 }
+
+void Statement::bindText(int index, const std::string& value){
+    int rc = sqlite3_bind_text(stmt_, index, value.c_str(), -1, SQLITE_TRANSIENT);
+    if(rc != SQLITE_OK) {
+        throw std::runtime_error("Bind fehlgeschlagen.");
+    }
+}
+
+int Statement::step(){
+    if (!stmt_) {
+        throw std::logic_error("Statement ist null.");
+    }
+
+    int rc = sqlite3_step(stmt_);
+    if (rc == SQLITE_ROW || rc == SQLITE_DONE) {
+        return rc;
+    }
+
+    throw std::runtime_error("Step fehlgeschlagen.");
+}

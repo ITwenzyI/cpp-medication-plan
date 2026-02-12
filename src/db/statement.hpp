@@ -20,6 +20,10 @@ public:
 
     void reset() const;
 
+    void bindText(int index, const std::string& value);
+
+    int step();
+
 private:
     sqlite3_stmt* stmt_;
 };
