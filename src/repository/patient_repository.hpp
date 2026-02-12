@@ -6,11 +6,20 @@
  */
 //
 
-#ifndef MEDICATION_PLAN_PATIENT_REPOSITORY_HPP
-#define MEDICATION_PLAN_PATIENT_REPOSITORY_HPP
+#pragma once
+
+#include <vector>
+#include "../model/patient.hpp"
+#include "../db/database.hpp"
 
 class PatientRepository {
+public:
+    explicit PatientRepository(Database& db);
 
+    Patient createPatient(const Patient& p);
+
+    std::vector<Patient> getAllPatients();
+
+private:
+    Database& db_;
 };
-
-#endif //MEDICATION_PLAN_PATIENT_REPOSITORY_HPP
