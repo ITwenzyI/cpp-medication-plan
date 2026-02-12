@@ -54,6 +54,13 @@ void Statement::bindText(int index, const std::string& value){
     }
 }
 
+void Statement::bindNull(int index) {
+    int rc = sqlite3_bind_null(stmt_, index);
+    if(rc != SQLITE_OK) {
+        throw std::runtime_error("Bind fehlgeschlagen.");
+    }
+}
+
 int Statement::step(){
     if (!stmt_) {
         throw std::logic_error("Statement ist null.");

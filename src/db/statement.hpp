@@ -21,6 +21,7 @@ public:
     void reset() const;
 
     void bindText(int index, const std::string& value);
+    void bindNull(int index);
 
     int step();
 
