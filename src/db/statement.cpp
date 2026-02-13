@@ -1,5 +1,6 @@
 #include "statement.hpp"
 #include <stdexcept>
+#include <string>
 
 Statement::Statement(sqlite3_stmt* stmt) : stmt_(stmt) {
 }
@@ -100,4 +101,15 @@ void Statement::bindDouble(int index, double value) {
     if (rc != SQLITE_OK) {
         throw std::runtime_error("Bind fehlgeschlagen.");
     }
+}
+
+int Statement::getInt(int column) {
+    if (!stmt_) {
+        throw std::logic_error("Statement ist Null.");
+    }
+
+    return sqlite3_column_int(stmt_, column);
+}
+
+std::string Statement::getText(int column) {
 }
