@@ -1,7 +1,6 @@
 #include "database.hpp"
 #include <stdexcept>
 
-
 Database::Database(const std::string& dbPfad) : db_(nullptr) {
     if (sqlite3_open(dbPfad.c_str(), &db_) != SQLITE_OK) {
         std::string fehler = sqlite3_errmsg(db_);
@@ -11,42 +10,38 @@ Database::Database(const std::string& dbPfad) : db_(nullptr) {
     }
 }
 
-
 Database::~Database() {
+    if (db_) {
+        sqlite3_close(db_);
+        db_ = nullptr;
+    }
+}
+
+[[nodiscard]] sqlite3* Database::get() const {
+    return db_;
+}
+
+Database::Database(Database&& other) noexcept : db_(other.db_) {
+    other.db_ = nullptr;
+}
+
+Database& Database::operator=(Database&& other) noexcept {
+    if (this != &other) {
         if (db_) {
             sqlite3_close(db_);
-            db_ = nullptr;
         }
-}
-
-
-[[nodiscard]] sqlite3 *Database::get() const{
-        return db_;
-}
-
-Database::Database(Database &&other) noexcept : db_(other.db_) {
+        db_ = other.db_;
         other.db_ = nullptr;
+    }
+    return *this;
 }
 
-Database &Database::operator=(Database &&other) noexcept {
-        if (this != &other) {
-            if (db_) {
-                sqlite3_close(db_);
-            }
-            db_ = other.db_;
-            other.db_ = nullptr;
-        }
-        return *this;
-}
-
-
-Statement Database::prepare(const char *sql) {
+Statement Database::prepare(const char* sql) {
     sqlite3_stmt* stmt = nullptr;
 
     if (!db_) {
         throw std::logic_error("Datenbank nicht geöffnet.");
     }
-
 
     const int rc = sqlite3_prepare_v2(db_, sql, -1, &stmt, nullptr);
     if (rc != SQLITE_OK) {
@@ -57,7 +52,7 @@ Statement Database::prepare(const char *sql) {
     return Statement(stmt);
 }
 
-void Database::execute(const char *sql) {
+void Database::execute(const char* sql) {
     if (db_ == nullptr) {
         throw std::logic_error("Datenbank nicht geöffnet.");
     }
