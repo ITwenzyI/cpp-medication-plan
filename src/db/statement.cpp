@@ -1,8 +1,7 @@
 #include "statement.hpp"
 #include <stdexcept>
 
-Statement::Statement(sqlite3_stmt* stmt)
-    : stmt_(stmt) {
+Statement::Statement(sqlite3_stmt* stmt) : stmt_(stmt) {
 }
 
 Statement::~Statement() {
@@ -12,8 +11,7 @@ Statement::~Statement() {
     }
 }
 
-Statement::Statement(Statement&& other) noexcept
-    : stmt_(other.stmt_) {
+Statement::Statement(Statement&& other) noexcept : stmt_(other.stmt_) {
     other.stmt_ = nullptr;
 }
 
@@ -32,36 +30,14 @@ Statement& Statement::operator=(Statement&& other) noexcept {
     return stmt_;
 }
 
-int Statement::stepRaw() const {
+int Statement::stepRaw() {
     if (stmt_ == nullptr) {
         throw std::logic_error("Step fehlgeschlagen.");
     }
     return sqlite3_step(stmt_);
 }
 
-void Statement::reset() const {
-    if (stmt_ == nullptr) {
-        throw std::logic_error("Reset fehlgeschlagen.");
-    }
-
-    sqlite3_reset(stmt_);
-}
-
-void Statement::bindText(int index, const std::string& value){
-    int rc = sqlite3_bind_text(stmt_, index, value.c_str(), -1, SQLITE_TRANSIENT);
-    if(rc != SQLITE_OK) {
-        throw std::runtime_error("Bind fehlgeschlagen.");
-    }
-}
-
-void Statement::bindNull(int index) {
-    int rc = sqlite3_bind_null(stmt_, index);
-    if(rc != SQLITE_OK) {
-        throw std::runtime_error("Bind fehlgeschlagen.");
-    }
-}
-
-int Statement::step(){
+int Statement::step() {
     if (!stmt_) {
         throw std::logic_error("Statement ist null.");
     }
@@ -72,4 +48,56 @@ int Statement::step(){
     }
 
     throw std::runtime_error("Step fehlgeschlagen.");
+}
+
+void Statement::reset() {
+    if (stmt_ == nullptr) {
+        throw std::logic_error("Reset fehlgeschlagen.");
+    }
+
+    sqlite3_reset(stmt_);
+}
+
+void Statement::bindText(int index, const std::string& value) {
+    if (!stmt_) {
+        throw std::logic_error("Statement ist Null.");
+    }
+
+    int rc = sqlite3_bind_text(stmt_, index, value.c_str(), -1, SQLITE_TRANSIENT);
+    if (rc != SQLITE_OK) {
+        throw std::runtime_error("Bind fehlgeschlagen.");
+    }
+}
+
+void Statement::bindNull(int index) {
+    if (!stmt_) {
+        throw std::logic_error("Statement ist Null.");
+    }
+
+    int rc = sqlite3_bind_null(stmt_, index);
+    if (rc != SQLITE_OK) {
+        throw std::runtime_error("Bind fehlgeschlagen.");
+    }
+}
+
+void Statement::bindInt(int index, int value) {
+    if (!stmt_) {
+        throw std::logic_error("Statement ist Null.");
+    }
+
+    int rc = sqlite3_bind_int(stmt_, index, value);
+    if (rc != SQLITE_OK) {
+        throw std::runtime_error("Bind fehlgeschlagen.");
+    }
+}
+
+void Statement::bindDouble(int index, double value) {
+    if (!stmt_) {
+        throw std::logic_error("Statement ist Null.");
+    }
+
+    int rc = sqlite3_bind_double(stmt_, index, value);
+    if (rc != SQLITE_OK) {
+        throw std::runtime_error("Bind fehlgeschlagen.");
+    }
 }
