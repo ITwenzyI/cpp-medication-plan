@@ -9,10 +9,12 @@
 #include "patient_repository.hpp"
 #include <stdexcept>
 
-PatientRepository::PatientRepository(Database& db) : db_(db) {}
+PatientRepository::PatientRepository(Database& db) : db_(db) {
+}
 
 Patient PatientRepository::createPatient(const Patient& p) {
-    auto stmt = db_.prepare ("INSERT INTO patients (name, birth_date, nationality) VALUES (?, ?, ?);");
+    auto stmt =
+        db_.prepare("INSERT INTO patients (name, birth_date, nationality) VALUES (?, ?, ?);");
 
     stmt.bindText(1, p.name);
 
@@ -29,7 +31,7 @@ Patient PatientRepository::createPatient(const Patient& p) {
     }
 
     int rc = stmt.step();
-    if(rc != SQLITE_DONE) {
+    if (rc != SQLITE_DONE) {
         throw std::runtime_error("INSERT fehlgeschlagen.");
     }
 
@@ -41,6 +43,5 @@ Patient PatientRepository::createPatient(const Patient& p) {
     return newPatient;
 }
 
-
-
-std::vector<Patient> PatientRepository::getAllPatients() {}
+std::vector<Patient> PatientRepository::getAllPatients() {
+}

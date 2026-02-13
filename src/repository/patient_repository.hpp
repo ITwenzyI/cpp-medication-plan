@@ -8,18 +8,18 @@
 
 #pragma once
 
-#include <vector>
-#include "../model/patient.hpp"
 #include "../db/database.hpp"
+#include "../model/patient.hpp"
+#include <vector>
 
 class PatientRepository {
-public:
+  public:
     explicit PatientRepository(Database& db);
 
     Patient createPatient(const Patient& p);
 
     std::vector<Patient> getAllPatients();
 
-private:
+  private:
     Database& db_;
 };
