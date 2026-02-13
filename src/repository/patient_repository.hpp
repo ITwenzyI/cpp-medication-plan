@@ -18,7 +18,7 @@ class PatientRepository {
 
     Patient createPatient(const Patient& p);
 
-    std::vector<Patient> getAllPatients();
+    [[nodiscard]] std::vector<Patient> getAllPatients();
 
   private:
     Database& db_;
