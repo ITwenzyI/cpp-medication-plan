@@ -120,4 +120,18 @@ double Statement::getDouble(int column) {
 }
 
 std::string Statement::getText(int column) {
+    if (!stmt_) {
+        throw std::logic_error("Statement ist Null.");
+    }
+
+    if (sqlite3_column_type(stmt_, column) == SQLITE_NULL) {
+        return "";
+    }
+
+    const unsigned char* text = sqlite3_column_text(stmt_, column);
+    if (text != nullptr) {
+        return reinterpret_cast<const char*>(text);
+    }
+
+    return "";
 }
