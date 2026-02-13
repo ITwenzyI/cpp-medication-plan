@@ -10,8 +10,10 @@ add_executable(medication_plan
         src/db/init_db.cpp
         src/model/patient.hpp
         src/repository/patient_repository.cpp
-        src/repository/patient_repository.hpp
+        src/cli/patient_printer.cpp
 )
+
+target_include_directories(medication_plan PRIVATE src)
 
 target_compile_features(medication_plan PRIVATE cxx_std_20)
 
