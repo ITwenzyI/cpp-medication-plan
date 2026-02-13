@@ -9,6 +9,16 @@
 #include "patient_repository.hpp"
 #include <stdexcept>
 
+static Patient mapPatient(const Statement& stmt) {
+    Patient temp;
+    temp.id = stmt.getInt(0);
+    temp.name = stmt.getText(1);
+    temp.birth_date = stmt.getText(2);
+    temp.nationality = stmt.getText(3);
+
+    return temp;
+}
+
 PatientRepository::PatientRepository(Database& db) : db_(db) {
 }
 
