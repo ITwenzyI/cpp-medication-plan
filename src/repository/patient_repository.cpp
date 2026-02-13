@@ -63,12 +63,7 @@ std::vector<Patient> PatientRepository::getAllPatients() {
         int rc = stmt.step();
 
         if (rc == SQLITE_ROW) {
-            Patient temp;
-            temp.id = stmt.getInt(0);
-            temp.name = stmt.getText(1);
-            temp.birth_date = stmt.getText(2);
-            temp.nationality = stmt.getText(3);
-            result.push_back(temp);
+            result.push_back(mapPatient(stmt));
             continue;
         } else if (rc == SQLITE_DONE) {
             break;
