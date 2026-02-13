@@ -1,10 +1,10 @@
 #ifndef STATEMENT_HPP
-#define  STATEMENT_HPP
+#define STATEMENT_HPP
 
 #include <sqlite3.h>
 
 class Statement {
-public:
+  public:
     explicit Statement(sqlite3_stmt* stmt = nullptr);
     ~Statement();
 
@@ -16,18 +16,18 @@ public:
 
     [[nodiscard]] sqlite3_stmt* get() const;
 
-    [[nodiscard]] int stepRaw() const;
+    [[nodiscard]] int stepRaw();
+    [[nodiscard]] int step();
 
-    void reset() const;
+    void reset();
 
+    void bindInt(int index, int value);
+    void bindDouble(int index, double value);
     void bindText(int index, const std::string& value);
     void bindNull(int index);
 
-    int step();
-
-private:
+  private:
     sqlite3_stmt* stmt_;
 };
-
 
 #endif
