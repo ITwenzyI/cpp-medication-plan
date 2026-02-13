@@ -26,9 +26,9 @@ class Statement {
     void bindText(int index, const std::string& value);
     void bindNull(int index);
 
-    int getInt(int column);
-    double getDouble(int column);
-    std::string getText(int column);
+    int getInt(int column) const;
+    double getDouble(int column) const;
+    std::string getText(int column) const;
 
   private:
     sqlite3_stmt* stmt_;
