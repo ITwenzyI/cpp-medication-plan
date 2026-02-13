@@ -15,7 +15,6 @@ struct Patient {
     std::string name;
     std::string birth_date;
     std::string nationality;
-
 };
 
 #endif //MEDICATION_PLAN_PATIENT_HPP
