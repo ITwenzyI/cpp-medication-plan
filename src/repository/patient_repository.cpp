@@ -28,13 +28,13 @@ Patient PatientRepository::createPatient(const Patient& p) {
 
     stmt.bindText(1, p.name);
 
-    if (p.birth_date.empty()) {
+    if (!p.birth_date.empty()) {
         stmt.bindText(2, p.birth_date);
     } else {
         stmt.bindNull(2);
     }
 
-    if (p.nationality.empty()) {
+    if (!p.nationality.empty()) {
         stmt.bindText(3, p.nationality);
     } else {
         stmt.bindNull(3);
