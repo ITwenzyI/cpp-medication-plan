@@ -27,6 +27,7 @@ class Statement {
     void bindNull(int index);
 
     int getInt(int column);
+    double getDouble(int column);
     std::string getText(int column);
 
   private:

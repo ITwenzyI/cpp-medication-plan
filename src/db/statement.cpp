@@ -111,5 +111,13 @@ int Statement::getInt(int column) {
     return sqlite3_column_int(stmt_, column);
 }
 
+double Statement::getDouble(int column) {
+    if (!stmt_) {
+        throw std::logic_error("Statement ist Null.");
+    }
+
+    return sqlite3_column_double(stmt_, column);
+}
+
 std::string Statement::getText(int column) {
 }
