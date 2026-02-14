@@ -1,6 +1,7 @@
 /data
 /build
 /cmake-build-debug
+/docs
 
 # Prerequisites
 *.d
