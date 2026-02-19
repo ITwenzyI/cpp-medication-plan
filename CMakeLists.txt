@@ -5,12 +5,12 @@ add_subdirectory(external/sqlite)
 
 add_executable(medication_plan
         src/main.cpp
-        src/db/database.cpp
-        src/db/statement.cpp
-        src/db/init_db.cpp
-        src/model/patient.hpp
-        src/repository/patient_repository.cpp
-        src/cli/patient_printer.cpp
+        src/infrastructure/db/database.cpp
+        src/infrastructure/db/statement.cpp
+        src/infrastructure/db/init_db.cpp
+        src/domain/patient.hpp
+        src/application/repository/patient_repository.cpp
+        src/ui/cli/patient_printer.cpp
 )
 
 target_include_directories(medication_plan PRIVATE src)

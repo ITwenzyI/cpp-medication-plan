@@ -1,5 +1,5 @@
 #pragma once
-#include "model/patient.hpp"
+#include "domain/patient.hpp"
 #include <vector>
 
 void printPatient(const Patient& p);
