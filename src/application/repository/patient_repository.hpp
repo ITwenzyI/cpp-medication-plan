@@ -8,8 +8,8 @@
 
 #pragma once
 
-#include "../db/database.hpp"
-#include "../model/patient.hpp"
+#include "domain/patient.hpp"
+#include "infrastructure/db/database.hpp"
 #include <vector>
 
 class PatientRepository {

@@ -3,15 +3,12 @@ project(medication_plan LANGUAGES C CXX)
 
 add_subdirectory(external/sqlite)
 
-add_executable(medication_plan
-        src/main.cpp
-        src/db/database.cpp
-        src/db/statement.cpp
-        src/db/init_db.cpp
-        src/model/patient.hpp
-        src/repository/patient_repository.cpp
-        src/cli/patient_printer.cpp
+file(GLOB_RECURSE APP_SOURCES CONFIGURE_DEPENDS
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/*.hpp"
 )
+
+add_executable(medication_plan ${APP_SOURCES})
 
 target_include_directories(medication_plan PRIVATE src)
 

@@ -1,8 +1,8 @@
-#include "cli/patient_printer.hpp"
-#include "db/database.hpp"
-#include "db/init_db.hpp"
-#include "model/patient.hpp"
-#include "repository/patient_repository.hpp"
+#include "application/repository/patient_repository.hpp"
+#include "domain/patient.hpp"
+#include "infrastructure/db/database.hpp"
+#include "infrastructure/db/init_db.hpp"
+#include "ui/cli/patient_printer.hpp"
 
 #include <iostream>
 #include <vector>
