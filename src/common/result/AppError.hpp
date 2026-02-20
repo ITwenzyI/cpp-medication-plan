@@ -2,8 +2,10 @@
 #include "ErrorCode.hpp"
 #include <string>
 
+namespace common::result {
 struct AppError {
     ErrorCode code;
     std::string message;
-    std::string context;
+    std::string context = "";
 };
+} // namespace common::result
