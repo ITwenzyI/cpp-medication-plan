@@ -60,8 +60,28 @@ template <typename T> class [[nodiscard]] Result {
     }
 };
 
-template <> class Result<void> {
+template <> class [[nodiscard]] Result<void> {
   public:
+    static Result<void> ok();
+
+    static Result<void> fail(AppError error);
+
+    static Result<void> fail(ErrorCode code, std::string message, std::string context = "");
+
+    bool isOk() const;
+
+    bool isError() const;
+
+    const AppError& error() const;
+
+  private:
+    std::variant<std::monostate, AppError> data_;
+
+    Result() : data_(std::monostate{}) {
+    }
+
+    Result(AppError error) : data_(std::move(error)) {
+    }
 };
 
 } // namespace common::result
