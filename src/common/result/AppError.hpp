@@ -1,5 +1,5 @@
 #pragma once
-#include "src/common/result/ErrorCode.hpp"
+#include "ErrorCode.hpp"
 #include <string>
 
 struct AppError {
