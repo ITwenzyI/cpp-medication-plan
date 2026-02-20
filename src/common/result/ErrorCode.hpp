@@ -1,5 +1,6 @@
 #pragma once
 
+namespace common::result {
 enum class ErrorCode {
     Ok,
     NotFound,
@@ -8,3 +9,4 @@ enum class ErrorCode {
     ConstraintViolation,
     Unexpected
 };
+} // namespace common::result
