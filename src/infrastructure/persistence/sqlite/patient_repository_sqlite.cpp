@@ -69,6 +69,12 @@ std::vector<domain::Patient> PatientRepositorySqlite::getAllPatients() {
 }
 
 common::result::Result<domain::Patient> PatientRepositorySqlite::findPatientById(int patient_id) {
+    if (patient_id <= 0) {
+        return common::result::Result<domain::Patient>::fail(
+            common::result::ErrorCode::InvalidArgument, "patient_id must be positive",
+            "PatientRepositorySqlite::findPatientById");
+    }
+
     auto stmt = db_.prepare("SELECT id, name, birth_date, nationality FROM patients WHERE id = ?;");
 
     stmt.bindInt(1, patient_id);
