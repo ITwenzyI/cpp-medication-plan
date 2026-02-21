@@ -2,6 +2,7 @@
 #include <stdexcept>
 #include <string>
 
+namespace infrastructure::db {
 Statement::Statement(sqlite3_stmt* stmt) : stmt_(stmt) {
 }
 
@@ -135,3 +136,4 @@ std::string Statement::getText(int column) const {
 
     return "";
 }
+} // namespace infrastructure::db

@@ -4,6 +4,7 @@
 #include <sqlite3.h>
 #include <string>
 
+namespace infrastructure::db {
 class Statement {
   public:
     explicit Statement(sqlite3_stmt* stmt = nullptr);
@@ -34,5 +35,6 @@ class Statement {
   private:
     sqlite3_stmt* stmt_;
 };
+} // namespace infrastructure::db
 
 #endif

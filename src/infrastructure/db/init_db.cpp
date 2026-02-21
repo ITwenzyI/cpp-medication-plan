@@ -9,6 +9,7 @@
 #include "init_db.hpp"
 #include <fstream>
 
+namespace infrastructure::db {
 void initDatabase(Database& db, const std::string& schemaPath) {
     std::ifstream file(schemaPath);
     if (!file) {
@@ -25,3 +26,4 @@ void initDatabase(Database& db, const std::string& schemaPath) {
     }
     db.execute(sql.c_str());
 }
+} // namespace infrastructure::db

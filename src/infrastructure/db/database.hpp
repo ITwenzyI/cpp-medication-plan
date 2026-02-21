@@ -6,6 +6,7 @@
 
 #include "statement.hpp"
 
+namespace infrastructure::db {
 class Database {
   public:
     explicit Database(const std::string& dbPfad);
@@ -27,5 +28,6 @@ class Database {
   private:
     sqlite3* db_;
 };
+} // namespace infrastructure::db
 
 #endif
