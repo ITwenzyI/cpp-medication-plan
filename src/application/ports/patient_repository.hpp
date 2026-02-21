@@ -13,5 +13,7 @@ class IPatientRepository {
     [[nodiscard]] virtual std::vector<domain::Patient> getAllPatients() = 0;
 
     virtual common::result::Result<domain::Patient> findPatientById(int patient_id) = 0;
+
+    virtual common::result::Result<void> deletePatientById(int patient_id) = 0;
 };
 } // namespace application::ports

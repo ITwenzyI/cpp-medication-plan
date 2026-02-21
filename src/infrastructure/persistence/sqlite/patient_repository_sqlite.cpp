@@ -85,4 +85,24 @@ common::result::Result<domain::Patient> PatientRepositorySqlite::findPatientById
     throw std::logic_error("unreachable");
 }
 
+common::result::Result<void> PatientRepositorySqlite::deletePatientById(int patient_id) {
+    if (patient_id <= 0) {
+        return common::result::Result<void>::fail(common::result::ErrorCode::InvalidArgument,
+            "patient_id must be positive", "PatientRepositorySqlite::deletePatientById");
+    }
+
+    auto stmt = db_.prepare("DELETE FROM patients WHERE id = ?;");
+
+    stmt.bindInt(1, patient_id);
+
+    stmt.step();
+
+    if (db_.changes() == 0) {
+        return common::result::Result<void>::fail(common::result::ErrorCode::NotFound,
+            "No patient with id: " + std::to_string(patient_id),
+            "PatientRepositorySqlite::deletePatientById");
+    }
+    return common::result::Result<void>::ok();
+}
+
 } // namespace infrastructure::persistence::sqlite
