@@ -2,7 +2,7 @@
 #include <stdexcept>
 
 namespace infrastructure::persistence::sqlite {
-static domain::Patient mapPatient(const db::Statement& stmt) {
+static domain::Patient mapPatient(const infrastructure::db::Statement& stmt) {
     domain::Patient temp;
     temp.id = stmt.getInt(0);
     temp.name = stmt.getText(1);
@@ -12,7 +12,7 @@ static domain::Patient mapPatient(const db::Statement& stmt) {
     return temp;
 }
 
-PatientRepositorySqlite::PatientRepositorySqlite(db::Database& db) : db_(db) {
+PatientRepositorySqlite::PatientRepositorySqlite(infrastructure::db::Database& db) : db_(db) {
 }
 
 domain::Patient PatientRepositorySqlite::createPatient(const domain::Patient& p) {
