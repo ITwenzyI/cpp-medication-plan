@@ -62,17 +62,33 @@ template <typename T> class [[nodiscard]] Result {
 
 template <> class [[nodiscard]] Result<void> {
   public:
-    static Result<void> ok();
+    static Result<void> ok() {
+        return Result{};
+    }
 
-    static Result<void> fail(AppError error);
+    static Result<void> fail(AppError error) {
+        return Result(std::move(error));
+    }
 
-    static Result<void> fail(ErrorCode code, std::string message, std::string context = "");
+    static Result<void> fail(ErrorCode code, std::string message, std::string context = "") {
+        AppError error{code, std::move(message), std::move(context)};
+        return fail(std::move(error));
+    }
 
-    bool isOk() const;
+    bool isOk() const {
+        return std::holds_alternative<std::monostate>(data_);
+    }
 
-    bool isError() const;
+    bool isError() const {
+        return !isOk();
+    }
 
-    const AppError& error() const;
+    const AppError& error() const {
+        if (isOk()) {
+            throw std::logic_error("Result<void>::error() called on ok");
+        }
+        return std::get<AppError>(data_);
+    }
 
   private:
     std::variant<std::monostate, AppError> data_;
