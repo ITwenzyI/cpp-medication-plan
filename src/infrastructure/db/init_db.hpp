@@ -10,6 +10,8 @@
 #define MEDICATION_PLAN_INIT_DB_HPP
 #include "database.hpp"
 
+namespace infrastructure::db {
 void initDatabase(Database& db, const std::string& schemaPath);
+} // namespace infrastructure::db
 
 #endif //MEDICATION_PLAN_INIT_DB_HPP

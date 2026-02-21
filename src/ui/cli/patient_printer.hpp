@@ -2,6 +2,8 @@
 #include "domain/patient.hpp"
 #include <vector>
 
-void printPatient(const Patient& p);
+namespace ui::cli {
+void printPatient(const domain::Patient& p);
 
-void printPatients(const std::vector<Patient>& patients);
+void printPatients(const std::vector<domain::Patient>& patients);
+} // namespace ui::cli

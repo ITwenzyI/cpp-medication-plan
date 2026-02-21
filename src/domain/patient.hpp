@@ -10,11 +10,13 @@
 #define MEDICATION_PLAN_PATIENT_HPP
 #include <string>
 
+namespace domain {
 struct Patient {
     int id;
     std::string name;
     std::string birth_date;
     std::string nationality;
 };
+} // namespace domain
 
 #endif //MEDICATION_PLAN_PATIENT_HPP

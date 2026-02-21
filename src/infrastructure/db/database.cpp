@@ -1,6 +1,7 @@
 #include "database.hpp"
 #include <stdexcept>
 
+namespace infrastructure::db {
 Database::Database(const std::string& dbPfad) : db_(nullptr) {
     if (sqlite3_open(dbPfad.c_str(), &db_) != SQLITE_OK) {
         std::string fehler = sqlite3_errmsg(db_);
@@ -73,3 +74,4 @@ void Database::execute(const char* sql) {
         throw std::runtime_error("Execute fehlgeschlagen: " + fehler);
     }
 }
+} // namespace infrastructure::db
