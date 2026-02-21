@@ -1,13 +1,14 @@
 #pragma once
 #include "domain/patient.hpp"
-#include "infrastructure/db/database.hpp"
 #include <vector>
 
+namespace application::ports {
 class IPatientRepository {
   public:
     virtual ~IPatientRepository() = default;
 
-    virtual Patient createPatient(const Patient& p) = 0;
+    virtual domain::Patient createPatient(const domain::Patient& p) = 0;
 
-    [[nodiscard]] virtual std::vector<Patient> getAllPatients() = 0;
+    [[nodiscard]] virtual std::vector<domain::Patient> getAllPatients() = 0;
 };
+} // namespace application::ports
