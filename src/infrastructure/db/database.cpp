@@ -74,4 +74,13 @@ void Database::execute(const char* sql) {
         throw std::runtime_error("Execute fehlgeschlagen: " + fehler);
     }
 }
+
+int Database::changes() const {
+    if (db_ == nullptr) {
+        throw std::logic_error("Database is null in changes()");
+    }
+
+    return sqlite3_changes(db_);
+}
+
 } // namespace infrastructure::db

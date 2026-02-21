@@ -25,6 +25,9 @@ class Database {
 
     void execute(const char* sql);
 
+    // Returns the number of rows modified by the most recent
+    [[nodiscard]] int changes() const;
+
   private:
     sqlite3* db_;
 };
