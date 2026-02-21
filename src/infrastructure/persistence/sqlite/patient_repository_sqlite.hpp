@@ -1,14 +1,16 @@
 #pragma once
 #include "application/ports/patient_repository.hpp"
 
-class PatientRepositorySqlite : public IPatientRepository {
+namespace infrastructure::persistence::sqlite {
+class PatientRepositorySqlite : public application::ports::IPatientRepository {
   public:
-    explicit PatientRepositorySqlite(Database& db);
+    explicit PatientRepositorySqlite(db::Database& db);
 
-    Patient createPatient(const Patient& p) override;
+    domain::Patient createPatient(const domain::Patient& p) override;
 
-    [[nodiscard]] std::vector<Patient> getAllPatients() override;
+    [[nodiscard]] std::vector<domain::Patient> getAllPatients() override;
 
   private:
-    Database& db_;
+    db::Database& db_;
 };
+} // namespace infrastructure::persistence::sqlite
