@@ -11,6 +11,8 @@ class PatientRepositorySqlite : public application::ports::IPatientRepository {
 
     [[nodiscard]] std::vector<domain::Patient> getAllPatients() override;
 
+    [[nodiscard]] common::result::Result<domain::Patient> findPatientById(int patient_id) override;
+
   private:
     infrastructure::db::Database& db_;
 };

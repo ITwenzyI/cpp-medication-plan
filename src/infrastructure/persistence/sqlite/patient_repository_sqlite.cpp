@@ -67,4 +67,22 @@ std::vector<domain::Patient> PatientRepositorySqlite::getAllPatients() {
 
     return result;
 }
+
+common::result::Result<domain::Patient> PatientRepositorySqlite::findPatientById(int patient_id) {
+    auto stmt = db_.prepare("SELECT id, name, birth_date, nationality FROM patients WHERE id = ?;");
+
+    stmt.bindInt(1, patient_id);
+
+    int rc = stmt.step();
+
+    if (rc == SQLITE_ROW) {
+        return common::result::Result<domain::Patient>::ok(mapPatient(stmt));
+    } else if (rc == SQLITE_DONE) {
+        return common::result::Result<domain::Patient>::fail(common::result::ErrorCode::NotFound,
+            "No patient with id: " + std::to_string(patient_id),
+            "PatientRepositorySqlite::findPatientById");
+    }
+    throw std::logic_error("unreachable");
+}
+
 } // namespace infrastructure::persistence::sqlite
