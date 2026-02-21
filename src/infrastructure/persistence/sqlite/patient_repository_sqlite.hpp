@@ -13,6 +13,8 @@ class PatientRepositorySqlite : public application::ports::IPatientRepository {
 
     [[nodiscard]] common::result::Result<domain::Patient> findPatientById(int patient_id) override;
 
+    [[nodiscard]] common::result::Result<void> deletePatientById(int patient_id) override;
+
   private:
     infrastructure::db::Database& db_;
 };
