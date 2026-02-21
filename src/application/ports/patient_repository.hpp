@@ -1,4 +1,5 @@
 #pragma once
+#include "common/result/Result.hpp"
 #include "domain/patient.hpp"
 #include <vector>
 
@@ -10,5 +11,7 @@ class IPatientRepository {
     virtual domain::Patient createPatient(const domain::Patient& p) = 0;
 
     [[nodiscard]] virtual std::vector<domain::Patient> getAllPatients() = 0;
+
+    virtual common::result::Result<domain::Patient> findPatientById(int patient_id) = 0;
 };
 } // namespace application::ports
