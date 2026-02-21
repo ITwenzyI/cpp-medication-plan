@@ -1,7 +1,7 @@
-#include "application/repository/patient_repository.hpp"
 #include "domain/patient.hpp"
 #include "infrastructure/db/database.hpp"
 #include "infrastructure/db/init_db.hpp"
+#include "infrastructure/persistence/sqlite/patient_repository_sqlite.hpp"
 #include "ui/cli/patient_printer.hpp"
 
 #include <iostream>
@@ -14,7 +14,7 @@ int main() {
         //initDatabase(db, "sql/schema.sql");
         //std::cout << "Datenbank initialisiert\n";
 
-        PatientRepository repo(db);
+        PatientRepositorySqlite repo(db);
 
         //Patient p1{1, "Kilian", "01.01.2000", "Deutsch"};
 
