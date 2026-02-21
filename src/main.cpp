@@ -9,20 +9,20 @@
 
 int main() {
     try {
-        Database db("data/medication.db");
+        infrastructure::db::Database db("data/medication.db");
 
-        //initDatabase(db, "sql/schema.sql");
+        //infrastructure::db::initDatabase(db, "sql/schema.sql");
         //std::cout << "Datenbank initialisiert\n";
 
-        PatientRepositorySqlite repo(db);
+        infrastructure::persistence::sqlite::PatientRepositorySqlite repo(db);
 
-        //Patient p1{1, "Kilian", "01.01.2000", "Deutsch"};
+        //domain::Patient p1{1, "Kilian", "01.01.2000", "Deutsch"};
 
         //repo.createPatient(p1);
-        std::vector<Patient> allPatients;
+        std::vector<domain::Patient> allPatients;
         allPatients = repo.getAllPatients();
 
-        printPatients(allPatients);
+        ui::cli::printPatients(allPatients);
 
     } catch (const std::exception& e) {
         std::cerr << e.what() << std::endl;
