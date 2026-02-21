@@ -1,5 +1,5 @@
 #pragma once
-#include "ErrorCode.hpp"
+#include "error_code.hpp"
 #include <string>
 
 namespace common::result {
