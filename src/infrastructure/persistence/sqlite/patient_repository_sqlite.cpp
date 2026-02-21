@@ -1,12 +1,4 @@
-/*
- * File: patient_repository
- * Author: Kilian | ItwenzyI
- * Created: 07.02.2026
- * Description: 
- */
-//
-
-#include "patient_repository.hpp"
+#include "patient_repository_sqlite.hpp"
 #include <stdexcept>
 
 static Patient mapPatient(const Statement& stmt) {
@@ -19,10 +11,10 @@ static Patient mapPatient(const Statement& stmt) {
     return temp;
 }
 
-PatientRepository::PatientRepository(Database& db) : db_(db) {
+PatientRepositorySqlite::PatientRepositorySqlite(Database& db) : db_(db) {
 }
 
-Patient PatientRepository::createPatient(const Patient& p) {
+Patient PatientRepositorySqlite::createPatient(const Patient& p) {
     auto stmt =
         db_.prepare("INSERT INTO patients (name, birth_date, nationality) VALUES (?, ?, ?);");
 
@@ -53,7 +45,7 @@ Patient PatientRepository::createPatient(const Patient& p) {
     return newPatient;
 }
 
-std::vector<Patient> PatientRepository::getAllPatients() {
+std::vector<Patient> PatientRepositorySqlite::getAllPatients() {
     auto stmt =
         db_.prepare("SELECT id, name, birth_date, nationality FROM patients ORDER BY id ASC;");
 
