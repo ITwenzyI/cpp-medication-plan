@@ -102,7 +102,7 @@ common::result::Result<void> PatientRepositorySqlite::deletePatientById(int pati
 
     stmt.bindInt(1, patient_id);
 
-    stmt.step();
+    int rc = stmt.step();
 
     if (db_.changes() == 0) {
         return common::result::Result<void>::fail(common::result::ErrorCode::NotFound,
@@ -130,7 +130,7 @@ common::result::Result<void> PatientRepositorySqlite::updatePatientName(
     stmt.bindText(1, name_str);
     stmt.bindInt(2, patient_id);
 
-    stmt.step();
+    int rc = stmt.step();
 
     if (db_.changes() == 0) {
         auto existing = findPatientById(patient_id);
