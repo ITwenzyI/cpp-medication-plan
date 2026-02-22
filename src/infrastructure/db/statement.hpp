@@ -3,6 +3,7 @@
 
 #include <sqlite3.h>
 #include <string>
+#include <string_view>
 
 namespace infrastructure::db {
 class Statement {
@@ -25,6 +26,7 @@ class Statement {
 
     void bindInt(int index, int value);
     void bindDouble(int index, double value);
+    void bindText(int index, std::string_view value);
     void bindText(int index, const std::string& value);
     void bindNull(int index);
 

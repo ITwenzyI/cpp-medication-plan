@@ -60,15 +60,20 @@ void Statement::reset() {
     sqlite3_reset(stmt_);
 }
 
-void Statement::bindText(int index, const std::string& value) {
+void Statement::bindText(int index, std::string_view value) {
     if (!stmt_) {
         throw std::logic_error("Statement ist Null.");
     }
 
-    int rc = sqlite3_bind_text(stmt_, index, value.c_str(), -1, SQLITE_TRANSIENT);
+    int rc = sqlite3_bind_text(
+        stmt_, index, value.data(), static_cast<int>(value.size()), SQLITE_TRANSIENT);
     if (rc != SQLITE_OK) {
-        throw std::runtime_error("Bind fehlgeschlagen.");
+        throw std::runtime_error("Statement::bindText failed");
     }
+}
+
+void Statement::bindText(int index, const std::string& value) {
+    bindText(index, std::string_view{value});
 }
 
 void Statement::bindNull(int index) {
