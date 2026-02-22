@@ -1,4 +1,5 @@
 #include "patient_repository_sqlite.hpp"
+#include "common/validation/string_validation.hpp"
 #include <stdexcept>
 
 namespace infrastructure::persistence::sqlite {
@@ -107,6 +108,40 @@ common::result::Result<void> PatientRepositorySqlite::deletePatientById(int pati
         return common::result::Result<void>::fail(common::result::ErrorCode::NotFound,
             "No patient with id: " + std::to_string(patient_id),
             "PatientRepositorySqlite::deletePatientById");
+    }
+    return common::result::Result<void>::ok();
+}
+
+common::result::Result<void> PatientRepositorySqlite::updatePatientName(
+    int patient_id, std::string_view name) {
+    if (patient_id <= 0) {
+        return common::result::Result<void>::fail(common::result::ErrorCode::InvalidArgument,
+            "patient_id must be positive", "PatientRepositorySqlite::updatePatientName");
+    }
+    if (common::validation::isEmptyOrBlank(name)) {
+        return common::result::Result<void>::fail(common::result::ErrorCode::InvalidArgument,
+            "name must not be empty", "PatientRepositorySqlite::updatePatientName");
+    }
+
+    auto stmt = db_.prepare("UPDATE patients SET name = ? WHERE id = ?;");
+
+    std::string name_str{name};
+
+    stmt.bindText(1, name_str);
+    stmt.bindInt(2, patient_id);
+
+    stmt.step();
+
+    if (db_.changes() == 0) {
+        auto existing = findPatientById(patient_id);
+        if (existing.isError()) {
+            if (existing.error().code == common::result::ErrorCode::NotFound) {
+                return common::result::Result<void>::fail(common::result::ErrorCode::NotFound,
+                    "No patient with id: " + std::to_string(patient_id),
+                    "PatientRepositorySqlite::updatePatientName");
+            }
+            return common::result::Result<void>::fail(existing.error());
+        }
     }
     return common::result::Result<void>::ok();
 }

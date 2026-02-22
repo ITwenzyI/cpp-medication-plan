@@ -1,6 +1,8 @@
 #pragma once
 #include "application/ports/patient_repository.hpp"
 #include "infrastructure/db/database.hpp"
+#include <string_view>
+#include <vector>
 
 namespace infrastructure::persistence::sqlite {
 class PatientRepositorySqlite : public application::ports::IPatientRepository {
@@ -14,6 +16,9 @@ class PatientRepositorySqlite : public application::ports::IPatientRepository {
     [[nodiscard]] common::result::Result<domain::Patient> findPatientById(int patient_id) override;
 
     [[nodiscard]] common::result::Result<void> deletePatientById(int patient_id) override;
+
+    [[nodiscard]] common::result::Result<void> updatePatientName(
+        int patient_id, std::string_view name);
 
   private:
     infrastructure::db::Database& db_;
