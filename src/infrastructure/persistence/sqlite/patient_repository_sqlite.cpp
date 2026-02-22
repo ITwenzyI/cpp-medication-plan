@@ -133,9 +133,15 @@ common::result::Result<void> PatientRepositorySqlite::updatePatientName(
     stmt.step();
 
     if (db_.changes() == 0) {
-        return common::result::Result<void>::fail(common::result::ErrorCode::NotFound,
-            "No patient with id: " + std::to_string(patient_id),
-            "PatientRepositorySqlite::updatePatientName");
+        auto existing = findPatientById(patient_id);
+        if (existing.isError()) {
+            if (existing.error().code == common::result::ErrorCode::NotFound) {
+                return common::result::Result<void>::fail(common::result::ErrorCode::NotFound,
+                    "No patient with id: " + std::to_string(patient_id),
+                    "PatientRepositorySqlite::updatePatientName");
+            }
+            return common::result::Result<void>::fail(existing.error());
+        }
     }
     return common::result::Result<void>::ok();
 }
