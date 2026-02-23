@@ -1,6 +1,12 @@
 cmake_minimum_required(VERSION 3.20)
 project(medication_plan LANGUAGES C CXX)
 
+configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/sql/schema.sql
+    ${CMAKE_CURRENT_BINARY_DIR}/schema.sql
+    COPYONLY
+)
+
 add_subdirectory(external/sqlite)
 
 file(GLOB_RECURSE CORE_SOURCES CONFIGURE_DEPENDS
