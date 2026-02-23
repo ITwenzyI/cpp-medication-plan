@@ -2,6 +2,14 @@
 #include "infrastructure/db/init_db.hpp"
 #include <iostream>
 
+void expect(bool condition, std::string_view message) {
+    if (condition) {
+        return;
+    }
+    std::cerr << "TEST FAILED: " << message << "\n";
+    std::exit(1);
+}
+
 int main() {
 
     infrastructure::db::Database db(":memory:");
