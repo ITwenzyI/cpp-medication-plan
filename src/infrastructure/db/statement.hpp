@@ -18,7 +18,6 @@ class Statement {
 
     [[nodiscard]] sqlite3_stmt* get() const;
 
-    [[nodiscard]] int stepRaw();
     [[nodiscard]] int step();
 
     void reset();

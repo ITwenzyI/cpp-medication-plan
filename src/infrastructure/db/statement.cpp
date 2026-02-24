@@ -32,13 +32,6 @@ Statement& Statement::operator=(Statement&& other) noexcept {
     return stmt_;
 }
 
-int Statement::stepRaw() {
-    if (stmt_ == nullptr) {
-        throw std::logic_error("Step fehlgeschlagen.");
-    }
-    return sqlite3_step(stmt_);
-}
-
 int Statement::step() {
     if (!stmt_) {
         throw std::logic_error("Statement ist null in step().");
