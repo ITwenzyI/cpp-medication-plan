@@ -5,6 +5,7 @@
 #include "ui/cli/patient_printer.hpp"
 
 #include <iostream>
+#include <stdexcept>
 #include <vector>
 
 int main() {
