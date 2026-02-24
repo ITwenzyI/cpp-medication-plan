@@ -41,7 +41,7 @@ int Statement::stepRaw() {
 
 int Statement::step() {
     if (!stmt_) {
-        throw std::logic_error("Statement ist null.");
+        throw std::logic_error("Statement ist null in step().");
     }
 
     int rc = sqlite3_step(stmt_);
@@ -62,7 +62,7 @@ void Statement::reset() {
 
 void Statement::bindText(int index, std::string_view value) {
     if (!stmt_) {
-        throw std::logic_error("Statement ist Null.");
+        throw std::logic_error("Statement ist Null in bindText().");
     }
 
     int rc = sqlite3_bind_text(
@@ -78,7 +78,7 @@ void Statement::bindText(int index, const std::string& value) {
 
 void Statement::bindNull(int index) {
     if (!stmt_) {
-        throw std::logic_error("Statement ist Null.");
+        throw std::logic_error("Statement ist Null in bindNull().");
     }
 
     int rc = sqlite3_bind_null(stmt_, index);
@@ -89,7 +89,7 @@ void Statement::bindNull(int index) {
 
 void Statement::bindInt(int index, int value) {
     if (!stmt_) {
-        throw std::logic_error("Statement ist Null.");
+        throw std::logic_error("Statement ist Null in bindInt().");
     }
 
     int rc = sqlite3_bind_int(stmt_, index, value);
@@ -100,7 +100,7 @@ void Statement::bindInt(int index, int value) {
 
 void Statement::bindDouble(int index, double value) {
     if (!stmt_) {
-        throw std::logic_error("Statement ist Null.");
+        throw std::logic_error("Statement ist Null in bindDouble().");
     }
 
     int rc = sqlite3_bind_double(stmt_, index, value);
@@ -111,7 +111,7 @@ void Statement::bindDouble(int index, double value) {
 
 int Statement::getInt(int column) const {
     if (!stmt_) {
-        throw std::logic_error("Statement ist Null.");
+        throw std::logic_error("Statement ist Null in getInt().");
     }
 
     return sqlite3_column_int(stmt_, column);
@@ -119,7 +119,7 @@ int Statement::getInt(int column) const {
 
 double Statement::getDouble(int column) const {
     if (!stmt_) {
-        throw std::logic_error("Statement ist Null.");
+        throw std::logic_error("Statement ist Null in getDouble().");
     }
 
     return sqlite3_column_double(stmt_, column);
@@ -127,7 +127,7 @@ double Statement::getDouble(int column) const {
 
 std::string Statement::getText(int column) const {
     if (!stmt_) {
-        throw std::logic_error("Statement ist Null.");
+        throw std::logic_error("Statement ist Null in getText().");
     }
 
     if (sqlite3_column_type(stmt_, column) == SQLITE_NULL) {

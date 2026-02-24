@@ -41,7 +41,7 @@ Statement Database::prepare(const char* sql) {
     sqlite3_stmt* stmt = nullptr;
 
     if (!db_) {
-        throw std::logic_error("Datenbank nicht geöffnet.");
+        throw std::logic_error("Datenbank nicht geöffnet in prepare().");
     }
 
     const int rc = sqlite3_prepare_v2(db_, sql, -1, &stmt, nullptr);
@@ -55,7 +55,7 @@ Statement Database::prepare(const char* sql) {
 
 void Database::execute(const char* sql) {
     if (db_ == nullptr) {
-        throw std::logic_error("Datenbank nicht geöffnet.");
+        throw std::logic_error("Datenbank nicht geöffnet in execute().");
     }
 
     char* errMsg = nullptr;
