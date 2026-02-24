@@ -43,6 +43,14 @@ int main() {
     expect(updated.isOk(), "find after update should succeed");
     expect(updated.value().name == "Bjarne Stroustrup", "name should be updated");
 
+    auto upd_same = repo.updatePatientName(created.id, "Bjarne Stroustrup");
+    expect(upd_same.isOk(), "updatePatientName with same value should still succeed");
+
+    auto upd_bad = repo.updatePatientName(0, "X");
+    expect(upd_bad.isError(), "update with invalid id should fail");
+    expect(upd_bad.error().code == common::result::ErrorCode::InvalidArgument,
+        "invalid id should return InvalidArgument");
+
     std::cout << "SMOKE TEST PASSED\n";
 
     return 0;
