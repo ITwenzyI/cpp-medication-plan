@@ -63,9 +63,9 @@ int main() {
     auto delete1 = repo.deletePatientById(created.id);
     expect(delete1.isOk(), "deletePatientById should succeed");
 
-    auto after = repo.findPatientById(created.id);
-    expect(after.isError(), "find after delete should fail");
-    expect(after.error().code == common::result::ErrorCode::NotFound,
+    auto after_delete = repo.findPatientById(created.id);
+    expect(after_delete.isError(), "find after delete should fail");
+    expect(after_delete.error().code == common::result::ErrorCode::NotFound,
         "find after delete should return NotFound");
 
     auto delete2 = repo.deletePatientById(created.id);
