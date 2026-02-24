@@ -11,7 +11,7 @@ class IPatientRepository {
 
     virtual common::result::Result<domain::Patient> createPatient(const domain::Patient& p) = 0;
 
-    virtual std::vector<domain::Patient> getAllPatients() = 0;
+    virtual common::result::Result<std::vector<domain::Patient>> getAllPatients() = 0;
 
     virtual common::result::Result<domain::Patient> findPatientById(int patient_id) = 0;
 

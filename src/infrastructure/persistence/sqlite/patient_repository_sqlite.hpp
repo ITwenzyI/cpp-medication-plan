@@ -13,7 +13,7 @@ class PatientRepositorySqlite : public application::ports::IPatientRepository {
     [[nodiscard]] common::result::Result<domain::Patient> createPatient(
         const domain::Patient& p) override;
 
-    [[nodiscard]] std::vector<domain::Patient> getAllPatients() override;
+    [[nodiscard]] common::result::Result<std::vector<domain::Patient>> getAllPatients() override;
 
     [[nodiscard]] common::result::Result<domain::Patient> findPatientById(int patient_id) override;
 

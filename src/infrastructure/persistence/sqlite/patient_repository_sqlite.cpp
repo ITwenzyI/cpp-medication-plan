@@ -51,7 +51,7 @@ common::result::Result<domain::Patient> PatientRepositorySqlite::createPatient(
     return common::result::Result<domain::Patient>::ok(newPatient);
 }
 
-std::vector<domain::Patient> PatientRepositorySqlite::getAllPatients() {
+common::result::Result<std::vector<domain::Patient>> PatientRepositorySqlite::getAllPatients() {
     auto stmt =
         db_.prepare("SELECT id, name, birth_date, nationality FROM patients ORDER BY id ASC;");
 
@@ -66,11 +66,13 @@ std::vector<domain::Patient> PatientRepositorySqlite::getAllPatients() {
         } else if (rc == SQLITE_DONE) {
             break;
         } else {
-            throw std::runtime_error("STEP fehlgeschlagen.");
+            return common::result::Result<std::vector<domain::Patient>>::fail(
+                common::result::ErrorCode::DatabaseError, "SELECT fehlgeschlagen",
+                "PatientRepositorySqlite::getAllPatients");
         }
     }
 
-    return result;
+    return common::result::Result<std::vector<domain::Patient>>::ok(result);
 }
 
 common::result::Result<domain::Patient> PatientRepositorySqlite::findPatientById(int patient_id) {
