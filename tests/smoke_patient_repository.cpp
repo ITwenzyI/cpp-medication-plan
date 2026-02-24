@@ -58,6 +58,21 @@ int main() {
     expect(upd_bad.error().code == common::result::ErrorCode::InvalidArgument,
         "invalid id should return InvalidArgument");
 
+    // ======= DELETE ======
+
+    auto delete1 = repo.deletePatientById(created.id);
+    expect(delete1.isOk(), "deletePatientById should succeed");
+
+    auto after = repo.findPatientById(created.id);
+    expect(after.isError(), "find after delete should fail");
+    expect(after.error().code == common::result::ErrorCode::NotFound,
+        "find after delete should return NotFound");
+
+    auto delete2 = repo.deletePatientById(created.id);
+    expect(delete2.isError(), "delete missing patient should fail");
+    expect(delete2.error().code == common::result::ErrorCode::NotFound,
+        "delete missing patient should return NotFound");
+
     std::cout << "SMOKE TEST PASSED\n";
 
     return 0;
