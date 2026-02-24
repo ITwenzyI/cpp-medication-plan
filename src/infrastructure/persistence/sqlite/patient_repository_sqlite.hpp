@@ -1,5 +1,6 @@
 #pragma once
 #include "application/ports/patient_repository.hpp"
+#include "common/result/result.hpp"
 #include "infrastructure/db/database.hpp"
 #include <string_view>
 #include <vector>
