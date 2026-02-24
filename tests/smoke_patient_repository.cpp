@@ -15,7 +15,7 @@ static void expect(bool condition, std::string_view message) {
 int main() {
 
     infrastructure::db::Database db(":memory:");
-    infrastructure::db::initDatabase(db, "schema.sql");
+    infrastructure::db::initDatabase(db, "sql/schema.sql");
 
     infrastructure::persistence::sqlite::PatientRepositorySqlite repo(db);
 
@@ -35,6 +35,13 @@ int main() {
     expect(found.value().name == created.name, "name should match");
     expect(found.value().birth_date == created.birth_date, "birth_date should match");
     expect(found.value().nationality == created.nationality, "nationality should match");
+
+    auto update = repo.updatePatientName(created.id, "Bjarne Stroustrup");
+    expect(update.isOk(), "updatePatientName should succeed");
+
+    auto updated = repo.findPatientById(created.id);
+    expect(updated.isOk(), "find after update should succeed");
+    expect(updated.value().name == "Bjarne Stroustrup", "name should be updated");
 
     std::cout << "SMOKE TEST PASSED\n";
 
