@@ -1,5 +1,4 @@
-#ifndef DATABASE_HPP
-#define DATABASE_HPP
+#pragma once
 
 #include <sqlite3.h>
 #include <string>
@@ -32,5 +31,3 @@ class Database {
     sqlite3* db_;
 };
 } // namespace infrastructure::db
-
-#endif

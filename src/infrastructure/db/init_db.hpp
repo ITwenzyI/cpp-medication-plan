@@ -5,13 +5,9 @@
  * Description: 
  */
 //
-
-#ifndef MEDICATION_PLAN_INIT_DB_HPP
-#define MEDICATION_PLAN_INIT_DB_HPP
+#pragma once
 #include "database.hpp"
 
 namespace infrastructure::db {
 void initDatabase(Database& db, const std::string& schemaPath);
 } // namespace infrastructure::db
-
-#endif //MEDICATION_PLAN_INIT_DB_HPP

@@ -6,8 +6,7 @@
  */
 //
 
-#ifndef MEDICATION_PLAN_PATIENT_HPP
-#define MEDICATION_PLAN_PATIENT_HPP
+#pragma once
 #include <string>
 
 namespace domain {
@@ -18,5 +17,3 @@ struct Patient {
     std::string nationality;
 };
 } // namespace domain
-
-#endif //MEDICATION_PLAN_PATIENT_HPP
