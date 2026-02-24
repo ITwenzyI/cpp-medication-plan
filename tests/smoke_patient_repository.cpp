@@ -4,7 +4,7 @@
 #include "infrastructure/persistence/sqlite/patient_repository_sqlite.hpp"
 #include <iostream>
 
-void expect(bool condition, std::string_view message) {
+static void expect(bool condition, std::string_view message) {
     if (condition) {
         return;
     }
