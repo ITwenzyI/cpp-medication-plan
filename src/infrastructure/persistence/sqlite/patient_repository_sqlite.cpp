@@ -1,4 +1,5 @@
 #include "patient_repository_sqlite.hpp"
+#include "common/validation/id_validation.hpp"
 #include "common/validation/string_validation.hpp"
 #include <stdexcept>
 
@@ -70,7 +71,7 @@ std::vector<domain::Patient> PatientRepositorySqlite::getAllPatients() {
 }
 
 common::result::Result<domain::Patient> PatientRepositorySqlite::findPatientById(int patient_id) {
-    if (patient_id <= 0) {
+    if (!common::validation::validateId(patient_id)) {
         return common::result::Result<domain::Patient>::fail(
             common::result::ErrorCode::InvalidArgument, "patient_id must be positive",
             "PatientRepositorySqlite::findPatientById");
@@ -93,7 +94,7 @@ common::result::Result<domain::Patient> PatientRepositorySqlite::findPatientById
 }
 
 common::result::Result<void> PatientRepositorySqlite::deletePatientById(int patient_id) {
-    if (patient_id <= 0) {
+    if (!common::validation::validateId(patient_id)) {
         return common::result::Result<void>::fail(common::result::ErrorCode::InvalidArgument,
             "patient_id must be positive", "PatientRepositorySqlite::deletePatientById");
     }
@@ -114,7 +115,7 @@ common::result::Result<void> PatientRepositorySqlite::deletePatientById(int pati
 
 common::result::Result<void> PatientRepositorySqlite::updatePatientName(
     int patient_id, std::string_view name) {
-    if (patient_id <= 0) {
+    if (!common::validation::validateId(patient_id)) {
         return common::result::Result<void>::fail(common::result::ErrorCode::InvalidArgument,
             "patient_id must be positive", "PatientRepositorySqlite::updatePatientName");
     }
