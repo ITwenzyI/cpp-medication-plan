@@ -17,7 +17,8 @@ static domain::Patient mapPatient(const infrastructure::db::Statement& stmt) {
 PatientRepositorySqlite::PatientRepositorySqlite(infrastructure::db::Database& db) : db_(db) {
 }
 
-domain::Patient PatientRepositorySqlite::createPatient(const domain::Patient& p) {
+common::result::Result<domain::Patient> PatientRepositorySqlite::createPatient(
+    const domain::Patient& p) {
     auto stmt =
         db_.prepare("INSERT INTO patients (name, birth_date, nationality) VALUES (?, ?, ?);");
 
@@ -37,7 +38,9 @@ domain::Patient PatientRepositorySqlite::createPatient(const domain::Patient& p)
 
     int rc = stmt.step();
     if (rc != SQLITE_DONE) {
-        throw std::runtime_error("INSERT fehlgeschlagen.");
+        return common::result::Result<domain::Patient>::fail(
+            common::result::ErrorCode::DatabaseError, "INSERT fehlgeschlagen",
+            "PatientRepositorySqlite::createPatient");
     }
 
     int lastInsertRowID = static_cast<int>(sqlite3_last_insert_rowid(db_.get()));
@@ -45,7 +48,7 @@ domain::Patient PatientRepositorySqlite::createPatient(const domain::Patient& p)
     domain::Patient newPatient = p;
     newPatient.id = lastInsertRowID;
 
-    return newPatient;
+    return common::result::Result<domain::Patient>::ok(newPatient);
 }
 
 std::vector<domain::Patient> PatientRepositorySqlite::getAllPatients() {
