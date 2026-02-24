@@ -1,5 +1,4 @@
-#ifndef STATEMENT_HPP
-#define STATEMENT_HPP
+#pragma once
 
 #include <sqlite3.h>
 #include <string>
@@ -38,5 +37,3 @@ class Statement {
     sqlite3_stmt* stmt_;
 };
 } // namespace infrastructure::db
-
-#endif
