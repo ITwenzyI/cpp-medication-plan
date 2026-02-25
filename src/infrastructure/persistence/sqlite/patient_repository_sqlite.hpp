@@ -20,7 +20,10 @@ class PatientRepositorySqlite : public application::ports::IPatientRepository {
     [[nodiscard]] common::result::Result<void> deletePatientById(int patient_id) override;
 
     [[nodiscard]] common::result::Result<void> updatePatientName(
-        int patient_id, std::string_view name);
+        int patient_id, std::string_view name) override;
+
+    [[nodiscard]] common::result::Result<void> updatePatientBirthdate(
+        int patient_id, std::string_view new_birth_date) override;
 
   private:
     infrastructure::db::Database& db_;
