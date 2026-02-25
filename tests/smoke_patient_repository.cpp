@@ -21,9 +21,13 @@ int main() {
 
     domain::Patient p1{0, "Steve Moro", "1998-02-07", "Deutsch"};
 
+    // ======= CREATE PATIENT ======
+
     // Create Patient
     auto created = repo.createPatient(p1);
     expect(created.value().id > 0, "created patient should have generated id");
+
+    // ======= GET ALL PATIENTS ======
 
     // Get All Patients
     auto all = repo.getAllPatients();
@@ -33,12 +37,16 @@ int main() {
         all.value()[0].id == created.value().id, "expected stored patient id to equal created.id");
     expect(all.value()[0].name == "Steve Moro", "stored name should match");
 
+    // ======= FIND PATIENT BY ID ======
+
     // Find Patient by ID
     auto found = repo.findPatientById(created.value().id);
     expect(found.isOk(), "findPatientById should succeed after creation");
     expect(found.value().name == created.value().name, "name should match");
     expect(found.value().birth_date == created.value().birth_date, "birth_date should match");
     expect(found.value().nationality == created.value().nationality, "nationality should match");
+
+    // ======= UPDATE PATIENT NAME ======
 
     // Update Patient Name
     auto update = repo.updatePatientName(created.value().id, "Bjarne Stroustrup");
@@ -59,7 +67,18 @@ int main() {
     expect(upd_bad.error().code == common::result::ErrorCode::InvalidArgument,
         "invalid id should return InvalidArgument");
 
-    // ======= DELETE ======
+    // ======= UPDATE PATIENT BIRTHDATE ======
+
+    // Update Patient BirthDate
+    auto update_birthdate = repo.updatePatientBirthdate(created.value().id, "1999-06-06");
+    expect(update_birthdate.isOk(), "updatePatientBirthdate should succeed");
+
+    // Find Patient by ID after Update Patient BirthDate
+    auto updated_birthdate = repo.findPatientById(created.value().id);
+    expect(updated_birthdate.isOk(), "find after update should succeed");
+    expect(updated_birthdate.value().birth_date == "1999-06-06", "birthdate should be updated");
+
+    // ======= DELETE PATIENT ======
 
     auto delete1 = repo.deletePatientById(created.value().id);
     expect(delete1.isOk(), "deletePatientById should succeed");
