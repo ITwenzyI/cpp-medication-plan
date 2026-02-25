@@ -1,4 +1,5 @@
 #include "patient_repository_sqlite.hpp"
+#include "common/validation/birth_date_validation.hpp"
 #include "common/validation/id_validation.hpp"
 #include "common/validation/string_validation.hpp"
 #include <stdexcept>
@@ -158,7 +159,7 @@ common::result::Result<void> PatientRepositorySqlite::updatePatientBirthdate(
         return common::result::Result<void>::fail(common::result::ErrorCode::InvalidArgument,
             "patient_id must be positive", "PatientRepositorySqlite::updatePatientBirthdate");
     }
-    if (common::validation::isEmptyOrBlank(new_birth_date)) {
+    if (common::validation::isValidBirthDate(new_birth_date)) {
         return common::result::Result<void>::fail(common::result::ErrorCode::InvalidArgument,
             "birth_date must not be empty", "PatientRepositorySqlite::updatePatientBirthdate");
     }
