@@ -1,3 +1,4 @@
+#include "common/result/result.hpp"
 #include "domain/patient.hpp"
 #include "infrastructure/db/database.hpp"
 #include "infrastructure/db/init_db.hpp"
@@ -77,6 +78,13 @@ int main() {
     auto updated_birthdate = repo.findPatientById(created.value().id);
     expect(updated_birthdate.isOk(), "find after update should succeed");
     expect(updated_birthdate.value().birth_date == "1999-06-06", "birthdate should be updated");
+
+    // Update Patient BirthDate with invalid BirthDate
+    auto update_birthdate_invalid = repo.updatePatientBirthdate(created.value().id, "1999.06.06");
+    expect(update_birthdate_invalid.isError(),
+        "updatePatientBirthDate with invalid birth_date should fail");
+    expect(update_birthdate_invalid.error().code == common::result::ErrorCode::InvalidArgument,
+        "invalid birth_date should return InvalidArgument");
 
     // ======= UPDATE PATIENT NATIONALITY ======
 
