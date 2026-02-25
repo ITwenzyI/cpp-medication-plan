@@ -121,6 +121,7 @@ common::result::Result<void> PatientRepositorySqlite::deletePatientById(int pati
 
 common::result::Result<void> PatientRepositorySqlite::updatePatientName(
     int patient_id, std::string_view name) {
+
     if (!common::validation::validateId(patient_id)) {
         return common::result::Result<void>::fail(common::result::ErrorCode::InvalidArgument,
             "patient_id must be positive", "PatientRepositorySqlite::updatePatientName");
@@ -153,6 +154,7 @@ common::result::Result<void> PatientRepositorySqlite::updatePatientName(
 
 common::result::Result<void> PatientRepositorySqlite::updatePatientBirthdate(
     int patient_id, std::string_view new_birth_date) {
+
     if (!common::validation::validateId(patient_id)) {
         return common::result::Result<void>::fail(common::result::ErrorCode::InvalidArgument,
             "patient_id must be positive", "PatientRepositorySqlite::updatePatientBirthdate");
@@ -176,6 +178,39 @@ common::result::Result<void> PatientRepositorySqlite::updatePatientBirthdate(
                 return common::result::Result<void>::fail(common::result::ErrorCode::NotFound,
                     "No patient with id: " + std::to_string(patient_id),
                     "PatientRepositorySqlite::updatePatientBirthdate");
+            }
+            return common::result::Result<void>::fail(existing.error());
+        }
+    }
+    return common::result::Result<void>::ok();
+}
+
+common::result::Result<void> PatientRepositorySqlite::updatePatientNationality(
+    int patient_id, std::string_view new_nationality) {
+
+    if (!common::validation::validateId(patient_id)) {
+        return common::result::Result<void>::fail(common::result::ErrorCode::InvalidArgument,
+            "patient_id must be positive", "PatientRepositorySqlite::updatePatientNationality");
+    }
+    if (common::validation::isEmptyOrBlank(new_nationality)) {
+        return common::result::Result<void>::fail(common::result::ErrorCode::InvalidArgument,
+            "nationality must not be empty", "PatientRepositorySqlite::updatePatientNationality");
+    }
+
+    auto stmt = db_.prepare("UPDATE patients SET nationality = ? WHERE id = ?;");
+
+    stmt.bindText(1, new_nationality);
+    stmt.bindInt(2, patient_id);
+
+    int rc = stmt.step();
+
+    if (db_.changes() == 0) {
+        auto existing = findPatientById(patient_id);
+        if (existing.isError()) {
+            if (existing.error().code == common::result::ErrorCode::NotFound) {
+                return common::result::Result<void>::fail(common::result::ErrorCode::NotFound,
+                    "No patient with id: " + std::to_string(patient_id),
+                    "PatientRepositorySqlite::updatePatientNationality");
             }
             return common::result::Result<void>::fail(existing.error());
         }
