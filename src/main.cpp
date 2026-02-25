@@ -13,14 +13,14 @@ int main() {
         infrastructure::db::Database db("data/medication.db");
 
         //infrastructure::db::initDatabase(db, "sql/schema.sql");
-        //std::cout << "Datenbank initialisiert\n";
+        //std::cout << "Database initalized\n";
 
         infrastructure::persistence::sqlite::PatientRepositorySqlite repo(db);
 
-        //domain::Patient p1{1, "Kilian", "01.01.2000", "Deutsch"};
+        //domain::Patient p1{1, "Kilian Cpp", "01.01.2000", "DE"};
+        //domain::Patient p2{2, "Test Patient", "24.12.1998", "ES"};
 
-        //repo.createPatient(p1);
-        //std::vector<domain::Patient> allPatients;
+        //auto all_patients = repo.createPatient(p1);
         auto allPatients = repo.getAllPatients();
 
         ui::cli::printPatients(allPatients.value());
