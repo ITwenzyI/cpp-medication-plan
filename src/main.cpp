@@ -17,8 +17,8 @@ int main() {
 
         infrastructure::persistence::sqlite::PatientRepositorySqlite repo(db);
 
-        //domain::Patient p1{1, "Kilian Cpp", "01.01.2000", "DE"};
-        //domain::Patient p2{2, "Test Patient", "24.12.1998", "ES"};
+        //domain::Patient p1{1, "Kilian Cpp", "2000-01-01", "DE"};
+        //domain::Patient p2{2, "Test Patient", "1998-12-24", "ES"};
 
         //auto all_patients = repo.createPatient(p1);
         auto allPatients = repo.getAllPatients();

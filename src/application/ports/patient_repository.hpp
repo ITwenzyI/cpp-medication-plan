@@ -19,5 +19,8 @@ class IPatientRepository {
 
     virtual common::result::Result<void> updatePatientName(
         int patient_id, std::string_view name) = 0;
+
+    virtual common::result::Result<void> updatePatientBirthdate(
+        int patient_id, std::string_view new_birth_date) = 0;
 };
 } // namespace application::ports

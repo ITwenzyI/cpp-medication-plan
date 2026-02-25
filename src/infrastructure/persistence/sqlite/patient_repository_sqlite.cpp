@@ -1,4 +1,5 @@
 #include "patient_repository_sqlite.hpp"
+#include "common/validation/birth_date_validation.hpp"
 #include "common/validation/id_validation.hpp"
 #include "common/validation/string_validation.hpp"
 #include <stdexcept>
@@ -145,6 +146,38 @@ common::result::Result<void> PatientRepositorySqlite::updatePatientName(
                 return common::result::Result<void>::fail(common::result::ErrorCode::NotFound,
                     "No patient with id: " + std::to_string(patient_id),
                     "PatientRepositorySqlite::updatePatientName");
+            }
+            return common::result::Result<void>::fail(existing.error());
+        }
+    }
+    return common::result::Result<void>::ok();
+}
+
+common::result::Result<void> PatientRepositorySqlite::updatePatientBirthdate(
+    int patient_id, std::string_view new_birth_date) {
+    if (!common::validation::validateId(patient_id)) {
+        return common::result::Result<void>::fail(common::result::ErrorCode::InvalidArgument,
+            "patient_id must be positive", "PatientRepositorySqlite::updatePatientBirthdate");
+    }
+    if (common::validation::isValidBirthDate(new_birth_date)) {
+        return common::result::Result<void>::fail(common::result::ErrorCode::InvalidArgument,
+            "birth_date must not be empty", "PatientRepositorySqlite::updatePatientBirthdate");
+    }
+
+    auto stmt = db_.prepare("UPDATE patients SET birth_date = ? WHERE id = ?;");
+
+    stmt.bindText(1, new_birth_date);
+    stmt.bindInt(2, patient_id);
+
+    int rc = stmt.step();
+
+    if (db_.changes() == 0) {
+        auto existing = findPatientById(patient_id);
+        if (existing.isError()) {
+            if (existing.error().code == common::result::ErrorCode::NotFound) {
+                return common::result::Result<void>::fail(common::result::ErrorCode::NotFound,
+                    "No patient with id: " + std::to_string(patient_id),
+                    "PatientRepositorySqlite::updatePatientBirthdate");
             }
             return common::result::Result<void>::fail(existing.error());
         }
