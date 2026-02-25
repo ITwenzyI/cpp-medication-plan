@@ -23,33 +23,34 @@ int main() {
 
     // Create Patient
     auto created = repo.createPatient(p1);
-    expect(created.id > 0, "created patient should have generated id");
+    expect(created.value().id > 0, "created patient should have generated id");
 
     // Get All Patients
     auto all = repo.getAllPatients();
-    expect(!all.empty(), "getAllPatients should return at least one patient after create");
-    expect(all.size() == 1, "expected exactly one patient in empty test database");
-    expect(all[0].id == created.id, "expected stored patient id to equal created.id");
-    expect(all[0].name == "Steve Moro", "stored name should match");
+    expect(!all.value().empty(), "getAllPatients should return at least one patient after create");
+    expect(all.value().size() == 1, "expected exactly one patient in empty test database");
+    expect(
+        all.value()[0].id == created.value().id, "expected stored patient id to equal created.id");
+    expect(all.value()[0].name == "Steve Moro", "stored name should match");
 
     // Find Patient by ID
-    auto found = repo.findPatientById(created.id);
+    auto found = repo.findPatientById(created.value().id);
     expect(found.isOk(), "findPatientById should succeed after creation");
-    expect(found.value().name == created.name, "name should match");
-    expect(found.value().birth_date == created.birth_date, "birth_date should match");
-    expect(found.value().nationality == created.nationality, "nationality should match");
+    expect(found.value().name == created.value().name, "name should match");
+    expect(found.value().birth_date == created.value().birth_date, "birth_date should match");
+    expect(found.value().nationality == created.value().nationality, "nationality should match");
 
     // Update Patient Name
-    auto update = repo.updatePatientName(created.id, "Bjarne Stroustrup");
+    auto update = repo.updatePatientName(created.value().id, "Bjarne Stroustrup");
     expect(update.isOk(), "updatePatientName should succeed");
 
     // Find Patient by ID after Update Patient Name
-    auto updated = repo.findPatientById(created.id);
+    auto updated = repo.findPatientById(created.value().id);
     expect(updated.isOk(), "find after update should succeed");
     expect(updated.value().name == "Bjarne Stroustrup", "name should be updated");
 
     // Update Patient Name with same Name
-    auto upd_same = repo.updatePatientName(created.id, "Bjarne Stroustrup");
+    auto upd_same = repo.updatePatientName(created.value().id, "Bjarne Stroustrup");
     expect(upd_same.isOk(), "updatePatientName with same value should still succeed");
 
     // Update Patient Name with invalid ID=0
@@ -60,15 +61,15 @@ int main() {
 
     // ======= DELETE ======
 
-    auto delete1 = repo.deletePatientById(created.id);
+    auto delete1 = repo.deletePatientById(created.value().id);
     expect(delete1.isOk(), "deletePatientById should succeed");
 
-    auto after_delete = repo.findPatientById(created.id);
+    auto after_delete = repo.findPatientById(created.value().id);
     expect(after_delete.isError(), "find after delete should fail");
     expect(after_delete.error().code == common::result::ErrorCode::NotFound,
         "find after delete should return NotFound");
 
-    auto delete2 = repo.deletePatientById(created.id);
+    auto delete2 = repo.deletePatientById(created.value().id);
     expect(delete2.isError(), "delete missing patient should fail");
     expect(delete2.error().code == common::result::ErrorCode::NotFound,
         "delete missing patient should return NotFound");
