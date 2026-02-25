@@ -19,7 +19,7 @@ int main() {
 
     infrastructure::persistence::sqlite::PatientRepositorySqlite repo(db);
 
-    domain::Patient p1{0, "Steve Moro", "07.02.1998", "Deutsch"};
+    domain::Patient p1{0, "Steve Moro", "1998-02-07", "Deutsch"};
 
     // Create Patient
     auto created = repo.createPatient(p1);
