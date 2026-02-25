@@ -78,6 +78,17 @@ int main() {
     expect(updated_birthdate.isOk(), "find after update should succeed");
     expect(updated_birthdate.value().birth_date == "1999-06-06", "birthdate should be updated");
 
+    // ======= UPDATE PATIENT NATIONALITY ======
+
+    // Update Patient Nationality
+    auto update_nationality = repo.updatePatientNationality(created.value().id, "EN");
+    expect(update_nationality.isOk(), "updatePatientNationality should succeed");
+
+    // Find Patient by ID after Update Patient Nationality
+    auto updated_nationality = repo.findPatientById(created.value().id);
+    expect(updated_nationality.isOk(), "find after update should succeed");
+    expect(updated_nationality.value().nationality == "EN", "nationality should be updated");
+
     // ======= DELETE PATIENT ======
 
     auto delete1 = repo.deletePatientById(created.value().id);
