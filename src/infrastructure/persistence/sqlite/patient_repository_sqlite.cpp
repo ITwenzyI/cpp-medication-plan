@@ -132,9 +132,7 @@ common::result::Result<void> PatientRepositorySqlite::updatePatientName(
 
     auto stmt = db_.prepare("UPDATE patients SET name = ? WHERE id = ?;");
 
-    std::string name_str{name};
-
-    stmt.bindText(1, name_str);
+    stmt.bindText(1, name);
     stmt.bindInt(2, patient_id);
 
     int rc = stmt.step();
