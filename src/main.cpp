@@ -20,10 +20,10 @@ int main() {
         //domain::Patient p1{1, "Kilian", "01.01.2000", "Deutsch"};
 
         //repo.createPatient(p1);
-        std::vector<domain::Patient> allPatients;
-        allPatients = repo.getAllPatients();
+        //std::vector<domain::Patient> allPatients;
+        auto allPatients = repo.getAllPatients();
 
-        ui::cli::printPatients(allPatients);
+        ui::cli::printPatients(allPatients.value());
 
     } catch (const std::exception& e) {
         std::cerr << e.what() << std::endl;
