@@ -10,9 +10,10 @@ class PatientRepositorySqlite : public application::ports::IPatientRepository {
   public:
     explicit PatientRepositorySqlite(infrastructure::db::Database& db);
 
-    domain::Patient createPatient(const domain::Patient& p) override;
+    [[nodiscard]] common::result::Result<domain::Patient> createPatient(
+        const domain::Patient& p) override;
 
-    [[nodiscard]] std::vector<domain::Patient> getAllPatients() override;
+    [[nodiscard]] common::result::Result<std::vector<domain::Patient>> getAllPatients() override;
 
     [[nodiscard]] common::result::Result<domain::Patient> findPatientById(int patient_id) override;
 
