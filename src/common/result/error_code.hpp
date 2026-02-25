@@ -7,6 +7,7 @@ enum class ErrorCode {
     InvalidArgument,
     DatabaseError,
     ConstraintViolation,
+    InvalidNationalityCode,
     Unexpected
 };
 } // namespace common::result
