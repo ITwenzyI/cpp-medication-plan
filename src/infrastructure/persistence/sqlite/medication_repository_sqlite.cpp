@@ -14,4 +14,7 @@ static domain::Medication mapMedication(const infrastructure::db::Statement& stm
 
     return temp;
 }
+
+MedicationRepositorySqlite::MedicationRepositorySqlite(infrastructure::db::Database& db) : db_(db) {
 }
+} // namespace infrastructure::persistence::sqlite
