@@ -9,7 +9,7 @@ static void expect(bool condition, std::string_view message) {
     if (condition) {
         return;
     }
-    std::cerr << "TEST FAILED: " << message << "\n";
+    std::cerr << "MEDICATION SMOKE TEST FAILED: " << message << "\n";
     std::exit(1);
 }
 
