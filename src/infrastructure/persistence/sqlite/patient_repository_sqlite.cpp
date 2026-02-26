@@ -49,7 +49,7 @@ common::result::Result<domain::Patient> PatientRepositorySqlite::createPatient(
     int rc = stmt.step();
     if (rc != SQLITE_DONE) {
         return common::result::Result<domain::Patient>::fail(
-            common::result::ErrorCode::DatabaseError, "INSERT fehlgeschlagen",
+            common::result::ErrorCode::DatabaseError, "INSERT failed",
             "PatientRepositorySqlite::createPatient");
     }
 
@@ -77,7 +77,7 @@ common::result::Result<std::vector<domain::Patient>> PatientRepositorySqlite::ge
             break;
         } else {
             return common::result::Result<std::vector<domain::Patient>>::fail(
-                common::result::ErrorCode::DatabaseError, "SELECT fehlgeschlagen",
+                common::result::ErrorCode::DatabaseError, "SELECT failed",
                 "PatientRepositorySqlite::getAllPatients");
         }
     }
