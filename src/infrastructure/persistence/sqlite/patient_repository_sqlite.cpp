@@ -20,12 +20,19 @@ PatientRepositorySqlite::PatientRepositorySqlite(infrastructure::db::Database& d
 
 common::result::Result<domain::Patient> PatientRepositorySqlite::createPatient(
     const domain::Patient& p) {
+
     auto stmt =
         db_.prepare("INSERT INTO patients (name, birth_date, nationality) VALUES (?, ?, ?);");
 
     stmt.bindText(1, p.name);
 
     if (!p.birth_date.empty()) {
+        if (!common::validation::isValidBirthDate(p.birth_date)) {
+            return common::result::Result<domain::Patient>::fail(
+                common::result::ErrorCode::InvalidArgument,
+                "birth_date format is invalid (YYYY-MM-DD)",
+                "PatientRepositorySqlite::createPatient");
+        }
         stmt.bindText(2, p.birth_date);
     } else {
         stmt.bindNull(2);
