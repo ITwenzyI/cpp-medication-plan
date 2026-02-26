@@ -168,7 +168,8 @@ common::result::Result<void> PatientRepositorySqlite::updatePatientBirthdate(
     }
     if (!common::validation::isValidBirthDate(new_birth_date)) {
         return common::result::Result<void>::fail(common::result::ErrorCode::InvalidArgument,
-            "birth_date must not be empty", "PatientRepositorySqlite::updatePatientBirthdate");
+            "birth_date format is invalid (YYYY-MM-DD)",
+            "PatientRepositorySqlite::updatePatientBirthdate");
     }
 
     auto stmt = db_.prepare("UPDATE patients SET birth_date = ? WHERE id = ?;");
