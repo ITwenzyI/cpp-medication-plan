@@ -17,4 +17,7 @@ static domain::IntakePlan mapIntakePlan(const infrastructure::db::Statement& stm
     return temp;
 }
 
+IntakePlanRepositorySqlite::IntakePlanRepositorySqlite(infrastructure::db::Database& db) : db_(db) {
+}
+
 } // namespace infrastructure::persistence::sqlite
