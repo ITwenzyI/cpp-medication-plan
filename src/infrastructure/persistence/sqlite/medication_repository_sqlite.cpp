@@ -103,6 +103,23 @@ common::result::Result<domain::Medication> MedicationRepositorySqlite::findMedic
 }
 
 common::result::Result<void> MedicationRepositorySqlite::deleteMedicationById(int medication_id) {
+    if (!common::validation::validateId(medication_id)) {
+        return common::result::Result<void>::fail(common::result::ErrorCode::InvalidArgument,
+            "medication_id must be positive", "MedicationRepositorySqlite::deleteMedicationById");
+    }
+
+    auto stmt = db_.prepare("DELETE FROM medications WHERE id = ?;");
+
+    stmt.bindInt(1, medication_id);
+
+    int rc = stmt.step();
+
+    if (db_.changes() == 0) {
+        return common::result::Result<void>::fail(common::result::ErrorCode::NotFound,
+            "No medication with id: " + std::to_string(medication_id),
+            "MedicationRepositorySqlite::deleteMedicationById");
+    }
+    return common::result::Result<void>::ok();
 }
 
 common::result::Result<void> MedicationRepositorySqlite::updateMedicationName(
