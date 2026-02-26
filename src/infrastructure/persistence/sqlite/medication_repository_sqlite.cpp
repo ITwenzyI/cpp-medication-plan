@@ -22,14 +22,20 @@ common::result::Result<domain::Medication> MedicationRepositorySqlite::createMed
 
     auto stmt = db_.prepare("INSERT INTO medications (name, strength, warnings) VALUES (?, ?, ?);");
 
-    if (!common::validation::isEmptyOrBlank(m.name)) {
+    if (common::validation::isEmptyOrBlank(m.name)) {
+        return common::result::Result<domain::Medication>::fail(
+            common::result::ErrorCode::InvalidArgument, "name must not be empty",
+            "MedicationRepositorySqlite::createMedication");
+    } else {
         stmt.bindText(1, m.name);
     }
 
-    if (!common::validation::isEmptyOrBlank(m.strength)) {
-        stmt.bindText(2, m.strength);
+    if (common::validation::isEmptyOrBlank(m.strength)) {
+        return common::result::Result<domain::Medication>::fail(
+            common::result::ErrorCode::InvalidArgument, "strength must not be empty",
+            "MedicationRepositorySqlite::createMedication");
     } else {
-        stmt.bindNull(2);
+        stmt.bindText(2, m.strength);
     }
 
     if (!common::validation::isEmptyOrBlank(m.warnings)) {
