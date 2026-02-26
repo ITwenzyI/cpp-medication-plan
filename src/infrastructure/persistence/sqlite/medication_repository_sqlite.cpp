@@ -124,6 +124,35 @@ common::result::Result<void> MedicationRepositorySqlite::deleteMedicationById(in
 
 common::result::Result<void> MedicationRepositorySqlite::updateMedicationName(
     int medication_id, std::string_view name) {
+
+    if (!common::validation::validateId(medication_id)) {
+        return common::result::Result<void>::fail(common::result::ErrorCode::InvalidArgument,
+            "medication_id must be positive", "MedicationRepositorySqlite::updateMedicationName");
+    }
+    if (common::validation::isEmptyOrBlank(name)) {
+        return common::result::Result<void>::fail(common::result::ErrorCode::InvalidArgument,
+            "name must not be empty", "MedicationRepositorySqlite::updateMedicationName");
+    }
+
+    auto stmt = db_.prepare("UPDATE medications SET name = ? WHERE id = ?;");
+
+    stmt.bindText(1, name);
+    stmt.bindInt(2, medication_id);
+
+    int rc = stmt.step();
+
+    if (db_.changes() == 0) {
+        auto existing = findMedicationById(medication_id);
+        if (existing.isError()) {
+            if (existing.error().code == common::result::ErrorCode::NotFound) {
+                return common::result::Result<void>::fail(common::result::ErrorCode::NotFound,
+                    "No medication with id: " + std::to_string(medication_id),
+                    "MedicationRepositorySqlite::updateMedicationName");
+            }
+            return common::result::Result<void>::fail(existing.error());
+        }
+    }
+    return common::result::Result<void>::ok();
 }
 
 common::result::Result<void> MedicationRepositorySqlite::updateMedicationStrength(
