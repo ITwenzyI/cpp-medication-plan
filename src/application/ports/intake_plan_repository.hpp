@@ -1,0 +1,24 @@
+#pragma once
+#include "common/result/Result.hpp"
+#include "domain/intake_plan.hpp"
+#include <vector>
+
+namespace application::ports {
+class IIntakePlanRepository {
+  public:
+    virtual ~IIntakePlanRepository() = default;
+
+    virtual common::result::Result<domain::IntakePlan> createIntakePlan(
+        const domain::IntakePlan& plan) = 0;
+
+    virtual common::result::Result<std::vector<domain::IntakePlan>> getIntakePlansByPatientId(
+        int patient_id) const = 0;
+
+    virtual common::result::Result<std::vector<domain::IntakePlan>> getIntakePlansByMedicationId(
+        int medication_id) const = 0;
+
+    virtual common::result::Result<void> deleteIntakePlanById(int intake_plan_id) = 0;
+
+    virtual common::result::Result<void> updateIntakePlan(const domain::IntakePlan& plan) = 0;
+};
+} // namespace application::ports
