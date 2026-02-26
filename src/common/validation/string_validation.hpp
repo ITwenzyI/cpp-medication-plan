@@ -1,6 +1,7 @@
 #pragma once
 #include <algorithm>
 #include <cctype>
+#include <string>
 #include <string_view>
 
 namespace common::validation {
@@ -9,4 +10,9 @@ namespace common::validation {
 bool isEmptyOrBlank(std::string_view sv) {
     return std::all_of(sv.begin(), sv.end(), [](unsigned char c) { return std::isspace(c); });
 }
+
+bool isEmptyOrBlank(const std::string& s) {
+    return std::all_of(s.begin(), s.end(), [](unsigned char c) { return std::isspace(c); });
+}
+
 } // namespace common::validation

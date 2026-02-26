@@ -20,18 +20,27 @@ PatientRepositorySqlite::PatientRepositorySqlite(infrastructure::db::Database& d
 
 common::result::Result<domain::Patient> PatientRepositorySqlite::createPatient(
     const domain::Patient& p) {
+
     auto stmt =
         db_.prepare("INSERT INTO patients (name, birth_date, nationality) VALUES (?, ?, ?);");
 
-    stmt.bindText(1, p.name);
+    if (!common::validation::isEmptyOrBlank(p.name)) {
+        stmt.bindText(1, p.name);
+    }
 
-    if (!p.birth_date.empty()) {
+    if (!common::validation::isEmptyOrBlank(p.birth_date)) {
+        if (!common::validation::isValidBirthDate(p.birth_date)) {
+            return common::result::Result<domain::Patient>::fail(
+                common::result::ErrorCode::InvalidArgument,
+                "birth_date format is invalid (YYYY-MM-DD)",
+                "PatientRepositorySqlite::createPatient");
+        }
         stmt.bindText(2, p.birth_date);
     } else {
         stmt.bindNull(2);
     }
 
-    if (!p.nationality.empty()) {
+    if (!common::validation::isEmptyOrBlank(p.nationality)) {
         stmt.bindText(3, p.nationality);
     } else {
         stmt.bindNull(3);
@@ -40,7 +49,7 @@ common::result::Result<domain::Patient> PatientRepositorySqlite::createPatient(
     int rc = stmt.step();
     if (rc != SQLITE_DONE) {
         return common::result::Result<domain::Patient>::fail(
-            common::result::ErrorCode::DatabaseError, "INSERT fehlgeschlagen",
+            common::result::ErrorCode::DatabaseError, "INSERT failed",
             "PatientRepositorySqlite::createPatient");
     }
 
@@ -68,7 +77,7 @@ common::result::Result<std::vector<domain::Patient>> PatientRepositorySqlite::ge
             break;
         } else {
             return common::result::Result<std::vector<domain::Patient>>::fail(
-                common::result::ErrorCode::DatabaseError, "SELECT fehlgeschlagen",
+                common::result::ErrorCode::DatabaseError, "SELECT failed",
                 "PatientRepositorySqlite::getAllPatients");
         }
     }
@@ -161,7 +170,8 @@ common::result::Result<void> PatientRepositorySqlite::updatePatientBirthdate(
     }
     if (!common::validation::isValidBirthDate(new_birth_date)) {
         return common::result::Result<void>::fail(common::result::ErrorCode::InvalidArgument,
-            "birth_date must not be empty", "PatientRepositorySqlite::updatePatientBirthdate");
+            "birth_date format is invalid (YYYY-MM-DD)",
+            "PatientRepositorySqlite::updatePatientBirthdate");
     }
 
     auto stmt = db_.prepare("UPDATE patients SET birth_date = ? WHERE id = ?;");
