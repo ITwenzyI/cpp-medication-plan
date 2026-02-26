@@ -29,8 +29,12 @@ add_executable(medication_plan src/main.cpp)
 target_link_libraries(medication_plan PRIVATE medication_core)
 
 
+# =========== TESTS =============
 
+add_executable(smoke_patients tests/smoke_patient_repository.cpp)
 
-add_executable(medication_plan_smoke tests/smoke_patient_repository.cpp)
+target_link_libraries(smoke_patients PRIVATE medication_core)
 
-target_link_libraries(medication_plan_smoke PRIVATE medication_core)
+add_executable(smoke_medications tests/smoke_medication_repository.cpp)
+
+target_link_libraries(smoke_medications PRIVATE medication_core)
