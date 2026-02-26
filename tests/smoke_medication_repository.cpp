@@ -49,6 +49,27 @@ int main() {
     expect(found.value().strength == created.value().strength, "strength should match");
     expect(found.value().warnings == created.value().warnings, "warnings should match");
 
+    // ======= UPDATE MEDICATION NAME ======
+
+    // Update Medication Name
+    auto update = repo.updateMedicationName(created.value().id, "Metformin");
+    expect(update.isOk(), "updateMedicationName should succeed");
+
+    // Find Medication by ID after Update Medication Name
+    auto updated = repo.findMedicationById(created.value().id);
+    expect(updated.isOk(), "find after update should succeed");
+    expect(updated.value().name == "Metformin", "name should be updated");
+
+    // Update Medication Name with same Name
+    auto upd_same = repo.updateMedicationName(created.value().id, "Metformin");
+    expect(upd_same.isOk(), "updateMedicationName with same value should still succeed");
+
+    // Update Medication Name with invalid ID=0
+    auto upd_bad = repo.updateMedicationName(0, "X");
+    expect(upd_bad.isError(), "update with invalid id should fail");
+    expect(upd_bad.error().code == common::result::ErrorCode::InvalidArgument,
+        "invalid id should return InvalidArgument");
+
     std::cout << "MEDICATION SMOKE TEST PASSED\n";
 
     return 0;
