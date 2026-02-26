@@ -95,6 +95,26 @@ int main() {
         updated_warnings.value().warnings == "Do not use in cases of severe renal insufficiency.",
         "warnings should be updated");
 
+    // ======= DELETE MEDICATION ======
+
+    auto delete1 = repo.deleteMedicationById(created.value().id);
+    expect(delete1.isOk(), "deleteMedicationById should succeed");
+
+    auto after_delete = repo.findMedicationById(created.value().id);
+    expect(after_delete.isError(), "find after delete should fail");
+    expect(after_delete.error().code == common::result::ErrorCode::NotFound,
+        "find after delete should return NotFound");
+
+    auto delete2 = repo.deleteMedicationById(created.value().id);
+    expect(delete2.isError(), "delete missing medication should fail");
+    expect(delete2.error().code == common::result::ErrorCode::NotFound,
+        "delete missing medication should return NotFound");
+
+    auto delete_bad = repo.deleteMedicationById(0);
+    expect(delete_bad.isError(), "update with invalid id should fail");
+    expect(delete_bad.error().code == common::result::ErrorCode::InvalidArgument,
+        "invalid id should return InvalidArgument");
+
     std::cout << "MEDICATION SMOKE TEST PASSED\n";
 
     return 0;
