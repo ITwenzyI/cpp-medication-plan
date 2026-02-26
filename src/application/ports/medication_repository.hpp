@@ -1,5 +1,5 @@
 #pragma once
-#include "common/result/Result.hpp"
+#include "common/result/result.hpp"
 #include "domain/medication.hpp"
 #include <string_view>
 #include <vector>
