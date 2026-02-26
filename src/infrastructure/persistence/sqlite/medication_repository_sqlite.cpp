@@ -19,6 +19,38 @@ MedicationRepositorySqlite::MedicationRepositorySqlite(infrastructure::db::Datab
 
 common::result::Result<domain::Medication> MedicationRepositorySqlite::createMedication(
     const domain::Medication& m) {
+
+    auto stmt = db_.prepare("INSERT INTO medications (name, strength, warnings) VALUES (?, ?, ?);");
+
+    if (!common::validation::isEmptyOrBlank(m.name)) {
+        stmt.bindText(1, m.name);
+    }
+
+    if (!common::validation::isEmptyOrBlank(m.strength)) {
+        stmt.bindText(2, m.strength);
+    } else {
+        stmt.bindNull(2);
+    }
+
+    if (!common::validation::isEmptyOrBlank(m.warnings)) {
+        stmt.bindText(3, m.warnings);
+    } else {
+        stmt.bindNull(3);
+    }
+
+    int rc = stmt.step();
+    if (rc != SQLITE_DONE) {
+        return common::result::Result<domain::Medication>::fail(
+            common::result::ErrorCode::DatabaseError, "INSERT failed",
+            "MedicationRepositorySqlite::createMedication");
+    }
+
+    int lastInsertRowID = static_cast<int>(sqlite3_last_insert_rowid(db_.get()));
+
+    domain::Medication newMedication = m;
+    newMedication.id = lastInsertRowID;
+
+    return common::result::Result<domain::Medication>::ok(newMedication);
 }
 
 common::result::Result<std::vector<domain::Medication>>
