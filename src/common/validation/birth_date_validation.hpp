@@ -45,7 +45,7 @@ bool isValidBirthDate(std::string_view sv) {
     }
 
     if (year >= 1900 && year <= 2027) {
-        return false;
+        return true;
     }
 
     if (month < 1 || month > 12) {
