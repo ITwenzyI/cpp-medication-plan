@@ -1,5 +1,4 @@
 #include "medication_repository_sqlite.hpp"
-#include "common/validation/birth_date_validation.hpp"
 #include "common/validation/id_validation.hpp"
 #include "common/validation/string_validation.hpp"
 #include <stdexcept>
@@ -17,4 +16,32 @@ static domain::Medication mapMedication(const infrastructure::db::Statement& stm
 
 MedicationRepositorySqlite::MedicationRepositorySqlite(infrastructure::db::Database& db) : db_(db) {
 }
+
+common::result::Result<domain::Medication> MedicationRepositorySqlite::createMedication(
+    const domain::Medication& m) {
+}
+
+common::result::Result<std::vector<domain::Medication>>
+MedicationRepositorySqlite::getAllMedications() {
+}
+
+common::result::Result<domain::Medication> MedicationRepositorySqlite::findMedicationById(
+    int medication_id) {
+}
+
+common::result::Result<void> MedicationRepositorySqlite::deleteMedicationById(int medication_id) {
+}
+
+common::result::Result<void> MedicationRepositorySqlite::updateMedicationName(
+    int medication_id, std::string_view name) {
+}
+
+common::result::Result<void> MedicationRepositorySqlite::updateMedicationStrength(
+    int medication_id, std::string_view new_strength) {
+}
+
+common::result::Result<void> MedicationRepositorySqlite::updateMedicationWarnings(
+    int medication_id, std::string_view new_warnings) {
+}
+
 } // namespace infrastructure::persistence::sqlite
