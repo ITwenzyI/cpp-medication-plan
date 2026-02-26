@@ -198,6 +198,37 @@ common::result::Result<void> MedicationRepositorySqlite::updateMedicationStrengt
 
 common::result::Result<void> MedicationRepositorySqlite::updateMedicationWarnings(
     int medication_id, std::string_view new_warnings) {
+
+    if (!common::validation::validateId(medication_id)) {
+        return common::result::Result<void>::fail(common::result::ErrorCode::InvalidArgument,
+            "medication_id must be positive",
+            "MedicationRepositorySqlite::updateMedicationWarnings");
+    }
+    if (common::validation::isEmptyOrBlank(new_warnings)) {
+        return common::result::Result<void>::fail(common::result::ErrorCode::InvalidArgument,
+            "new_warnings must not be empty",
+            "MedicationRepositorySqlite::updateMedicationWarnings");
+    }
+
+    auto stmt = db_.prepare("UPDATE medications SET warnings = ? WHERE id = ?;");
+
+    stmt.bindText(1, new_warnings);
+    stmt.bindInt(2, medication_id);
+
+    int rc = stmt.step();
+
+    if (db_.changes() == 0) {
+        auto existing = findMedicationById(medication_id);
+        if (existing.isError()) {
+            if (existing.error().code == common::result::ErrorCode::NotFound) {
+                return common::result::Result<void>::fail(common::result::ErrorCode::NotFound,
+                    "No medication with id: " + std::to_string(medication_id),
+                    "MedicationRepositorySqlite::updateMedicationWarnings");
+            }
+            return common::result::Result<void>::fail(existing.error());
+        }
+    }
+    return common::result::Result<void>::ok();
 }
 
 } // namespace infrastructure::persistence::sqlite
