@@ -55,6 +55,27 @@ common::result::Result<domain::Medication> MedicationRepositorySqlite::createMed
 
 common::result::Result<std::vector<domain::Medication>>
 MedicationRepositorySqlite::getAllMedications() {
+    auto stmt =
+        db_.prepare("SELECT id, name, strength, warnings FROM medications ORDER BY id ASC;");
+
+    std::vector<domain::Medication> result;
+
+    while (true) {
+        int rc = stmt.step();
+
+        if (rc == SQLITE_ROW) {
+            result.push_back(mapMedication(stmt));
+            continue;
+        } else if (rc == SQLITE_DONE) {
+            break;
+        } else {
+            return common::result::Result<std::vector<domain::Medication>>::fail(
+                common::result::ErrorCode::DatabaseError, "SELECT failed",
+                "MedicationRepositorySqlite::getAllMedications");
+        }
+    }
+
+    return common::result::Result<std::vector<domain::Medication>>::ok(result);
 }
 
 common::result::Result<domain::Medication> MedicationRepositorySqlite::findMedicationById(
