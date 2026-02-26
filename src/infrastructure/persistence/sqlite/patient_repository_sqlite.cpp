@@ -24,7 +24,11 @@ common::result::Result<domain::Patient> PatientRepositorySqlite::createPatient(
     auto stmt =
         db_.prepare("INSERT INTO patients (name, birth_date, nationality) VALUES (?, ?, ?);");
 
-    if (!common::validation::isEmptyOrBlank(p.name)) {
+    if (common::validation::isEmptyOrBlank(p.name)) {
+        return common::result::Result<domain::Patient>::fail(
+            common::result::ErrorCode::InvalidArgument, "name must not be empty",
+            "PatientRepositorySqlite::createPatient");
+    } else {
         stmt.bindText(1, p.name);
     }
 
