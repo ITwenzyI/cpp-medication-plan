@@ -13,7 +13,7 @@ namespace infrastructure::db {
 void initDatabase(Database& db, const std::string& schemaPath) {
     std::ifstream file(schemaPath);
     if (!file) {
-        throw std::runtime_error("Schema Datei nicht gefunden.");
+        throw std::runtime_error("Schema file not found.");
     }
 
     std::string sql;
@@ -21,7 +21,7 @@ void initDatabase(Database& db, const std::string& schemaPath) {
     std::string line;
     while (std::getline(file, line)) {
         sql.append(line);
-        // Damit keine Zeilenumbrüche verloren gehen
+        // To ensure that no line breaks are lost
         sql.push_back('\n');
     }
     db.execute(sql.c_str());
