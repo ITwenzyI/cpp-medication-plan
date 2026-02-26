@@ -70,6 +70,17 @@ int main() {
     expect(upd_bad.error().code == common::result::ErrorCode::InvalidArgument,
         "invalid id should return InvalidArgument");
 
+    // ======= UPDATE MEDICATION STRENGTH ======
+
+    // Update Medication Strength
+    auto update_strength = repo.updateMedicationStrength(created.value().id, "600mg");
+    expect(update_strength.isOk(), "updateMedicationtStrength should succeed");
+
+    // Find Medication by ID after Update Medication Strength
+    auto updated_strength = repo.findMedicationById(created.value().id);
+    expect(updated_strength.isOk(), "find after update should succeed");
+    expect(updated_strength.value().strength == "600mg", "strength should be updated");
+
     std::cout << "MEDICATION SMOKE TEST PASSED\n";
 
     return 0;
