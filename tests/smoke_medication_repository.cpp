@@ -40,6 +40,15 @@ int main() {
         "expected stored medication id to equal created.id");
     expect(all.value()[0].name == "Ibuprofen", "stored name should match");
 
+    // ======= FIND MEDICATION BY ID ======
+
+    // Find Medication by ID
+    auto found = repo.findMedicationById(created.value().id);
+    expect(found.isOk(), "findMedicationById should succeed after creation");
+    expect(found.value().name == created.value().name, "name should match");
+    expect(found.value().strength == created.value().strength, "strength should match");
+    expect(found.value().warnings == created.value().warnings, "warnings should match");
+
     std::cout << "MEDICATION SMOKE TEST PASSED\n";
 
     return 0;
