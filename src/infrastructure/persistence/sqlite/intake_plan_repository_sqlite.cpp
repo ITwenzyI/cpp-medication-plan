@@ -20,4 +20,23 @@ static domain::IntakePlan mapIntakePlan(const infrastructure::db::Statement& stm
 IntakePlanRepositorySqlite::IntakePlanRepositorySqlite(infrastructure::db::Database& db) : db_(db) {
 }
 
+common::result::Result<domain::IntakePlan> IntakePlanRepositorySqlite::createIntakePlan(
+    const domain::IntakePlan& plan) {
+}
+
+common::result::Result<std::vector<domain::IntakePlan>>
+IntakePlanRepositorySqlite::getIntakePlansByPatientId(int patient_id) const {
+}
+
+common::result::Result<std::vector<domain::IntakePlan>>
+IntakePlanRepositorySqlite::getIntakePlansByMedicationId(int medication_id) const {
+}
+
+common::result::Result<void> IntakePlanRepositorySqlite::deleteIntakePlanById(int intake_plan_id) {
+}
+
+common::result::Result<void> IntakePlanRepositorySqlite::updateIntakePlan(
+    const domain::IntakePlan& plan) {
+}
+
 } // namespace infrastructure::persistence::sqlite
