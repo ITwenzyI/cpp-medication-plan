@@ -81,6 +81,20 @@ int main() {
     expect(updated_strength.isOk(), "find after update should succeed");
     expect(updated_strength.value().strength == "600mg", "strength should be updated");
 
+    // ======= UPDATE MEDICATION WARNINGS ======
+
+    // Update Medication Warnings
+    auto update_warning = repo.updateMedicationWarnings(
+        created.value().id, "Do not use in cases of severe renal insufficiency.");
+    expect(update_warning.isOk(), "updateMedicationWarning should succeed");
+
+    // Find Medication by ID after Update Medication Warnings
+    auto updated_warnings = repo.findMedicationById(created.value().id);
+    expect(updated_warnings.isOk(), "find after update should succeed");
+    expect(
+        updated_warnings.value().warnings == "Do not use in cases of severe renal insufficiency.",
+        "warnings should be updated");
+
     std::cout << "MEDICATION SMOKE TEST PASSED\n";
 
     return 0;
