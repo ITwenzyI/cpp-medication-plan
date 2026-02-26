@@ -4,4 +4,14 @@
 #include "common/validation/string_validation.hpp"
 #include <stdexcept>
 
-namespace infrastructure::persistence::sqlite {}
+namespace infrastructure::persistence::sqlite {
+static domain::Medication mapMedication(const infrastructure::db::Statement& stmt) {
+    domain::Medication temp;
+    temp.id = stmt.getInt(0);
+    temp.name = stmt.getText(1);
+    temp.strength = stmt.getText(2);
+    temp.warnings = stmt.getText(3);
+
+    return temp;
+}
+}
