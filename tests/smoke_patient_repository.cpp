@@ -9,7 +9,7 @@ static void expect(bool condition, std::string_view message) {
     if (condition) {
         return;
     }
-    std::cerr << "TEST FAILED: " << message << "\n";
+    std::cerr << "PATIENT SMOKE TEST FAILED: " << message << "\n";
     std::exit(1);
 }
 
@@ -117,7 +117,7 @@ int main() {
     expect(delete_bad.error().code == common::result::ErrorCode::InvalidArgument,
         "invalid id should return InvalidArgument");
 
-    std::cout << "SMOKE TEST PASSED\n";
+    std::cout << "PATIENT SMOKE TEST PASSED\n";
 
     return 0;
 }
