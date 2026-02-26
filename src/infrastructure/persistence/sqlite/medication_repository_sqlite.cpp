@@ -80,6 +80,26 @@ MedicationRepositorySqlite::getAllMedications() {
 
 common::result::Result<domain::Medication> MedicationRepositorySqlite::findMedicationById(
     int medication_id) {
+    if (!common::validation::validateId(medication_id)) {
+        return common::result::Result<domain::Medication>::fail(
+            common::result::ErrorCode::InvalidArgument, "medication_id must be positive",
+            "MedicationRepositorySqlite::findMedicationById");
+    }
+
+    auto stmt = db_.prepare("SELECT id, name, strength, warnings FROM medications WHERE id = ?;");
+
+    stmt.bindInt(1, medication_id);
+
+    int rc = stmt.step();
+
+    if (rc == SQLITE_ROW) {
+        return common::result::Result<domain::Medication>::ok(mapMedication(stmt));
+    } else if (rc == SQLITE_DONE) {
+        return common::result::Result<domain::Medication>::fail(common::result::ErrorCode::NotFound,
+            "No medication with id: " + std::to_string(medication_id),
+            "MedicationRepositorySqlite::findMedicationById");
+    }
+    throw std::logic_error("unreachable");
 }
 
 common::result::Result<void> MedicationRepositorySqlite::deleteMedicationById(int medication_id) {
