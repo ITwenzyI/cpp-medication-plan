@@ -97,7 +97,7 @@ int main() {
 
     plans_by_patient_id = repo_plan.getIntakePlansByPatientId(created_patient.value().id);
     expect(plans_by_patient_id.isOk(), "get intake_plans2 by patient_id should succeed");
-    expect(plans_by_patient_id.value().size() == 2, "expected two intake_plan in test database");
+    expect(plans_by_patient_id.value().size() == 2, "expected two intake_plans in test database");
 
     // finds the correct intake_plan of the two existing in database
     for (auto intake_plan2 : plans_by_patient_id.value()) {
@@ -105,6 +105,15 @@ int main() {
             expect(intake_plan2.notes == "", "notes should be empty");
         }
     }
+
+    // ======= TEST CASCADE DELETE ======
+    auto delete_patient1 = repo_patient.deletePatientById(created_patient.value().id);
+    auto intake_plans_after_delete =
+        repo_plan.getIntakePlansByPatientId(created_patient.value().id);
+    expect(intake_plans_after_delete.isOk(),
+        "get intake_plans_after_delete by patient_id should succeed");
+    expect(intake_plans_after_delete.value().size() == 0,
+        "expected zero intake_plans in test database after delete of patient");
 
     std::cout << "INTAKE_PLAN SMOKE TEST PASSED\n";
 
