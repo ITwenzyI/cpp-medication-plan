@@ -122,6 +122,47 @@ common::result::Result<domain::IntakePlan> IntakePlanRepositorySqlite::createInt
 
 common::result::Result<std::vector<domain::IntakePlan>>
 IntakePlanRepositorySqlite::getIntakePlansByPatientId(int patient_id) const {
+
+    if (!common::validation::validateId(patient_id)) {
+        return common::result::Result<std::vector<domain::IntakePlan>>::fail(
+            common::result::ErrorCode::InvalidArgument, "patient_id must be positive",
+            "IntakePlanRepositorySqlite::getIntakePlansByPatientId");
+    }
+
+    auto stmt = db_.prepare("SELECT id, patient_id, medication_id, dose, "
+                            "time_of_day, notes FROM intake_plans WHERE patient_id = ? ORDER BY "
+                            "time_of_day, medication_id, id;");
+
+    stmt.bindInt(1, patient_id);
+
+    std::vector<domain::IntakePlan> result;
+
+    while (true) {
+        const int rc = stmt.step();
+
+        switch (rc) {
+            case SQLITE_DONE:
+                return common::result::Result<std::vector<domain::IntakePlan>>::ok(result);
+
+            case SQLITE_ROW: {
+                auto mapped = mapIntakePlan(stmt);
+
+                if (mapped.isError()) {
+                    return common::result::Result<std::vector<domain::IntakePlan>>::fail(
+                        mapped.error().code, mapped.error().message,
+                        "IntakePlanRepositorySqlite::getIntakePlansByPatientId");
+                }
+
+                result.push_back(mapped.value());
+                continue;
+            }
+
+            default:
+                return common::result::Result<std::vector<domain::IntakePlan>>::fail(
+                    common::result::ErrorCode::DatabaseError, "SELECT failed",
+                    "IntakePlanRepositorySqlite::getIntakePlansByPatientId");
+        }
+    }
 }
 
 common::result::Result<std::vector<domain::IntakePlan>>
