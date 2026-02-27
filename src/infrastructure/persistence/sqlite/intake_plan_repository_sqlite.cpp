@@ -5,16 +5,24 @@
 #include <stdexcept>
 
 namespace infrastructure::persistence::sqlite {
-static domain::IntakePlan mapIntakePlan(const infrastructure::db::Statement& stmt) {
+static common::result::Result<domain::IntakePlan> mapIntakePlan(
+    const infrastructure::db::Statement& stmt) {
     domain::IntakePlan temp;
     temp.id = stmt.getInt(0);
     temp.patientId = stmt.getInt(1);
     temp.medicationId = stmt.getInt(2);
     temp.dose = stmt.getText(3);
-    temp.timeOfDay = timeOfDayFromDbString(stmt.getText(4));
+
+    auto todResult = timeOfDayFromDbString(stmt.getText(4));
+    if (todResult.isError()) {
+        return common::result::Result<domain::IntakePlan>::fail(todResult.error().code,
+            todResult.error().message, "infrastructure::persistence::sqlite::mapIntakePlan");
+    }
+    temp.timeOfDay = todResult.value();
+
     temp.notes = stmt.getText(5);
 
-    return temp;
+    return common::result::Result<domain::IntakePlan>::ok(temp);
 }
 
 IntakePlanRepositorySqlite::IntakePlanRepositorySqlite(infrastructure::db::Database& db) : db_(db) {
