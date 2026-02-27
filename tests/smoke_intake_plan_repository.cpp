@@ -73,6 +73,12 @@ int main() {
     expect(plans_by_patient_id.value()[0].notes == "Take with food!",
         "notes should match with string");
 
+    // ======= TEST UNIQUE CONSTRAINT ======
+    auto dup = repo_plan.createIntakePlan(plan1);
+    expect(dup.isError(), "create with the same intake_plan should fail");
+    expect(dup.error().code == common::result::ErrorCode::Conflict,
+        "same intake_plan should return conflict");
+
     std::cout << "INTAKE_PLAN SMOKE TEST PASSED\n";
 
     return 0;
