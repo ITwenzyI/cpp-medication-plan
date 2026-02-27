@@ -167,13 +167,17 @@ IntakePlanRepositorySqlite::getIntakePlansByPatientId(int patient_id) const {
 
 common::result::Result<std::vector<domain::IntakePlan>>
 IntakePlanRepositorySqlite::getIntakePlansByMedicationId(int medication_id) const {
+    std::vector<domain::IntakePlan> result;
+    return common::result::Result<std::vector<domain::IntakePlan>>::ok(result);
 }
 
 common::result::Result<void> IntakePlanRepositorySqlite::deleteIntakePlanById(int intake_plan_id) {
+    return common::result::Result<void>::ok();
 }
 
 common::result::Result<void> IntakePlanRepositorySqlite::updateIntakePlan(
     const domain::IntakePlan& plan) {
+    return common::result::Result<void>::ok();
 }
 
 } // namespace infrastructure::persistence::sqlite
