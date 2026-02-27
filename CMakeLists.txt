@@ -38,3 +38,7 @@ target_link_libraries(smoke_patients PRIVATE medication_core)
 add_executable(smoke_medications tests/smoke_medication_repository.cpp)
 
 target_link_libraries(smoke_medications PRIVATE medication_core)
+
+add_executable(smoke_intake_plans tests/smoke_intake_plan_repository.cpp)
+
+target_link_libraries(smoke_intake_plans PRIVATE medication_core)
