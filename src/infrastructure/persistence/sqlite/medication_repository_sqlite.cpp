@@ -60,7 +60,7 @@ common::result::Result<domain::Medication> MedicationRepositorySqlite::createMed
 }
 
 common::result::Result<std::vector<domain::Medication>>
-MedicationRepositorySqlite::getAllMedications() {
+MedicationRepositorySqlite::getAllMedications() const {
     auto stmt =
         db_.prepare("SELECT id, name, strength, warnings FROM medications ORDER BY id ASC;");
 
@@ -85,7 +85,7 @@ MedicationRepositorySqlite::getAllMedications() {
 }
 
 common::result::Result<domain::Medication> MedicationRepositorySqlite::findMedicationById(
-    int medication_id) {
+    int medication_id) const {
     if (!common::validation::validateId(medication_id)) {
         return common::result::Result<domain::Medication>::fail(
             common::result::ErrorCode::InvalidArgument, "medication_id must be positive",
