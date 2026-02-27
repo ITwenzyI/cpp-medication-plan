@@ -4,10 +4,29 @@
 namespace infrastructure::db {
 Database::Database(const std::string& dbPfad) : db_(nullptr) {
     if (sqlite3_open(dbPfad.c_str(), &db_) != SQLITE_OK) {
+        std::string error = db_ ? sqlite3_errmsg(db_) : "sqlite3_open failed";
+        if (db_) {
+            sqlite3_close(db_);
+            db_ = nullptr;
+        }
+        throw std::runtime_error("Unable to open Database: " + error);
+    }
+
+    // Enable extended codes to distinguish between SQLITE_CONSTRAINT_UNIQUE and FOREIGNKEY
+    if (sqlite3_extended_result_codes(db_, 1) != SQLITE_OK) {
         std::string error = sqlite3_errmsg(db_);
         sqlite3_close(db_);
         db_ = nullptr;
-        throw std::runtime_error("Unable to open Database: " + error);
+        throw std::runtime_error("Unable to enable extended result codes: " + error);
+    }
+
+    // Enable foreign keys per connection (not just in schema.sql!)
+    try {
+        execute("PRAGMA foreign_keys = ON;");
+    } catch (...) {
+        sqlite3_close(db_);
+        db_ = nullptr;
+        throw;
     }
 }
 
