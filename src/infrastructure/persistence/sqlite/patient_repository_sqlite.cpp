@@ -65,7 +65,8 @@ common::result::Result<domain::Patient> PatientRepositorySqlite::createPatient(
     return common::result::Result<domain::Patient>::ok(newPatient);
 }
 
-common::result::Result<std::vector<domain::Patient>> PatientRepositorySqlite::getAllPatients() {
+common::result::Result<std::vector<domain::Patient>>
+PatientRepositorySqlite::getAllPatients() const {
     auto stmt =
         db_.prepare("SELECT id, name, birth_date, nationality FROM patients ORDER BY id ASC;");
 
@@ -89,7 +90,8 @@ common::result::Result<std::vector<domain::Patient>> PatientRepositorySqlite::ge
     return common::result::Result<std::vector<domain::Patient>>::ok(result);
 }
 
-common::result::Result<domain::Patient> PatientRepositorySqlite::findPatientById(int patient_id) {
+common::result::Result<domain::Patient> PatientRepositorySqlite::findPatientById(
+    int patient_id) const {
     if (!common::validation::validateId(patient_id)) {
         return common::result::Result<domain::Patient>::fail(
             common::result::ErrorCode::InvalidArgument, "patient_id must be positive",
