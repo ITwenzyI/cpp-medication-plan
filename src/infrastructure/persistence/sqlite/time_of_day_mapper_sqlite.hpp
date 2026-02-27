@@ -15,24 +15,25 @@ inline std::string timeOfDayToDbString(domain::TimeOfDay timeOfDay) {
         case domain::TimeOfDay::Night:
             return "night";
     }
-
     throw std::logic_error("Invalid TimeOfDay enum value.");
 }
 
-inline domain::TimeOfDay timeOfDayFromDbString(std::string_view value) {
+inline common::result::Result<domain::TimeOfDay> timeOfDayFromDbString(std::string_view value) {
     if (value == "morning") {
-        return domain::TimeOfDay::Morning;
+        return common::result::Result<domain::TimeOfDay>::ok(domain::TimeOfDay::Morning);
     }
     if (value == "noon") {
-        return domain::TimeOfDay::Noon;
+        return common::result::Result<domain::TimeOfDay>::ok(domain::TimeOfDay::Noon);
     }
     if (value == "evening") {
-        return domain::TimeOfDay::Evening;
+        return common::result::Result<domain::TimeOfDay>::ok(domain::TimeOfDay::Evening);
     }
     if (value == "night") {
-        return domain::TimeOfDay::Night;
+        return common::result::Result<domain::TimeOfDay>::ok(domain::TimeOfDay::Night);
     }
 
-    throw std::runtime_error("Invalid time_of_day value in database.");
+    return common::result::Result<domain::TimeOfDay>::fail(
+        common::result::ErrorCode::DataCorruption, "Invalid time_of_day value in database",
+        "infrastructure::persistence::sqlite::timeOfDayFromDbString");
 }
 } // namespace infrastructure::persistence::sqlite
