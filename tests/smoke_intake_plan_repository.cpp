@@ -87,6 +87,25 @@ int main() {
     expect(created_invalid_plan.error().code == common::result::ErrorCode::ForeignKeyViolation,
         "same intake_plan should return ForeignKeyViolation");
 
+    // ======= TEST NOTES NULL MAPPING ======
+    domain::IntakePlan plan2{
+        0, created_patient.value().id, created_med.value().id, "600mg", domain::TimeOfDay::Morning};
+
+    auto created_plan2 = repo_plan.createIntakePlan(plan2);
+    expect(created_plan2.isOk(), "created intake_plan2 should succeed");
+    expect(created_plan2.value().id > 0, "created intake_plan2 should have generated id");
+
+    plans_by_patient_id = repo_plan.getIntakePlansByPatientId(created_patient.value().id);
+    expect(plans_by_patient_id.isOk(), "get intake_plans2 by patient_id should succeed");
+    expect(plans_by_patient_id.value().size() == 2, "expected two intake_plan in test database");
+
+    // finds the correct intake_plan of the two existing in database
+    for (auto intake_plan2 : plans_by_patient_id.value()) {
+        if (intake_plan2.id == plan2.id) {
+            expect(intake_plan2.notes == "", "notes should be empty");
+        }
+    }
+
     std::cout << "INTAKE_PLAN SMOKE TEST PASSED\n";
 
     return 0;
