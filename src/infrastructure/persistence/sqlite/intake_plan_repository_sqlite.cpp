@@ -71,34 +71,28 @@ common::result::Result<domain::IntakePlan> IntakePlanRepositorySqlite::createInt
         case SQLITE_DONE:
             break;
 
-        case SQLITE_CONSTRAINT: {
-            const int ext = sqlite3_extended_errcode(db_.get());
+        case SQLITE_CONSTRAINT_UNIQUE:
+        case SQLITE_CONSTRAINT_PRIMARYKEY:
+            return common::result::Result<domain::IntakePlan>::fail(
+                common::result::ErrorCode::Conflict,
+                "intake plan already exists for patient, medication and time_of_day",
+                "IntakePlanRepositorySqlite::createIntakePlan");
 
-            switch (ext) {
-                case SQLITE_CONSTRAINT_UNIQUE:
-                case SQLITE_CONSTRAINT_PRIMARYKEY:
-                    return common::result::Result<domain::IntakePlan>::fail(
-                        common::result::ErrorCode::Conflict,
-                        "intake plan already exists for patient, medication and time_of_day",
-                        "IntakePlanRepositorySqlite::createIntakePlan");
+        case SQLITE_CONSTRAINT_FOREIGNKEY:
+            return common::result::Result<domain::IntakePlan>::fail(
+                common::result::ErrorCode::ForeignKeyViolation,
+                "patient_id or medication_id does not exist",
+                "IntakePlanRepositorySqlite::createIntakePlan");
 
-                case SQLITE_CONSTRAINT_FOREIGNKEY:
-                    return common::result::Result<domain::IntakePlan>::fail(
-                        common::result::ErrorCode::ForeignKeyViolation,
-                        "patient_id or medication_id does not exist",
-                        "IntakePlanRepositorySqlite::createIntakePlan");
+        case SQLITE_CONSTRAINT_NOTNULL:
+            return common::result::Result<domain::IntakePlan>::fail(
+                common::result::ErrorCode::Unexpected, "NOT NULL constraint failed",
+                "IntakePlanRepositorySqlite::createIntakePlan");
 
-                case SQLITE_CONSTRAINT_NOTNULL:
-                    return common::result::Result<domain::IntakePlan>::fail(
-                        common::result::ErrorCode::Unexpected, "NOT NULL constraint failed",
-                        "IntakePlanRepositorySqlite::createIntakePlan");
-
-                default:
-                    return common::result::Result<domain::IntakePlan>::fail(
-                        common::result::ErrorCode::ConstraintViolation, "constraint violation",
-                        "IntakePlanRepositorySqlite::createIntakePlan");
-            }
-        }
+        case SQLITE_CONSTRAINT:
+            return common::result::Result<domain::IntakePlan>::fail(
+                common::result::ErrorCode::ConstraintViolation, "constraint violation",
+                "IntakePlanRepositorySqlite::createIntakePlan");
 
         case SQLITE_BUSY:
         case SQLITE_LOCKED:
@@ -167,13 +161,17 @@ IntakePlanRepositorySqlite::getIntakePlansByPatientId(int patient_id) const {
 
 common::result::Result<std::vector<domain::IntakePlan>>
 IntakePlanRepositorySqlite::getIntakePlansByMedicationId(int medication_id) const {
+    std::vector<domain::IntakePlan> result;
+    return common::result::Result<std::vector<domain::IntakePlan>>::ok(result);
 }
 
 common::result::Result<void> IntakePlanRepositorySqlite::deleteIntakePlanById(int intake_plan_id) {
+    return common::result::Result<void>::ok();
 }
 
 common::result::Result<void> IntakePlanRepositorySqlite::updateIntakePlan(
     const domain::IntakePlan& plan) {
+    return common::result::Result<void>::ok();
 }
 
 } // namespace infrastructure::persistence::sqlite
