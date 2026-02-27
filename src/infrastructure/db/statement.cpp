@@ -37,12 +37,7 @@ int Statement::step() {
         throw std::logic_error("Statement is null in step().");
     }
 
-    int rc = sqlite3_step(stmt_);
-    if (rc == SQLITE_ROW || rc == SQLITE_DONE) {
-        return rc;
-    }
-
-    throw std::runtime_error("Step failed.");
+    return sqlite3_step(stmt_);
 }
 
 void Statement::reset() {
