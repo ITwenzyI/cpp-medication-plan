@@ -12,9 +12,10 @@ class IMedicationRepository {
     virtual common::result::Result<domain::Medication> createMedication(
         const domain::Medication& m) = 0;
 
-    virtual common::result::Result<std::vector<domain::Medication>> getAllMedications() = 0;
+    virtual common::result::Result<std::vector<domain::Medication>> getAllMedications() const = 0;
 
-    virtual common::result::Result<domain::Medication> findMedicationById(int medication_id) = 0;
+    virtual common::result::Result<domain::Medication> findMedicationById(
+        int medication_id) const = 0;
 
     virtual common::result::Result<void> deleteMedicationById(int medication_id) = 0;
 

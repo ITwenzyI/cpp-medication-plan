@@ -14,10 +14,10 @@ class MedicationRepositorySqlite : public application::ports::IMedicationReposit
         const domain::Medication& m) override;
 
     [[nodiscard]] common::result::Result<std::vector<domain::Medication>>
-    getAllMedications() override;
+    getAllMedications() const override;
 
     [[nodiscard]] common::result::Result<domain::Medication> findMedicationById(
-        int medication_id) override;
+        int medication_id) const override;
 
     [[nodiscard]] common::result::Result<void> deleteMedicationById(int medication_id) override;
 
