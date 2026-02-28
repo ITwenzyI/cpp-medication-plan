@@ -205,6 +205,22 @@ IntakePlanRepositorySqlite::getIntakePlansByMedicationId(int medication_id) cons
 }
 
 common::result::Result<void> IntakePlanRepositorySqlite::deleteIntakePlanById(int intake_plan_id) {
+    if (!common::validation::validateId(intake_plan_id)) {
+        return common::result::Result<void>::fail(common::result::ErrorCode::InvalidArgument,
+            "intake_plan_id must be positive", "IntakePlanRepositorySqlite::deleteIntakePlanById");
+    }
+
+    auto stmt = db_.prepare("DELETE FROM intake_plans WHERE id = ?;");
+
+    stmt.bindInt(1, intake_plan_id);
+
+    int rc = stmt.step();
+
+    if (db_.changes() == 0) {
+        return common::result::Result<void>::fail(common::result::ErrorCode::NotFound,
+            "No IntakePlan with id: " + std::to_string(intake_plan_id),
+            "IntakePlanRepositorySqlite::deleteIntakePlanById");
+    }
     return common::result::Result<void>::ok();
 }
 
