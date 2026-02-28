@@ -267,7 +267,58 @@ common::result::Result<void> IntakePlanRepositorySqlite::deleteIntakePlanById(in
 
 common::result::Result<void> IntakePlanRepositorySqlite::updateIntakePlan(
     const domain::IntakePlan& plan) {
-    return common::result::Result<void>::ok();
+
+    auto validated = validateIntakePlanForUpdate(plan);
+    if (validated.isError()) {
+        return common::result::Result<void>::fail(validated.error().code, validated.error().message,
+            "IntakePlanRepositorySqlite::updateIntakePlan");
+    }
+
+    auto stmt = db_.prepare("UPDATE intake_plans SET patient_id = ?, medication_id = ?, dose = "
+                            "?, time_of_day = ?, notes = ?  WHERE id = ?;");
+
+    auto normalized = validated.value();
+
+    stmt.bindInt(1, normalized.patientId);
+    stmt.bindInt(2, normalized.medicationId);
+    stmt.bindText(3, normalized.dose);
+    stmt.bindText(4, timeOfDayToDbString(normalized.timeOfDay));
+    if (common::validation::isEmptyOrBlank(normalized.notes)) {
+        stmt.bindNull(5);
+    } else {
+        stmt.bindText(5, normalized.notes);
+    }
+
+    stmt.bindInt(6, normalized.id);
+
+    int rc = stmt.step();
+
+    switch (rc) {
+        case SQLITE_DONE: {
+            if (db_.changes() == 0) {
+                return common::result::Result<void>::fail(common::result::ErrorCode::NotFound,
+                    "No intake_plan with id: " + std::to_string(normalized.id),
+                    "IntakePlanRepositorySqlite::updateIntakePlan");
+            }
+            return common::result::Result<void>::ok();
+        }
+        case SQLITE_CONSTRAINT_UNIQUE:
+        case SQLITE_CONSTRAINT_PRIMARYKEY: {
+            return common::result::Result<void>::fail(common::result::ErrorCode::Conflict,
+                "duplicate (patient, medication, time_of_day)",
+                "IntakePlanRepositorySqlite::updateIntakePlan");
+        }
+        case SQLITE_CONSTRAINT_FOREIGNKEY: {
+            return common::result::Result<void>::fail(
+                common::result::ErrorCode::ForeignKeyViolation,
+                "referenced patient or medication missing",
+                "IntakePlanRepositorySqlite::updateIntakePlan");
+        }
+        default: {
+            return common::result::Result<void>::fail(common::result::ErrorCode::DatabaseError,
+                "UPDATE failed", "IntakePlanRepositorySqlite::updateIntakePlan");
+        }
+    }
 }
 
 } // namespace infrastructure::persistence::sqlite
