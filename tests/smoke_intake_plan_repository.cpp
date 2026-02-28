@@ -106,6 +106,33 @@ int main() {
         }
     }
 
+    // ======= GET INTAKE_PLAN BY MEDICATION_ID ======
+    domain::Patient p2{0, "Kilian Cpp", "2000-12-12", "DE"};
+    auto create_new_patient = repo_patient.createPatient(p2);
+    expect(create_new_patient.isOk(), "create new patient should succeed.");
+    domain::Medication m2{0, "Paracetamol", "500 mg", "Do not exceed 4,000 mg in 24 hours"};
+
+    auto create_new_medication = repo_med.createMedication(m2);
+    expect(create_new_medication.isOk(), "create new medication should succeed");
+
+    domain::IntakePlan plan3{0, create_new_patient.value().id, create_new_medication.value().id,
+        "500 mg", domain::TimeOfDay::Night};
+    auto create_new_plan = repo_plan.createIntakePlan(plan3);
+    expect(create_new_plan.isOk(), "create new plan should succeed");
+
+    auto plans_by_medication_id =
+        repo_plan.getIntakePlansByMedicationId(create_new_medication.value().id);
+    expect(plans_by_medication_id.isOk(), "get intake_plans by medication_id should succeed");
+    expect(plans_by_medication_id.value().size() == 1,
+        "expected one intake_plan in test database with this medication_id");
+    expect(plans_by_medication_id.value()[0].id == create_new_plan.value().id, "id should match");
+    expect(plans_by_medication_id.value()[0].patientId == create_new_plan.value().patientId,
+        "patient_id should match");
+    expect(plans_by_medication_id.value()[0].medicationId == create_new_plan.value().medicationId,
+        "medication_id should match");
+
+    // ========================================
+    // ========================================
     // ======= TEST CASCADE DELETE ======
     auto delete_patient1 = repo_patient.deletePatientById(created_patient.value().id);
     auto intake_plans_after_delete =
