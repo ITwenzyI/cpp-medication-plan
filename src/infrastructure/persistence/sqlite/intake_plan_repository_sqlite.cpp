@@ -85,14 +85,14 @@ IntakePlanRepositorySqlite::IntakePlanRepositorySqlite(infrastructure::db::Datab
 common::result::Result<domain::IntakePlan> IntakePlanRepositorySqlite::createIntakePlan(
     const domain::IntakePlan& plan) {
 
-    auto stmt = db_.prepare("INSERT INTO intake_plans (patient_id, medication_id, dose, "
-                            "time_of_day, notes) VALUES (?, ?, ?, ?, ?);");
-
     auto validated = validateIntakePlanForCreate(plan);
     if (validated.isError()) {
         return common::result::Result<domain::IntakePlan>::fail(validated.error().code,
             validated.error().message, "IntakePlanRepositorySqlite::createIntakePlan");
     }
+
+    auto stmt = db_.prepare("INSERT INTO intake_plans (patient_id, medication_id, dose, "
+                            "time_of_day, notes) VALUES (?, ?, ?, ?, ?);");
 
     const domain::IntakePlan normalized = validated.value();
 
