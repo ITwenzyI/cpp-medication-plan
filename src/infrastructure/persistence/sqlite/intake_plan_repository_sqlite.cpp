@@ -25,30 +25,54 @@ static common::result::Result<domain::IntakePlan> mapIntakePlan(
     return common::result::Result<domain::IntakePlan>::ok(temp);
 }
 
-static common::result::Result<domain::IntakePlan> validateIntakePlanForUpdate(
+static common::result::Result<domain::IntakePlan> validateIntakePlan(
     const domain::IntakePlan& plan) {
-
-    if (!common::validation::validateId(plan.id)) {
-        return common::result::Result<domain::IntakePlan>::fail(
-            common::result::ErrorCode::InvalidArgument, "intake_plan_id must be positive",
-            "IntakePlanRepositorySqlite::validateIntakePlanForUpdate");
-    }
 
     if (!common::validation::validateId(plan.patientId)) {
         return common::result::Result<domain::IntakePlan>::fail(
             common::result::ErrorCode::InvalidArgument, "patient_id must be positive",
-            "IntakePlanRepositorySqlite::validateIntakePlanForUpdate");
+            "IntakePlanRepositorySqlite::validateIntakePlan");
     }
 
     if (!common::validation::validateId(plan.medicationId)) {
         return common::result::Result<domain::IntakePlan>::fail(
             common::result::ErrorCode::InvalidArgument, "medication_id must be positive",
-            "IntakePlanRepositorySqlite::validateIntakePlanForUpdate");
+            "IntakePlanRepositorySqlite::validateIntakePlan");
     }
 
     if (common::validation::isEmptyOrBlank(plan.dose)) {
         return common::result::Result<domain::IntakePlan>::fail(
             common::result::ErrorCode::InvalidArgument, "dose must not be empty",
+            "IntakePlanRepositorySqlite::validateIntakePlan");
+    }
+
+    return common::result::Result<domain::IntakePlan>::ok(plan);
+}
+
+static common::result::Result<domain::IntakePlan> validateIntakePlanForCreate(
+    const domain::IntakePlan& plan) {
+
+    auto base = validateIntakePlan(plan);
+    if (base.isError())
+        return base;
+
+    auto normalizedPlan = base.value();
+    normalizedPlan.id = 0;
+
+    return common::result::Result<domain::IntakePlan>::ok(normalizedPlan);
+}
+
+static common::result::Result<domain::IntakePlan> validateIntakePlanForUpdate(
+    const domain::IntakePlan& plan) {
+
+    auto base = validateIntakePlan(plan);
+
+    if (base.isError())
+        return base;
+
+    if (!common::validation::validateId(plan.id)) {
+        return common::result::Result<domain::IntakePlan>::fail(
+            common::result::ErrorCode::InvalidArgument, "intake_plan_id must be positive",
             "IntakePlanRepositorySqlite::validateIntakePlanForUpdate");
     }
 
