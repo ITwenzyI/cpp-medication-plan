@@ -120,16 +120,29 @@ int main() {
     auto create_new_plan = repo_plan.createIntakePlan(plan3);
     expect(create_new_plan.isOk(), "create new plan should succeed");
 
-    auto plans_by_medication_id =
+    auto new_plans_by_medication_id =
         repo_plan.getIntakePlansByMedicationId(create_new_medication.value().id);
-    expect(plans_by_medication_id.isOk(), "get intake_plans by medication_id should succeed");
-    expect(plans_by_medication_id.value().size() == 1,
-        "expected one intake_plan in test database with this medication_id");
-    expect(plans_by_medication_id.value()[0].id == create_new_plan.value().id, "id should match");
-    expect(plans_by_medication_id.value()[0].patientId == create_new_plan.value().patientId,
+    expect(
+        new_plans_by_medication_id.isOk(), "get new_intake_plans by medication_id should succeed");
+    expect(new_plans_by_medication_id.value().size() == 1,
+        "expected one intake_plan in test database with this new medication_id");
+    expect(
+        new_plans_by_medication_id.value()[0].id == create_new_plan.value().id, "id should match");
+    expect(new_plans_by_medication_id.value()[0].patientId == create_new_plan.value().patientId,
         "patient_id should match");
-    expect(plans_by_medication_id.value()[0].medicationId == create_new_plan.value().medicationId,
+    expect(
+        new_plans_by_medication_id.value()[0].medicationId == create_new_plan.value().medicationId,
         "medication_id should match");
+
+    // ======= DELETE INTAKE_PLAN BY ID ======
+    auto deleted = repo_plan.deleteIntakePlanById(create_new_plan.value().id);
+    expect(deleted.isOk(), "delete new intake_plan should succeed");
+    auto new_plans_by_medication_id_after_delete =
+        repo_plan.getIntakePlansByMedicationId(create_new_medication.value().id);
+    expect(new_plans_by_medication_id_after_delete.isOk(),
+        "get intake_plans by medication_id after delete should succeed");
+    expect(new_plans_by_medication_id_after_delete.value().size() == 0,
+        "expected zero intake_plans in test database with this medication_id after delete");
 
     // ========================================
     // ========================================
