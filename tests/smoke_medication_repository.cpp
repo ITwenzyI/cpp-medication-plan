@@ -27,6 +27,7 @@ int main() {
 
     // Create Medication
     auto created = repo.createMedication(m1);
+    expect(created.isOk(), "created medication should succeed");
     expect(created.value().id > 0, "created medication should have generated id");
 
     // ======= GET ALL PATIENTS ======
