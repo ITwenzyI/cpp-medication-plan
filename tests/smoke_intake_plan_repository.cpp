@@ -106,6 +106,82 @@ int main() {
         }
     }
 
+    // ======= GET INTAKE_PLAN BY MEDICATION_ID ======
+    domain::Patient p2{0, "Kilian Cpp", "2000-12-12", "DE"};
+    auto create_new_patient = repo_patient.createPatient(p2);
+    expect(create_new_patient.isOk(), "create new patient should succeed.");
+    domain::Medication m2{0, "Paracetamol", "500 mg", "Do not exceed 4,000 mg in 24 hours"};
+
+    auto create_new_medication = repo_med.createMedication(m2);
+    expect(create_new_medication.isOk(), "create new medication should succeed");
+
+    domain::IntakePlan plan3{0, create_new_patient.value().id, create_new_medication.value().id,
+        "500 mg", domain::TimeOfDay::Night};
+    auto create_new_plan = repo_plan.createIntakePlan(plan3);
+    expect(create_new_plan.isOk(), "create new plan should succeed");
+
+    auto new_plans_by_medication_id =
+        repo_plan.getIntakePlansByMedicationId(create_new_medication.value().id);
+    expect(
+        new_plans_by_medication_id.isOk(), "get new_intake_plans by medication_id should succeed");
+    expect(new_plans_by_medication_id.value().size() == 1,
+        "expected one intake_plan in test database with this new medication_id");
+    expect(
+        new_plans_by_medication_id.value()[0].id == create_new_plan.value().id, "id should match");
+    expect(new_plans_by_medication_id.value()[0].patientId == create_new_plan.value().patientId,
+        "patient_id should match");
+    expect(
+        new_plans_by_medication_id.value()[0].medicationId == create_new_plan.value().medicationId,
+        "medication_id should match");
+
+    // ======= DELETE INTAKE_PLAN BY ID ======
+    auto deleted = repo_plan.deleteIntakePlanById(create_new_plan.value().id);
+    expect(deleted.isOk(), "delete new intake_plan should succeed");
+    auto new_plans_by_medication_id_after_delete =
+        repo_plan.getIntakePlansByMedicationId(create_new_medication.value().id);
+    expect(new_plans_by_medication_id_after_delete.isOk(),
+        "get intake_plans by medication_id after delete should succeed");
+    expect(new_plans_by_medication_id_after_delete.value().size() == 0,
+        "expected zero intake_plans in test database with this medication_id after delete");
+
+    // ======= UPDATE INTAKE_PLAN ======
+    domain::Patient p_update{0, "Before Update", "1999-01-01", "FR"};
+    auto create_patient_update = repo_patient.createPatient(p2);
+    expect(create_patient_update.isOk(), "create patient before update should succeed.");
+
+    domain::Medication m_update{0, "Paracetamol", "1000 mg", "Do not exceed 4,000 mg in 24 hours"};
+    auto create_medication_update = repo_med.createMedication(m2);
+    expect(create_medication_update.isOk(), "create medication before update should succeed");
+
+    domain::IntakePlan plan_before_update{0, create_patient_update.value().id,
+        create_medication_update.value().id, "1000 mg", domain::TimeOfDay::Morning};
+    auto create_plan_before_update = repo_plan.createIntakePlan(plan3);
+    expect(create_plan_before_update.isOk(), "create intake_plan before update should succeed");
+
+    auto plans_by_medication_id_before_update =
+        repo_plan.getIntakePlansByMedicationId(create_new_medication.value().id);
+    expect(plans_by_medication_id_before_update.isOk(),
+        "get new_intake_plans by medication_id should succeed");
+    expect(plans_by_medication_id_before_update.value().size() == 1,
+        "expected one intake_plan in test database with this new medication_id");
+    auto updated_plan = plans_by_medication_id_before_update.value()[0];
+    updated_plan.dose = "1mg";
+    updated_plan.timeOfDay = domain::TimeOfDay::Night;
+
+    auto update_intake_plan = repo_plan.updateIntakePlan(updated_plan);
+    expect(update_intake_plan.isOk(), "update intake_plan should succeed");
+    auto plans_by_medication_id_after_update =
+        repo_plan.getIntakePlansByMedicationId(create_new_medication.value().id);
+    expect(updated_plan.dose == "1mg", "dose should match after update");
+    expect(updated_plan.dose == plans_by_medication_id_after_update.value()[0].dose,
+        "dose should match after update");
+    expect(updated_plan.timeOfDay == domain::TimeOfDay::Night,
+        "time_of_day should match after update");
+    expect(updated_plan.timeOfDay == plans_by_medication_id_after_update.value()[0].timeOfDay,
+        "time_of_day should match after update");
+
+    // ========================================
+    // ========================================
     // ======= TEST CASCADE DELETE ======
     auto delete_patient1 = repo_patient.deletePatientById(created_patient.value().id);
     auto intake_plans_after_delete =
