@@ -33,7 +33,7 @@ int main() {
 
     // Create Patient
     auto created_patient = repo_patient.createPatient(p1);
-    expect(created_patient.isOk(), "created intake_plan should succeed");
+    expect(created_patient.isOk(), "created patient should succeed");
     expect(created_patient.value().id > 0, "created patient should have generated id");
 
     // Create Medication
