@@ -26,6 +26,7 @@ int main() {
 
     // Create Patient
     auto created = repo.createPatient(p1);
+    expect(created.isOk(), "created patient should succeed");
     expect(created.value().id > 0, "created patient should have generated id");
 
     // ======= GET ALL PATIENTS ======
