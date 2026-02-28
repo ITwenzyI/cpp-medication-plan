@@ -88,36 +88,23 @@ common::result::Result<domain::IntakePlan> IntakePlanRepositorySqlite::createInt
     auto stmt = db_.prepare("INSERT INTO intake_plans (patient_id, medication_id, dose, "
                             "time_of_day, notes) VALUES (?, ?, ?, ?, ?);");
 
-    if (!common::validation::validateId(plan.patientId)) {
-        return common::result::Result<domain::IntakePlan>::fail(
-            common::result::ErrorCode::InvalidArgument, "patient_id must be positive",
-            "IntakePlanRepositorySqlite::createIntakePlan");
-    } else {
-        stmt.bindInt(1, plan.patientId);
+    auto validated = validateIntakePlanForCreate(plan);
+    if (validated.isError()) {
+        return common::result::Result<domain::IntakePlan>::fail(validated.error().code,
+            validated.error().message, "IntakePlanRepositorySqlite::createIntakePlan");
     }
 
-    if (!common::validation::validateId(plan.medicationId)) {
-        return common::result::Result<domain::IntakePlan>::fail(
-            common::result::ErrorCode::InvalidArgument, "medication_id must be positive",
-            "IntakePlanRepositorySqlite::createIntakePlan");
-    } else {
-        stmt.bindInt(2, plan.medicationId);
-    }
+    const domain::IntakePlan normalized = validated.value();
 
-    if (common::validation::isEmptyOrBlank(plan.dose)) {
-        return common::result::Result<domain::IntakePlan>::fail(
-            common::result::ErrorCode::InvalidArgument, "dose must not be empty",
-            "IntakePlanRepositorySqlite::createIntakePlan");
-    } else {
-        stmt.bindText(3, plan.dose);
-    }
+    stmt.bindInt(1, normalized.patientId);
+    stmt.bindInt(2, normalized.medicationId);
+    stmt.bindText(3, normalized.dose);
+    stmt.bindText(4, timeOfDayToDbString(normalized.timeOfDay));
 
-    stmt.bindText(4, timeOfDayToDbString(plan.timeOfDay));
-
-    if (common::validation::isEmptyOrBlank(plan.notes)) {
+    if (common::validation::isEmptyOrBlank(normalized.notes)) {
         stmt.bindNull(5);
     } else {
-        stmt.bindText(5, plan.notes);
+        stmt.bindText(5, normalized.notes);
     }
 
     const int rc = stmt.step();
@@ -162,7 +149,7 @@ common::result::Result<domain::IntakePlan> IntakePlanRepositorySqlite::createInt
 
     const int lastInsertRowID = static_cast<int>(sqlite3_last_insert_rowid(db_.get()));
 
-    domain::IntakePlan newIntakePlan = plan;
+    domain::IntakePlan newIntakePlan = normalized;
     newIntakePlan.id = lastInsertRowID;
 
     return common::result::Result<domain::IntakePlan>::ok(newIntakePlan);
