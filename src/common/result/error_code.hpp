@@ -11,8 +11,6 @@ enum class ErrorCode {
     ConstraintViolation,
     AlreadyExists,
     DataCorruption,
-    InvalidNationalityCode,
-    InvalidBirthDate,
     Unexpected
 };
 } // namespace common::result
