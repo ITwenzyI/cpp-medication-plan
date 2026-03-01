@@ -7,13 +7,16 @@
 //
 
 #pragma once
+#include <optional>
 #include <string>
 
 namespace domain {
+
+enum class Nationality { DE, US, GB, FR, IT, ES, CN, IN, JP, TR };
 struct Patient {
     int id;
     std::string name;
     std::string birth_date;
-    std::string nationality;
+    std::optional<Nationality> nationality;
 };
 } // namespace domain

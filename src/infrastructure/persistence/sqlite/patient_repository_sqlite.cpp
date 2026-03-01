@@ -2,17 +2,25 @@
 #include "common/validation/birth_date_validation.hpp"
 #include "common/validation/id_validation.hpp"
 #include "common/validation/string_validation.hpp"
+#include "nationality_mapper_sqlite.hpp"
 #include <stdexcept>
 
 namespace infrastructure::persistence::sqlite {
-static domain::Patient mapPatient(const infrastructure::db::Statement& stmt) {
+static common::result::Result<domain::Patient> mapPatient(
+    const infrastructure::db::Statement& stmt) {
     domain::Patient temp;
     temp.id = stmt.getInt(0);
     temp.name = stmt.getText(1);
     temp.birth_date = stmt.getText(2);
-    temp.nationality = stmt.getText(3);
+    auto nationality_result = nationalityFromDbNullableString(stmt.getText(3));
+    if (nationality_result.isError()) {
+        return common::result::Result<domain::Patient>::fail(nationality_result.error().code,
+            nationality_result.error().message,
+            "infrastructure::persistence::sqlite::mapPatient");
+    }
+    temp.nationality = nationality_result.value();
 
-    return temp;
+    return common::result::Result<domain::Patient>::ok(temp);
 }
 
 PatientRepositorySqlite::PatientRepositorySqlite(infrastructure::db::Database& db) : db_(db) {
@@ -44,8 +52,8 @@ common::result::Result<domain::Patient> PatientRepositorySqlite::createPatient(
         stmt.bindNull(2);
     }
 
-    if (!common::validation::isEmptyOrBlank(p.nationality)) {
-        stmt.bindText(3, p.nationality);
+    if (p.nationality.has_value()) {
+        stmt.bindText(3, nationalityToDbString(p.nationality.value()));
     } else {
         stmt.bindNull(3);
     }
@@ -76,7 +84,13 @@ PatientRepositorySqlite::getAllPatients() const {
         int rc = stmt.step();
 
         if (rc == SQLITE_ROW) {
-            result.push_back(mapPatient(stmt));
+            auto mapped = mapPatient(stmt);
+            if (mapped.isError()) {
+                return common::result::Result<std::vector<domain::Patient>>::fail(
+                    mapped.error().code, mapped.error().message,
+                    "PatientRepositorySqlite::getAllPatients");
+            }
+            result.push_back(mapped.value());
             continue;
         } else if (rc == SQLITE_DONE) {
             break;
@@ -105,7 +119,13 @@ common::result::Result<domain::Patient> PatientRepositorySqlite::findPatientById
     int rc = stmt.step();
 
     if (rc == SQLITE_ROW) {
-        return common::result::Result<domain::Patient>::ok(mapPatient(stmt));
+        auto mapped = mapPatient(stmt);
+        if (mapped.isError()) {
+            return common::result::Result<domain::Patient>::fail(
+                mapped.error().code, mapped.error().message,
+                "PatientRepositorySqlite::findPatientById");
+        }
+        return common::result::Result<domain::Patient>::ok(mapped.value());
     } else if (rc == SQLITE_DONE) {
         return common::result::Result<domain::Patient>::fail(common::result::ErrorCode::NotFound,
             "No patient with id: " + std::to_string(patient_id),
@@ -208,14 +228,20 @@ common::result::Result<void> PatientRepositorySqlite::updatePatientNationality(
         return common::result::Result<void>::fail(common::result::ErrorCode::InvalidArgument,
             "patient_id must be positive", "PatientRepositorySqlite::updatePatientNationality");
     }
-    if (common::validation::isEmptyOrBlank(new_nationality)) {
-        return common::result::Result<void>::fail(common::result::ErrorCode::InvalidArgument,
-            "nationality must not be empty", "PatientRepositorySqlite::updatePatientNationality");
-    }
-
     auto stmt = db_.prepare("UPDATE patients SET nationality = ? WHERE id = ?;");
 
-    stmt.bindText(1, new_nationality);
+    if (common::validation::isEmptyOrBlank(new_nationality)) {
+        stmt.bindNull(1);
+    } else {
+        auto parsed = nationalityFromDbString(new_nationality);
+        if (parsed.isError()) {
+            return common::result::Result<void>::fail(
+                common::result::ErrorCode::InvalidArgument, "nationality has invalid country code",
+                "PatientRepositorySqlite::updatePatientNationality");
+        }
+
+        stmt.bindText(1, nationalityToDbString(parsed.value()));
+    }
     stmt.bindInt(2, patient_id);
 
     int rc = stmt.step();
