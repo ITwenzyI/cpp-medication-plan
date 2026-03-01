@@ -1,6 +1,7 @@
 #pragma once
 #include "common/result/result.hpp"
 #include "domain/patient.hpp"
+#include <optional>
 #include <stdexcept>
 #include <string>
 
@@ -65,5 +66,20 @@ inline common::result::Result<domain::Nationality> nationalityFromDbString(std::
 
     return common::result::Result<domain::Nationality>::fail(
         common::result::ErrorCode::InvalidArgument, "Invalid nationality code in database.");
+}
+
+inline common::result::Result<std::optional<domain::Nationality>>
+nationalityFromDbNullableString(std::string_view value) {
+    if (value.empty()) {
+        return common::result::Result<std::optional<domain::Nationality>>::ok(std::nullopt);
+    }
+
+    auto parsed = nationalityFromDbString(value);
+    if (parsed.isError()) {
+        return common::result::Result<std::optional<domain::Nationality>>::fail(parsed.error().code,
+            parsed.error().message, "nationalityFromDbNullableString");
+    }
+
+    return common::result::Result<std::optional<domain::Nationality>>::ok(parsed.value());
 }
 } // namespace infrastructure::persistence::sqlite
