@@ -17,10 +17,15 @@ int main() {
 
         infrastructure::persistence::sqlite::PatientRepositorySqlite repo(db);
 
-        //domain::Patient p1{1, "Kilian Cpp", "2000-01-01", "DE"};
-        //domain::Patient p2{2, "Test Patient", "1998-12-24", "ES"};
+        domain::Patient p1{1, "James Walker", "1994-03-18", domain::Nationality::GB};
+        domain::Patient p2{2, "Olivia Smith", "2000-09-05", domain::Nationality::US};
+        domain::Patient p3{2, "Daniel Brown", "1987-12-27", domain::Nationality::CN};
+        domain::Patient p4{2, "Emily Johnson", "2001-11-23"};
 
-        //auto all_patients = repo.createPatient(p1);
+        // auto p1_created = repo.createPatient(p1);
+        // auto p2_created = repo.createPatient(p2);
+        // auto p3_created = repo.createPatient(p3);
+        // auto p4_created = repo.createPatient(p4);
         auto allPatients = repo.getAllPatients();
 
         ui::cli::printPatients(allPatients.value());
