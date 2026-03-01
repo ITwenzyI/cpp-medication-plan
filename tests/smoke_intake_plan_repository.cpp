@@ -180,6 +180,13 @@ int main() {
     expect(updated_plan.timeOfDay == plans_by_medication_id_after_update.value()[0].timeOfDay,
         "time_of_day should match after update");
 
+    // ======= TEST NOTFOUND UPDATE ======
+    updated_plan.id = 999999;
+    auto updated_not_found_plan = repo_plan.updateIntakePlan(updated_plan);
+    expect(updated_not_found_plan.isError(), "update intake_plan with invalid id should fail");
+    expect(updated_not_found_plan.error().code == common::result::ErrorCode::NotFound,
+        "update with invalid id should return NotFound");
+
     // ========================================
     // ========================================
     // ======= TEST CASCADE DELETE ======
