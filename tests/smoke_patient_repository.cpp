@@ -20,7 +20,7 @@ int main() {
 
     infrastructure::persistence::sqlite::PatientRepositorySqlite repo(db);
 
-    domain::Patient p1{0, "Steve Moro", "1998-02-07", "DE"};
+    domain::Patient p1{0, "Steve Moro", "1998-02-07", domain::Nationality::DE};
 
     // ======= CREATE PATIENT ======
 
@@ -90,13 +90,25 @@ int main() {
     // ======= UPDATE PATIENT NATIONALITY ======
 
     // Update Patient Nationality
-    auto update_nationality = repo.updatePatientNationality(created.value().id, "EN");
+    auto update_nationality = repo.updatePatientNationality(created.value().id, "US");
     expect(update_nationality.isOk(), "updatePatientNationality should succeed");
 
     // Find Patient by ID after Update Patient Nationality
     auto updated_nationality = repo.findPatientById(created.value().id);
     expect(updated_nationality.isOk(), "find after update should succeed");
-    expect(updated_nationality.value().nationality == "EN", "nationality should be updated");
+    expect(updated_nationality.value().nationality.has_value(),
+        "nationality should be present after update");
+    expect(updated_nationality.value().nationality.value() == domain::Nationality::US,
+        "nationality should be updated");
+
+    // Clear Nationality (optional)
+    auto clear_nationality = repo.updatePatientNationality(created.value().id, "");
+    expect(clear_nationality.isOk(), "clearing nationality should succeed");
+
+    auto cleared_nationality = repo.findPatientById(created.value().id);
+    expect(cleared_nationality.isOk(), "find after clear nationality should succeed");
+    expect(!cleared_nationality.value().nationality.has_value(),
+        "nationality should be empty after clear");
 
     // ======= DELETE PATIENT ======
 
