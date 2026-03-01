@@ -7,6 +7,7 @@
 //
 
 #pragma once
+#include <optional>
 #include <string>
 
 namespace domain {
@@ -16,6 +17,6 @@ struct Patient {
     int id;
     std::string name;
     std::string birth_date;
-    Nationality nationality;
+    std::optional<Nationality> nationality;
 };
 } // namespace domain
