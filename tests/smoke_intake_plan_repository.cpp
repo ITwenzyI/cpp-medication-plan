@@ -217,6 +217,18 @@ int main() {
     expect(update_plan_unique_conflict.error().code == common::result::ErrorCode::Conflict,
         "update with same plan should return Conflict");
 
+    // ======= TEST FOREIGN KEY VIOLATION UPDATE ======
+    domain::IntakePlan plan_fk_valid{0, create_patient_unique.value().id,
+        create_medication_unique.value().id, "90 mg", domain::TimeOfDay::Evening};
+    auto create_plan_fk_valid = repo_plan.createIntakePlan(plan_fk_valid);
+    expect(create_plan_fk_valid.isOk(), "create intake_plan should succeed");
+    auto plan_fk_invalid = create_plan_fk_valid.value();
+    plan_fk_invalid.patientId = 9999999;
+    auto update_plan_fk_invalid = repo_plan.updateIntakePlan(plan_fk_invalid);
+    expect(update_plan_fk_invalid.isError(), "update plan with invalid patient_id should fail");
+    expect(update_plan_fk_invalid.error().code == common::result::ErrorCode::ForeignKeyViolation,
+        "update with invalid patient_id should return ForeignKeyViolation");
+
     // ========================================
     // ========================================
     // ======= TEST CASCADE DELETE ======
