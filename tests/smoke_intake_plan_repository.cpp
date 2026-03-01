@@ -187,6 +187,36 @@ int main() {
     expect(updated_not_found_plan.error().code == common::result::ErrorCode::NotFound,
         "update with invalid id should return NotFound");
 
+    // ======= TEST UNIQUE CONFLICT UPDATE ======
+    domain::Patient patient_unique{0, "Unique Conflict", "1999-01-01", "FR"};
+    auto create_patient_unique = repo_patient.createPatient(patient_unique);
+    expect(create_patient_unique.isOk(), "create patient should succeed.");
+
+    domain::Medication medication_unique{
+        0, "Paracetamol", "1000 mg", "Do not exceed 4,000 mg in 24 hours"};
+    auto create_medication_unique = repo_med.createMedication(m2);
+    expect(create_medication_unique.isOk(), "create medication should succeed");
+
+    // Plan 1 with Morning
+    domain::IntakePlan plan_unique1{0, create_patient_unique.value().id,
+        create_medication_unique.value().id, "1000 mg", domain::TimeOfDay::Morning};
+    auto create_plan_unique1 = repo_plan.createIntakePlan(plan_unique1);
+    expect(create_plan_unique1.isOk(), "create intake_plan should succeed");
+    // Plan 2 with Noon
+    domain::IntakePlan plan_unique2{0, create_patient_unique.value().id,
+        create_medication_unique.value().id, "1000 mg", domain::TimeOfDay::Noon};
+    auto create_plan_unique2 = repo_plan.createIntakePlan(plan_unique2);
+    expect(create_plan_unique2.isOk(), "create intake_plan should succeed");
+
+    // Update Plan 2 to Morning
+    auto plan_unique2_after_create = create_plan_unique2.value();
+    plan_unique2_after_create.timeOfDay = domain::TimeOfDay::Morning;
+    auto update_plan_unique_conflict = repo_plan.updateIntakePlan(plan_unique2_after_create);
+    expect(update_plan_unique_conflict.isError(),
+        "update plan with plan already existing should fail");
+    expect(update_plan_unique_conflict.error().code == common::result::ErrorCode::Conflict,
+        "update with same plan should return Conflict");
+
     // ========================================
     // ========================================
     // ======= TEST CASCADE DELETE ======
