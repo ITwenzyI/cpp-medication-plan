@@ -83,7 +83,7 @@ int main() {
     domain::IntakePlan invalid_plan = plan1;
     invalid_plan.patientId = 999; // Invalid PatientID
     auto created_invalid_plan = repo_plan.createIntakePlan(invalid_plan);
-    expect(created_invalid_plan.isError(), "create with invalid patiend_id should fail");
+    expect(created_invalid_plan.isError(), "create with invalid patient_id should fail");
     expect(created_invalid_plan.error().code == common::result::ErrorCode::ForeignKeyViolation,
         "same intake_plan should return ForeignKeyViolation");
 
