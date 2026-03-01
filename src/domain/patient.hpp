@@ -16,6 +16,6 @@ struct Patient {
     int id;
     std::string name;
     std::string birth_date;
-    std::string nationality;
+    Nationality nationality;
 };
 } // namespace domain
