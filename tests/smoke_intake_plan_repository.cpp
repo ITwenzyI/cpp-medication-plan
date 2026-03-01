@@ -25,7 +25,7 @@ int main() {
     infrastructure::persistence::sqlite::MedicationRepositorySqlite repo_med(db);
     infrastructure::persistence::sqlite::IntakePlanRepositorySqlite repo_plan(db);
 
-    domain::Patient p1{0, "Steve Moro", "1998-02-07", "DE"};
+    domain::Patient p1{0, "Steve Moro", "1998-02-07", domain::Nationality::DE};
     domain::Medication m1{0, "Ibuprofen", "400mg",
         "Do not use if you have stomach ulcers or severe kidney problems."};
 
@@ -107,7 +107,7 @@ int main() {
     }
 
     // ======= GET INTAKE_PLAN BY MEDICATION_ID ======
-    domain::Patient p2{0, "Kilian Cpp", "2000-12-12", "DE"};
+    domain::Patient p2{0, "Kilian Cpp", "2000-12-12", domain::Nationality::DE};
     auto create_new_patient = repo_patient.createPatient(p2);
     expect(create_new_patient.isOk(), "create new patient should succeed.");
     domain::Medication m2{0, "Paracetamol", "500 mg", "Do not exceed 4,000 mg in 24 hours"};
@@ -145,7 +145,7 @@ int main() {
         "expected zero intake_plans in test database with this medication_id after delete");
 
     // ======= UPDATE INTAKE_PLAN ======
-    domain::Patient p_update{0, "Before Update", "1999-01-01", "FR"};
+    domain::Patient p_update{0, "Before Update", "1999-01-01", domain::Nationality::FR};
     auto create_patient_update = repo_patient.createPatient(p2);
     expect(create_patient_update.isOk(), "create patient before update should succeed.");
 
@@ -188,7 +188,7 @@ int main() {
         "update with invalid id should return NotFound");
 
     // ======= TEST UNIQUE CONFLICT UPDATE ======
-    domain::Patient patient_unique{0, "Unique Conflict", "1999-01-01", "FR"};
+    domain::Patient patient_unique{0, "Unique Conflict", "1999-01-01", domain::Nationality::FR};
     auto create_patient_unique = repo_patient.createPatient(patient_unique);
     expect(create_patient_unique.isOk(), "create patient should succeed.");
 
