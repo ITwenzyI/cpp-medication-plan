@@ -10,6 +10,8 @@
 #include <string>
 
 namespace domain {
+
+enum class Nationality { DE, US, GB, FR, IT, ES, CN, IN, JP, TR };
 struct Patient {
     int id;
     std::string name;
