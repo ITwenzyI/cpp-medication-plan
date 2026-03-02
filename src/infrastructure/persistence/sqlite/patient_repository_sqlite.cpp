@@ -1,4 +1,5 @@
 #include "patient_repository_sqlite.hpp"
+#include "common/result/result.hpp"
 #include "common/validation/birth_date_validation.hpp"
 #include "common/validation/id_validation.hpp"
 #include "common/validation/string_validation.hpp"
@@ -15,8 +16,7 @@ static common::result::Result<domain::Patient> mapPatient(
     auto nationality_result = nationalityFromDbNullableString(stmt.getText(3));
     if (nationality_result.isError()) {
         return common::result::Result<domain::Patient>::fail(nationality_result.error().code,
-            nationality_result.error().message,
-            "infrastructure::persistence::sqlite::mapPatient");
+            nationality_result.error().message, "infrastructure::persistence::sqlite::mapPatient");
     }
     temp.nationality = nationality_result.value();
 
@@ -121,9 +121,8 @@ common::result::Result<domain::Patient> PatientRepositorySqlite::findPatientById
     if (rc == SQLITE_ROW) {
         auto mapped = mapPatient(stmt);
         if (mapped.isError()) {
-            return common::result::Result<domain::Patient>::fail(
-                mapped.error().code, mapped.error().message,
-                "PatientRepositorySqlite::findPatientById");
+            return common::result::Result<domain::Patient>::fail(mapped.error().code,
+                mapped.error().message, "PatientRepositorySqlite::findPatientById");
         }
         return common::result::Result<domain::Patient>::ok(mapped.value());
     } else if (rc == SQLITE_DONE) {
@@ -235,8 +234,8 @@ common::result::Result<void> PatientRepositorySqlite::updatePatientNationality(
     } else {
         auto parsed = nationalityFromDbString(new_nationality);
         if (parsed.isError()) {
-            return common::result::Result<void>::fail(
-                common::result::ErrorCode::InvalidArgument, "nationality has invalid country code",
+            return common::result::Result<void>::fail(common::result::ErrorCode::InvalidArgument,
+                "nationality has invalid country code",
                 "PatientRepositorySqlite::updatePatientNationality");
         }
 

@@ -8,6 +8,8 @@
 
 #include "init_db.hpp"
 #include <fstream>
+#include <stdexcept>
+#include <string>
 
 namespace infrastructure::db {
 void initDatabase(Database& db, const std::string& schemaPath) {

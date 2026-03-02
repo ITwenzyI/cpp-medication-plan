@@ -1,6 +1,8 @@
 #include "patient_printer.hpp"
 #include "infrastructure/persistence/sqlite/nationality_mapper_sqlite.hpp"
 #include <iostream>
+#include <string>
+#include <vector>
 
 namespace ui::cli {
 static std::string formatField(const std::string& field) {
