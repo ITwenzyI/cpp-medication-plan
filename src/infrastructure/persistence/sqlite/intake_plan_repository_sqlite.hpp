@@ -10,18 +10,19 @@ class IntakePlanRepositorySqlite : public application::ports::IIntakePlanReposit
     explicit IntakePlanRepositorySqlite(infrastructure::db::Database& db);
 
     [[nodiscard]] common::result::Result<domain::IntakePlan> createIntakePlan(
-        const domain::IntakePlan& plan) override;
+        const domain::IntakePlan& new_plan) override;
 
     [[nodiscard]] common::result::Result<std::vector<domain::IntakePlan>> getIntakePlansByPatientId(
-        int patient_id) const override;
+        int new_patient_id) const override;
 
     [[nodiscard]] common::result::Result<std::vector<domain::IntakePlan>>
-    getIntakePlansByMedicationId(int medication_id) const override;
+    getIntakePlansByMedicationId(int new_medication_id) const override;
 
-    [[nodiscard]] common::result::Result<void> deleteIntakePlanById(int intake_plan_id) override;
+    [[nodiscard]] common::result::Result<void> deleteIntakePlanById(
+        int new_intake_plan_id) override;
 
     [[nodiscard]] common::result::Result<void> updateIntakePlan(
-        const domain::IntakePlan& plan) override;
+        const domain::IntakePlan& new_plan) override;
 
   private:
     infrastructure::db::Database& db_;

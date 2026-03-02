@@ -7,10 +7,10 @@ enum class TimeOfDay { Morning, Noon, Evening, Night };
 
 struct IntakePlan {
     int id;
-    int patientId;
-    int medicationId;
+    int patient_id;
+    int medication_id;
     std::string dose;
-    TimeOfDay timeOfDay;
+    TimeOfDay time_of_day;
     std::string notes;
 };
 

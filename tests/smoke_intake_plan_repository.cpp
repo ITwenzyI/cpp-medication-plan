@@ -54,18 +54,19 @@ int main() {
     expect(plans_by_patient_id.value().size() == 1,
         "expected exactly one intake_plan in test database");
     expect(plans_by_patient_id.value()[0].id == created_intake_plan.value().id, "id should match");
-    expect(plans_by_patient_id.value()[0].patientId == created_intake_plan.value().patientId,
+    expect(plans_by_patient_id.value()[0].patient_id == created_intake_plan.value().patient_id,
         "patient_id should match");
-    expect(plans_by_patient_id.value()[0].medicationId == created_intake_plan.value().medicationId,
+    expect(
+        plans_by_patient_id.value()[0].medication_id == created_intake_plan.value().medication_id,
         "medication_id should match");
 
     expect(plans_by_patient_id.value()[0].dose == created_intake_plan.value().dose,
         "dose should match with created");
     expect(plans_by_patient_id.value()[0].dose == "400mg", "dose should match with string");
 
-    expect(plans_by_patient_id.value()[0].timeOfDay == created_intake_plan.value().timeOfDay,
+    expect(plans_by_patient_id.value()[0].time_of_day == created_intake_plan.value().time_of_day,
         "time_of_day should match with created");
-    expect(plans_by_patient_id.value()[0].timeOfDay == domain::TimeOfDay::Noon,
+    expect(plans_by_patient_id.value()[0].time_of_day == domain::TimeOfDay::Noon,
         "time_of_day should match with string");
 
     expect(plans_by_patient_id.value()[0].notes == created_intake_plan.value().notes,
@@ -81,7 +82,7 @@ int main() {
 
     // ======= TEST FOREIGN KEY CONSTRAINT ======
     domain::IntakePlan invalid_fk_intake_plan = primary_intake_plan;
-    invalid_fk_intake_plan.patientId = 999; // Invalid PatientID
+    invalid_fk_intake_plan.patient_id = 999; // Invalid PatientID
     auto created_invalid_fk_plan = repo_plan.createIntakePlan(invalid_fk_intake_plan);
     expect(created_invalid_fk_plan.isError(), "create with invalid patient_id should fail");
     expect(created_invalid_fk_plan.error().code == common::result::ErrorCode::ForeignKeyViolation,
@@ -129,11 +130,11 @@ int main() {
         "expected one intake_plan in test database with this new medication_id");
     expect(plans_by_secondary_medication_id.value()[0].id == created_secondary_plan.value().id,
         "id should match");
-    expect(plans_by_secondary_medication_id.value()[0].patientId ==
-            created_secondary_plan.value().patientId,
+    expect(plans_by_secondary_medication_id.value()[0].patient_id ==
+            created_secondary_plan.value().patient_id,
         "patient_id should match");
-    expect(plans_by_secondary_medication_id.value()[0].medicationId ==
-            created_secondary_plan.value().medicationId,
+    expect(plans_by_secondary_medication_id.value()[0].medication_id ==
+            created_secondary_plan.value().medication_id,
         "medication_id should match");
 
     // ======= DELETE INTAKE_PLAN BY ID ======
@@ -170,7 +171,7 @@ int main() {
         "expected one intake_plan in test database with this new medication_id");
     auto updated_plan = plans_by_medication_id_before_update.value()[0];
     updated_plan.dose = "1mg";
-    updated_plan.timeOfDay = domain::TimeOfDay::Night;
+    updated_plan.time_of_day = domain::TimeOfDay::Night;
 
     auto update_intake_plan_result = repo_plan.updateIntakePlan(updated_plan);
     expect(update_intake_plan_result.isOk(), "update intake_plan should succeed");
@@ -179,9 +180,9 @@ int main() {
     expect(updated_plan.dose == "1mg", "dose should match after update");
     expect(updated_plan.dose == plans_by_medication_id_after_update.value()[0].dose,
         "dose should match after update");
-    expect(updated_plan.timeOfDay == domain::TimeOfDay::Night,
+    expect(updated_plan.time_of_day == domain::TimeOfDay::Night,
         "time_of_day should match after update");
-    expect(updated_plan.timeOfDay == plans_by_medication_id_after_update.value()[0].timeOfDay,
+    expect(updated_plan.time_of_day == plans_by_medication_id_after_update.value()[0].time_of_day,
         "time_of_day should match after update");
 
     // ======= TEST NOTFOUND UPDATE ======
@@ -216,7 +217,7 @@ int main() {
 
     // Update Plan 2 to Morning
     auto unique_conflict_plan_after_create = created_unique_conflict_plan_noon.value();
-    unique_conflict_plan_after_create.timeOfDay = domain::TimeOfDay::Morning;
+    unique_conflict_plan_after_create.time_of_day = domain::TimeOfDay::Morning;
     auto update_unique_conflict_result =
         repo_plan.updateIntakePlan(unique_conflict_plan_after_create);
     expect(update_unique_conflict_result.isError(),
@@ -230,7 +231,7 @@ int main() {
     auto created_fk_valid_plan = repo_plan.createIntakePlan(fk_valid_intake_plan);
     expect(created_fk_valid_plan.isOk(), "create intake_plan should succeed");
     auto fk_invalid_plan = created_fk_valid_plan.value();
-    fk_invalid_plan.patientId = 9999999;
+    fk_invalid_plan.patient_id = 9999999;
     auto update_fk_invalid_result = repo_plan.updateIntakePlan(fk_invalid_plan);
     expect(update_fk_invalid_result.isError(), "update plan with invalid patient_id should fail");
     expect(update_fk_invalid_result.error().code == common::result::ErrorCode::ForeignKeyViolation,
