@@ -4,31 +4,31 @@
 #include <string>
 
 namespace infrastructure::persistence::sqlite {
-inline std::string timeOfDayToDbString(domain::TimeOfDay timeOfDay) {
-    switch (timeOfDay) {
+inline std::string timeOfDayToDbString(domain::TimeOfDay time_of_day) {
+    switch (time_of_day) {
         case domain::TimeOfDay::Morning:
-            return "morning";
+            return "Morning";
         case domain::TimeOfDay::Noon:
-            return "noon";
+            return "Noon";
         case domain::TimeOfDay::Evening:
-            return "evening";
+            return "Evening";
         case domain::TimeOfDay::Night:
-            return "night";
+            return "Night";
     }
     throw std::logic_error("Invalid TimeOfDay enum value.");
 }
 
 inline common::result::Result<domain::TimeOfDay> timeOfDayFromDbString(std::string_view value) {
-    if (value == "morning") {
+    if (value == "Morning") {
         return common::result::Result<domain::TimeOfDay>::ok(domain::TimeOfDay::Morning);
     }
-    if (value == "noon") {
+    if (value == "Noon") {
         return common::result::Result<domain::TimeOfDay>::ok(domain::TimeOfDay::Noon);
     }
-    if (value == "evening") {
+    if (value == "Evening") {
         return common::result::Result<domain::TimeOfDay>::ok(domain::TimeOfDay::Evening);
     }
-    if (value == "night") {
+    if (value == "Night") {
         return common::result::Result<domain::TimeOfDay>::ok(domain::TimeOfDay::Night);
     }
 
