@@ -9,8 +9,8 @@ static common::result::Result<domain::IntakePlan> mapIntakePlan(
     const infrastructure::db::Statement& stmt) {
     domain::IntakePlan temp;
     temp.id = stmt.getInt(0);
-    temp.patientId = stmt.getInt(1);
-    temp.medicationId = stmt.getInt(2);
+    temp.patient_id = stmt.getInt(1);
+    temp.medication_id = stmt.getInt(2);
     temp.dose = stmt.getText(3);
 
     auto todResult = timeOfDayFromDbString(stmt.getText(4));
@@ -18,7 +18,7 @@ static common::result::Result<domain::IntakePlan> mapIntakePlan(
         return common::result::Result<domain::IntakePlan>::fail(todResult.error().code,
             todResult.error().message, "infrastructure::persistence::sqlite::mapIntakePlan");
     }
-    temp.timeOfDay = todResult.value();
+    temp.time_of_day = todResult.value();
 
     temp.notes = stmt.getText(5);
 
@@ -28,13 +28,13 @@ static common::result::Result<domain::IntakePlan> mapIntakePlan(
 static common::result::Result<domain::IntakePlan> validateIntakePlan(
     const domain::IntakePlan& plan) {
 
-    if (!common::validation::validateId(plan.patientId)) {
+    if (!common::validation::validateId(plan.patient_id)) {
         return common::result::Result<domain::IntakePlan>::fail(
             common::result::ErrorCode::InvalidArgument, "patient_id must be positive",
             "IntakePlanRepositorySqlite::validateIntakePlan");
     }
 
-    if (!common::validation::validateId(plan.medicationId)) {
+    if (!common::validation::validateId(plan.medication_id)) {
         return common::result::Result<domain::IntakePlan>::fail(
             common::result::ErrorCode::InvalidArgument, "medication_id must be positive",
             "IntakePlanRepositorySqlite::validateIntakePlan");
@@ -96,10 +96,10 @@ common::result::Result<domain::IntakePlan> IntakePlanRepositorySqlite::createInt
 
     const domain::IntakePlan normalized = validated.value();
 
-    stmt.bindInt(1, normalized.patientId);
-    stmt.bindInt(2, normalized.medicationId);
+    stmt.bindInt(1, normalized.patient_id);
+    stmt.bindInt(2, normalized.medication_id);
     stmt.bindText(3, normalized.dose);
-    stmt.bindText(4, timeOfDayToDbString(normalized.timeOfDay));
+    stmt.bindText(4, timeOfDayToDbString(normalized.time_of_day));
 
     if (common::validation::isEmptyOrBlank(normalized.notes)) {
         stmt.bindNull(5);
@@ -279,10 +279,10 @@ common::result::Result<void> IntakePlanRepositorySqlite::updateIntakePlan(
 
     auto normalized = validated.value();
 
-    stmt.bindInt(1, normalized.patientId);
-    stmt.bindInt(2, normalized.medicationId);
+    stmt.bindInt(1, normalized.patient_id);
+    stmt.bindInt(2, normalized.medication_id);
     stmt.bindText(3, normalized.dose);
-    stmt.bindText(4, timeOfDayToDbString(normalized.timeOfDay));
+    stmt.bindText(4, timeOfDayToDbString(normalized.time_of_day));
     if (common::validation::isEmptyOrBlank(normalized.notes)) {
         stmt.bindNull(5);
     } else {
