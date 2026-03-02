@@ -7,6 +7,7 @@
 //
 #pragma once
 #include "database.hpp"
+#include <string>
 
 namespace infrastructure::db {
 void initDatabase(Database& db, const std::string& schemaPath);

@@ -1,4 +1,5 @@
 #include "medication_repository_sqlite.hpp"
+#include "common/result/result.hpp"
 #include "common/validation/id_validation.hpp"
 #include "common/validation/string_validation.hpp"
 #include <stdexcept>

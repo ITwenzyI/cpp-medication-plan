@@ -1,4 +1,5 @@
 #pragma once
+#include "common/result/result.hpp"
 #include "domain/intake_plan.hpp"
 #include <stdexcept>
 #include <string>
