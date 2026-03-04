@@ -44,7 +44,7 @@ class CliApp {
 
     // Utility
     void waitForEnter() const;
-    common::result::Result<int> readInt(std::string_view prompt) const;
+    common::result::Result<int> readInt(std::string_view prompt, int min, int max) const;
 
     // Error Message
     void printError(const common::result::AppError&) const;
