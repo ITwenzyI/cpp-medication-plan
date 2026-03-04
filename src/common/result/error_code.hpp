@@ -1,4 +1,5 @@
 #pragma once
+#include <string_view>
 
 namespace common::result {
 enum class ErrorCode {
@@ -22,4 +23,32 @@ enum class ErrorCode {
 
     Unexpected // Unhandled or logically impossible state
 };
+
+inline std::string_view errorCodeName(ErrorCode code) noexcept {
+    switch (code) {
+        case ErrorCode::Ok:
+            return "Ok";
+        case ErrorCode::NotFound:
+            return "NotFound";
+        case ErrorCode::InvalidArgument:
+            return "InvalidArgument";
+        case ErrorCode::Conflict:
+            return "Conflict";
+        case ErrorCode::ForeignKeyViolation:
+            return "ForeignKeyViolation";
+        case ErrorCode::DatabaseError:
+            return "DatabaseError";
+        case ErrorCode::ConstraintViolation:
+            return "ConstraintViolation";
+        case ErrorCode::AlreadyExists:
+            return "AlreadyExists";
+        case ErrorCode::DataCorruption:
+            return "DataCorruption";
+        case ErrorCode::Unexpected:
+            return "Unexpected";
+    }
+
+    return "UnknownErrorCode";
+}
+
 } // namespace common::result
