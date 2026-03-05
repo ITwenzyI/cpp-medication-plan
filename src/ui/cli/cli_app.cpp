@@ -2,6 +2,7 @@
 #include "common/result/result.hpp"
 #include "error_renderer.hpp"
 #include <iostream>
+#include <limits>
 #include <string_view>
 
 // CliApp ctor run()
@@ -191,6 +192,12 @@ void CliApp::showIntakePlansMenu() const {
     std::cout << "4. Delete IntakePlan by ID" << "\n";
     std::cout << "5. Update IntakePlan" << "\n";
     std::cout << "0. Exit" << "\n";
+}
+
+void CliApp::waitForEnter() const {
+    std::cout << "\nPress Enter to continue...";
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    std::cout << '\n';
 }
 
 common::result::Result<int> CliApp::readInt(std::string_view prompt, int min, int max) const {
