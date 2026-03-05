@@ -200,20 +200,29 @@ void CliApp::waitForEnter() const {
     std::cout << '\n';
 }
 
+#include <limits>
+
 common::result::Result<int> CliApp::readInt(std::string_view prompt, int min, int max) const {
-    int choice;
+    std::cout << prompt;
 
-    // If user input is not a int value
-    if (!(std::cin >> choice)) {
-        return common::result::Result<int>::fail(
-            common::result::ErrorCode::InvalidArgument, "Invalid Choice", "CliApp::readInt");
+    int value;
+
+    if (!(std::cin >> value)) {
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+        return common::result::Result<int>::fail(common::result::ErrorCode::InvalidArgument,
+            "Please enter a valid number", "CliApp::readInt");
     }
 
-    // If user input is not correct for the menu
-    if (choice < min || choice > max) {
-        return common::result::Result<int>::fail(
-            common::result::ErrorCode::InvalidArgument, "Invalid Choice", "CliApp::readInt");
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+    if (value < min || value > max) {
+        return common::result::Result<int>::fail(common::result::ErrorCode::InvalidArgument,
+            "Choice is outside the allowed range", "CliApp::readInt");
     }
+
+    return common::result::Result<int>::ok(value);
 }
 
 } // namespace ui::cli
