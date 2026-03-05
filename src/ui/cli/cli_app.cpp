@@ -152,6 +152,35 @@ void CliApp::showMedicationsMenu() const {
 }
 
 void CliApp::intakePlansMenuLoop() {
+    showIntakePlansMenu();
+
+    std::string_view prompt = "Choice: ";
+    auto user_choice = readInt(prompt, 0, 3);
+
+    while (user_choice.isError()) {
+        ErrorRenderer::printErrorMessage(user_choice.error(), "CliApp::intakePlansMenuLoop");
+        user_choice = readInt(prompt, 0, 5);
+    }
+
+    switch (user_choice.value()) {
+        case 0:
+            return;
+        case 1:
+            cmdCreateIntakePlan();
+            break;
+        case 2:
+            cmdListIntakePlansByPatientId();
+            break;
+        case 3:
+            cmdListIntakePlansByMedicationId();
+            break;
+        case 4:
+            cmdDeleteIntakePlanById();
+            break;
+        case 5:
+            cmdUpdateIntakePlan();
+            break;
+    }
 }
 
 void CliApp::showIntakePlansMenu() const {
@@ -159,8 +188,8 @@ void CliApp::showIntakePlansMenu() const {
     std::cout << "1. Create IntakePlan" << "\n";
     std::cout << "2. List IntakePlans by PatientID" << "\n";
     std::cout << "3. List IntakePlans by MedicationID" << "\n";
-    // std::cout << "4. Delete IntakePlan by ID" << "\n";
-    // std::cout << "5. Update IntakePlan" << "\n";
+    std::cout << "4. Delete IntakePlan by ID" << "\n";
+    std::cout << "5. Update IntakePlan" << "\n";
     std::cout << "0. Exit" << "\n";
 }
 
