@@ -38,10 +38,13 @@ void CliApp::mainMenuLoop() {
             return;
         case 1:
             patientsMenuLoop();
+            break;
         case 2:
             medicationsMenuLoop();
+            break;
         case 3:
             intakePlansMenuLoop();
+            break;
     }
 }
 
@@ -50,6 +53,52 @@ void CliApp::showMainMenu() const {
     std::cout << "1. Patients Menu" << "\n";
     std::cout << "2. Medications Menu" << "\n";
     std::cout << "3. IntakePlans Menu" << "\n";
+    std::cout << "0. Exit" << "\n";
+}
+
+void CliApp::patientsMenuLoop() {
+    showPatientsMenu();
+
+    std::string_view prompt = "Choice: ";
+    auto user_choice = readInt(prompt, 0, 3);
+
+    while (user_choice.isError()) {
+        ErrorRenderer::printErrorMessage(user_choice.error());
+        user_choice = readInt(prompt, 0, 7);
+    }
+
+    switch (user_choice.value()) {
+        case 0:
+            return;
+        case 1:
+            cmdCreatePatient();
+            break;
+        case 2:
+            cmdListPatients();
+            break;
+        case 3:
+            cmdFindPatientById();
+            break;
+        case 4:
+            break;
+        case 5:
+            break;
+        case 6:
+            break;
+        case 7:
+            break;
+    }
+}
+
+void CliApp::showPatientsMenu() const {
+    std::cout << "===== Medication Main Menu =====" << "\n";
+    std::cout << "1. Create Patient" << "\n";
+    std::cout << "2. List all Patients" << "\n";
+    std::cout << "3. Find Patient by ID" << "\n";
+    // std::cout << "4. Delete Patient by ID" << "\n";
+    // std::cout << "5. Update Patient Name" << "\n";
+    // std::cout << "6. Update Patient BirthDate" << "\n";
+    // std::cout << "7. Update Patient Nationality" << "\n";
     std::cout << "0. Exit" << "\n";
 }
 
