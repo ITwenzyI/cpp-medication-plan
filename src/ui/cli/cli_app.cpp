@@ -29,7 +29,7 @@ void CliApp::mainMenuLoop() {
     auto user_choice = readInt(prompt, 0, 3);
 
     while (user_choice.isError()) {
-        ErrorRenderer::printErrorMessage(user_choice.error());
+        ErrorRenderer::printErrorMessage(user_choice.error(), "CliApp::mainMenuLoop");
         user_choice = readInt(prompt, 0, 3);
     }
 
@@ -63,7 +63,7 @@ void CliApp::patientsMenuLoop() {
     auto user_choice = readInt(prompt, 0, 3);
 
     while (user_choice.isError()) {
-        ErrorRenderer::printErrorMessage(user_choice.error());
+        ErrorRenderer::printErrorMessage(user_choice.error(), "CliApp::patientsMenuLoop");
         user_choice = readInt(prompt, 0, 7);
     }
 
