@@ -7,7 +7,7 @@ namespace ui::cli {
 class ErrorRenderer {
   public:
     static std::string_view mapErrorCodeLabel(common::result::ErrorCode code);
-    static void printErrorMessage(const common::result::AppError& error);
+    static void printErrorMessage(const common::result::AppError& error, std::string_view caller);
 
   private:
     static bool shouldPrintContext(common::result::ErrorCode code);

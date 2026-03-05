@@ -41,7 +41,8 @@ std::string_view ErrorRenderer::mapErrorCodeLabel(common::result::ErrorCode code
     return "Unknown error";
 }
 
-void ErrorRenderer::printErrorMessage(const common::result::AppError& error) {
+void ErrorRenderer::printErrorMessage(
+    const common::result::AppError& error, std::string_view caller) {
 
     std::cout << "\nError: " << mapErrorCodeLabel(error.code) << '\n';
     if (error.message.empty()) {
@@ -53,7 +54,8 @@ void ErrorRenderer::printErrorMessage(const common::result::AppError& error) {
     if (shouldPrintContext(error.code)) {
         std::cout << "Details:\n";
         std::cout << "  Code: " << common::result::errorCodeName(error.code) << '\n';
-        std::cout << "  Where: " << error.context << '\n';
+        std::cout << "  Origin: " << error.context << '\n';
+        std::cout << "  Caller: " << caller << '\n';
     }
 
     std::cout << '\n';
