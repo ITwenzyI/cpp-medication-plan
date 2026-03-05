@@ -80,12 +80,16 @@ void CliApp::patientsMenuLoop() {
             cmdFindPatientById();
             break;
         case 4:
+            cmdDeletePatientById();
             break;
         case 5:
+            cmdUpdatePatientName();
             break;
         case 6:
+            cmdUpdatePatientBirthDate();
             break;
         case 7:
+            cmdUpdatePatientNationality();
             break;
     }
 }
@@ -95,10 +99,10 @@ void CliApp::showPatientsMenu() const {
     std::cout << "1. Create Patient" << "\n";
     std::cout << "2. List all Patients" << "\n";
     std::cout << "3. Find Patient by ID" << "\n";
-    // std::cout << "4. Delete Patient by ID" << "\n";
-    // std::cout << "5. Update Patient Name" << "\n";
-    // std::cout << "6. Update Patient BirthDate" << "\n";
-    // std::cout << "7. Update Patient Nationality" << "\n";
+    std::cout << "4. Delete Patient by ID" << "\n";
+    std::cout << "5. Update Patient Name" << "\n";
+    std::cout << "6. Update Patient BirthDate" << "\n";
+    std::cout << "7. Update Patient Nationality" << "\n";
     std::cout << "0. Exit" << "\n";
 }
 
@@ -139,11 +143,24 @@ void CliApp::showMedicationsMenu() const {
     std::cout << "===== Medication Menu =====" << "\n";
     std::cout << "1. Create Medication" << "\n";
     std::cout << "2. List all Medications" << "\n";
-    // std::cout << "3. Find Medication by ID" << "\n";
-    // std::cout << "4. Delete Medication by ID" << "\n";
-    // std::cout << "5. Update Medication Name" << "\n";
-    // std::cout << "6. Update Medication Strength" << "\n";
-    // std::cout << "7. Update Medication Warnings" << "\n";
+    std::cout << "3. Find Medication by ID" << "\n";
+    std::cout << "4. Delete Medication by ID" << "\n";
+    std::cout << "5. Update Medication Name" << "\n";
+    std::cout << "6. Update Medication Strength" << "\n";
+    std::cout << "7. Update Medication Warnings" << "\n";
+    std::cout << "0. Exit" << "\n";
+}
+
+void CliApp::intakePlansMenuLoop() {
+}
+
+void CliApp::showIntakePlansMenu() const {
+    std::cout << "===== IntakePlan Menu =====" << "\n";
+    std::cout << "1. Create IntakePlan" << "\n";
+    std::cout << "2. List IntakePlans by PatientID" << "\n";
+    std::cout << "3. List IntakePlans by MedicationID" << "\n";
+    // std::cout << "4. Delete IntakePlan by ID" << "\n";
+    // std::cout << "5. Update IntakePlan" << "\n";
     std::cout << "0. Exit" << "\n";
 }
 

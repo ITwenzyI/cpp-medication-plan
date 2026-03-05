@@ -30,17 +30,29 @@ class CliApp {
     void showIntakePlansMenu() const;
 
     // Patient Commands
-    void cmdListPatients();
     void cmdCreatePatient();
+    void cmdListPatients();
     void cmdFindPatientById();
+    void cmdDeletePatientById();
+    void cmdUpdatePatientName();
+    void cmdUpdatePatientBirthDate();
+    void cmdUpdatePatientNationality();
 
     // Medications Commands
-    void cmdListMedications();
     void cmdCreateMedication();
+    void cmdListMedications();
+    void cmdFindMedicationById();
+    void cmdDeleteMedicationById();
+    void cmdUpdateMedicationName();
+    void cmdUpdateMedicationStrength();
+    void cmdUpdateMedicationWarnings();
 
     // IntakePlans Commands
-    void cmdListIntakePlans();
     void cmdCreateIntakePlan();
+    void cmdListIntakePlansByPatientId();
+    void cmdListIntakePlansByMedicationId();
+    void cmdDeleteIntakePlanById();
+    void cmdUpdateIntakePlan();
 
     // Utility
     void waitForEnter() const;
