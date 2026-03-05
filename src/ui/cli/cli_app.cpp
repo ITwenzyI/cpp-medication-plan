@@ -1,5 +1,6 @@
 #include "cli_app.hpp"
 #include "common/result/result.hpp"
+#include "error_renderer.hpp"
 #include <iostream>
 #include <string_view>
 
@@ -28,7 +29,7 @@ void CliApp::mainMenuLoop() {
     auto user_choice = readInt(prompt, 0, 3);
 
     while (user_choice.isError()) {
-        printError(user_choice.error());
+        ErrorRenderer::printErrorMessage(user_choice.error());
         user_choice = readInt(prompt, 0, 3);
     }
 
@@ -66,9 +67,6 @@ common::result::Result<int> CliApp::readInt(std::string_view prompt, int min, in
         return common::result::Result<int>::fail(
             common::result::ErrorCode::InvalidArgument, "Invalid Choice", "CliApp::showMainMenu");
     }
-}
-
-void CliApp::printError(const common::result::AppError& error) const {
 }
 
 } // namespace ui::cli
