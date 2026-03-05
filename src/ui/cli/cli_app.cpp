@@ -59,13 +59,13 @@ common::result::Result<int> CliApp::readInt(std::string_view prompt, int min, in
     // If user input is not a int value
     if (!(std::cin >> choice)) {
         return common::result::Result<int>::fail(
-            common::result::ErrorCode::InvalidArgument, "Invalid Choice", "CliApp::showMainMenu");
+            common::result::ErrorCode::InvalidArgument, "Invalid Choice", "CliApp::readInt");
     }
 
     // If user input is not correct for the menu
     if (choice < min || choice > max) {
         return common::result::Result<int>::fail(
-            common::result::ErrorCode::InvalidArgument, "Invalid Choice", "CliApp::showMainMenu");
+            common::result::ErrorCode::InvalidArgument, "Invalid Choice", "CliApp::readInt");
     }
 }
 
