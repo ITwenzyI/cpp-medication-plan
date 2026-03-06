@@ -23,6 +23,8 @@ int CliApp::run() {
     return 0;
 }
 
+// Menu
+
 void CliApp::mainMenuLoop() {
     showMainMenu();
 
@@ -194,13 +196,18 @@ void CliApp::showIntakePlansMenu() const {
     std::cout << "0. Exit" << "\n";
 }
 
+// Patient Commands
+
+void CliApp::cmdCreatePatient() {
+}
+
+// Utility
+
 void CliApp::waitForEnter() const {
     std::cout << "\nPress Enter to continue...";
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     std::cout << '\n';
 }
-
-#include <limits>
 
 common::result::Result<int> CliApp::readInt(std::string_view prompt, int min, int max) const {
     std::cout << prompt;
