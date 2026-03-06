@@ -30,11 +30,11 @@ void CliApp::mainMenuLoop() {
     showMainMenu();
 
     std::string_view prompt = "Enter your Menu choice: ";
-    auto user_choice = readInt(prompt, 0, 3);
+    auto user_choice = input::readMenuChoice(prompt, 0, 3);
 
     while (user_choice.isError()) {
         ErrorRenderer::printErrorMessage(user_choice.error(), "CliApp::mainMenuLoop");
-        user_choice = readInt(prompt, 0, 3);
+        user_choice = input::readMenuChoice(prompt, 0, 3);
     }
 
     switch (user_choice.value()) {
@@ -64,11 +64,11 @@ void CliApp::patientsMenuLoop() {
     showPatientsMenu();
 
     std::string_view prompt = "Choice: ";
-    auto user_choice = readInt(prompt, 0, 3);
+    auto user_choice = input::readMenuChoice(prompt, 0, 3);
 
     while (user_choice.isError()) {
         ErrorRenderer::printErrorMessage(user_choice.error(), "CliApp::patientsMenuLoop");
-        user_choice = readInt(prompt, 0, 7);
+        user_choice = input::readMenuChoice(prompt, 0, 7);
     }
 
     switch (user_choice.value()) {
@@ -114,11 +114,11 @@ void CliApp::medicationsMenuLoop() {
     showMedicationsMenu();
 
     std::string_view prompt = "Choice: ";
-    auto user_choice = readInt(prompt, 0, 3);
+    auto user_choice = input::readMenuChoice(prompt, 0, 3);
 
     while (user_choice.isError()) {
         ErrorRenderer::printErrorMessage(user_choice.error(), "CliApp::medicationsMenuLoop");
-        user_choice = readInt(prompt, 0, 7);
+        user_choice = input::readMenuChoice(prompt, 0, 7);
     }
 
     switch (user_choice.value()) {
@@ -159,11 +159,11 @@ void CliApp::intakePlansMenuLoop() {
     showIntakePlansMenu();
 
     std::string_view prompt = "Choice: ";
-    auto user_choice = ui::cli::readInt(prompt, 0, 3);
+    auto user_choice = ui::cli::input::readMenuChoice(prompt, 0, 3);
 
     while (user_choice.isError()) {
         ErrorRenderer::printErrorMessage(user_choice.error(), "CliApp::intakePlansMenuLoop");
-        user_choice = readInt(prompt, 0, 5);
+        user_choice = input::readMenuChoice(prompt, 0, 5);
     }
 
     switch (user_choice.value()) {
