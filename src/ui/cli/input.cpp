@@ -2,6 +2,7 @@
 #include "common/result/result.hpp"
 #include "common/strings/string_utils.hpp"
 #include "domain/patient.hpp"
+#include "infrastructure/persistence/sqlite/nationality_mapper_sqlite.hpp"
 #include <charconv>
 #include <iostream>
 #include <optional>
@@ -105,6 +106,21 @@ common::result::Result<bool> confirm(std::string_view prompt) {
     }
 }
 
-common::result::Result<domain::Nationality> readNationality(std::string_view prompt) {
+common::result::Result<std::optional<domain::Nationality>> readOptionalNationality(
+    std::string_view prompt) {
+    auto input = readLine(prompt);
+    auto normalized = common::strings::normalize(input);
+
+    if (normalized.empty()) {
+        return common::result::Result<std::optional<domain::Nationality>>::ok(std::nullopt);
+    }
+
+    auto mapped = infrastructure::persistence::sqlite::nationalityFromDbString(normalized);
+    if (mapped.isError()) {
+        return common::result::Result<std::optional<domain::Nationality>>::fail(mapped.error().code,
+            "Invalid nationality code. Use e.g. DE, US, GB.",
+            "ui::cli::input::readOptionalNationality");
+    }
+    return common::result::Result<std::optional<domain::Nationality>>::ok(mapped.value());
 }
 } // namespace ui::cli::input
