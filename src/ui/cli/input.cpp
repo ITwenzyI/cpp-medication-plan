@@ -69,6 +69,24 @@ common::result::Result<int> readInt(std::string_view prompt) {
     return common::result::Result<int>::ok(value);
 }
 
+common::result::Result<int> readMenuChoice(std::string_view prompt, int min, int max) {
+    auto choice = readInt(prompt);
+
+    if (choice.isError()) {
+        return choice;
+    }
+
+    auto value = choice.value();
+
+    if (value < min || value > max) {
+        return common::result::Result<int>::fail(common::result::ErrorCode::InvalidArgument,
+            "Please enter a number between " + std::to_string(min) + " and " + std::to_string(max),
+            "ui::cli::input::readMenuChoice");
+    }
+
+    return common::result::Result<int>::ok(value);
+}
+
 common::result::Result<bool> confirm(std::string_view prompt) {
 }
 
