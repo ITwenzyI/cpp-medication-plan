@@ -1,6 +1,7 @@
 #pragma once
 
 #include "common/result/result.hpp"
+#include "domain/intake_plan.hpp"
 #include "domain/patient.hpp"
 #include <optional>
 #include <string>
@@ -21,4 +22,6 @@ common::result::Result<bool> confirm(std::string_view prompt);
 
 common::result::Result<std::optional<domain::Nationality>> readOptionalNationality(
     std::string_view prompt);
+
+common::result::Result<domain::TimeOfDay> readTimeOfDay(std::string_view prompt);
 } // namespace ui::cli::input

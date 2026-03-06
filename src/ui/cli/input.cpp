@@ -3,6 +3,7 @@
 #include "common/strings/string_utils.hpp"
 #include "domain/patient.hpp"
 #include "infrastructure/persistence/sqlite/nationality_mapper_sqlite.hpp"
+#include "infrastructure/persistence/sqlite/time_of_day_mapper_sqlite.hpp"
 #include <charconv>
 #include <iostream>
 #include <optional>
@@ -122,5 +123,25 @@ common::result::Result<std::optional<domain::Nationality>> readOptionalNationali
             "ui::cli::input::readOptionalNationality");
     }
     return common::result::Result<std::optional<domain::Nationality>>::ok(mapped.value());
+}
+
+common::result::Result<domain::TimeOfDay> readTimeOfDay(std::string_view prompt) {
+    auto input = readLine(prompt);
+    auto trimmed = common::strings::trim(input);
+
+    if (trimmed.empty()) {
+        return common::result::Result<domain::TimeOfDay>::fail(
+            common::result::ErrorCode::InvalidArgument,
+            "Time must not be empty. Use: Morning, Noon, Evening, Night.",
+            "ui::cli::input::readTimeOfDay");
+    }
+
+    auto mapped = infrastructure::persistence::sqlite::timeOfDayFromDbString(trimmed);
+    if (mapped.isError()) {
+        return common::result::Result<domain::TimeOfDay>::fail(mapped.error().code,
+            "Invalid time of day. Use: Morning, Noon, Evening, Night.",
+            "ui::cli::input::readTimeOfDay");
+    }
+    return common::result::Result<domain::TimeOfDay>::ok(mapped.value());
 }
 } // namespace ui::cli::input
