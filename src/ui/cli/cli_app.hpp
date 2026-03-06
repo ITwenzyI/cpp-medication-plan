@@ -56,7 +56,6 @@ class CliApp {
 
     // Utility
     void waitForEnter() const;
-    common::result::Result<int> readInt(std::string_view prompt, int min, int max) const;
 };
 
 } // namespace ui::cli

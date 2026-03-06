@@ -1,6 +1,7 @@
 #include "cli_app.hpp"
 #include "common/result/result.hpp"
 #include "error_renderer.hpp"
+#include "input.hpp"
 #include <iostream>
 #include <limits>
 #include <string_view>
@@ -158,7 +159,7 @@ void CliApp::intakePlansMenuLoop() {
     showIntakePlansMenu();
 
     std::string_view prompt = "Choice: ";
-    auto user_choice = readInt(prompt, 0, 3);
+    auto user_choice = ui::cli::readInt(prompt, 0, 3);
 
     while (user_choice.isError()) {
         ErrorRenderer::printErrorMessage(user_choice.error(), "CliApp::intakePlansMenuLoop");
@@ -207,29 +208,6 @@ void CliApp::waitForEnter() const {
     std::cout << "\nPress Enter to continue...";
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     std::cout << '\n';
-}
-
-common::result::Result<int> CliApp::readInt(std::string_view prompt, int min, int max) const {
-    std::cout << prompt;
-
-    int value;
-
-    if (!(std::cin >> value)) {
-        std::cin.clear();
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-
-        return common::result::Result<int>::fail(common::result::ErrorCode::InvalidArgument,
-            "Please enter a valid number", "CliApp::readInt");
-    }
-
-    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-
-    if (value < min || value > max) {
-        return common::result::Result<int>::fail(common::result::ErrorCode::InvalidArgument,
-            "Choice is outside the allowed range", "CliApp::readInt");
-    }
-
-    return common::result::Result<int>::ok(value);
 }
 
 } // namespace ui::cli

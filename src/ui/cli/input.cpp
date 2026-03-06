@@ -2,6 +2,7 @@
 #include "common/result/result.hpp"
 #include "common/strings/string_utils.hpp"
 #include "domain/patient.hpp"
+#include <charconv>
 #include <iostream>
 #include <optional>
 #include <string>
@@ -39,7 +40,33 @@ std::optional<std::string> readOptionalString(std::string_view prompt) {
     return trimmed;
 }
 
-common::result::Result<int> readInt(std::string_view prompt, int min, int max) {
+common::result::Result<int> readInt(std::string_view prompt) {
+    auto input = readLine(prompt);
+    auto trimmed = common::strings::trim(input);
+
+    if (trimmed.empty()) {
+        return common::result::Result<int>::fail(common::result::ErrorCode::InvalidArgument,
+            "Please enter a valid number", "ui::cli::input::readInt");
+    }
+
+    int value = 0;
+
+    auto [ptr, ec] = std::from_chars(trimmed.data(), trimmed.data() + trimmed.size(), value);
+
+    if (ec == std::errc::invalid_argument) {
+        return common::result::Result<int>::fail(common::result::ErrorCode::InvalidArgument,
+            "Please enter a valid number", "ui::cli::input::readInt");
+    } else if (ec == std::errc::result_out_of_range) {
+        return common::result::Result<int>::fail(common::result::ErrorCode::InvalidArgument,
+            "This number is too large", "ui::cli::input::readInt");
+    }
+
+    if (ptr != trimmed.data() + trimmed.size()) {
+        return common::result::Result<int>::fail(common::result::ErrorCode::InvalidArgument,
+            "Please enter a valid number", "ui::cli::input::readInt");
+    }
+
+    return common::result::Result<int>::ok(value);
 }
 
 common::result::Result<bool> confirm(std::string_view prompt) {
