@@ -88,6 +88,21 @@ common::result::Result<int> readMenuChoice(std::string_view prompt, int min, int
 }
 
 common::result::Result<bool> confirm(std::string_view prompt) {
+    auto new_prompt = std::string(prompt);
+    new_prompt.append(" (y/n): ");
+
+    while (true) {
+        auto input = readLine(new_prompt);
+        auto normalized = common::strings::normalize(input);
+
+        if (normalized == "Y" || normalized == "YES") {
+            return common::result::Result<bool>::ok(true);
+        }
+        if (normalized == "N" || normalized == "NO") {
+            return common::result::Result<bool>::ok(false);
+        }
+        std::cout << "Please enter 'y' or 'n'.\n";
+    }
 }
 
 common::result::Result<domain::Nationality> readNationality(std::string_view prompt) {
