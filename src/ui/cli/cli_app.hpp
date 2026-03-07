@@ -1,5 +1,6 @@
 #pragma once
 #include "common/result/result.hpp"
+#include "error_renderer.hpp"
 #include "infrastructure/db/database.hpp"
 #include "infrastructure/persistence/sqlite/intake_plan_repository_sqlite.hpp"
 #include "infrastructure/persistence/sqlite/medication_repository_sqlite.hpp"
@@ -56,6 +57,17 @@ class CliApp {
 
     // Utility
     void waitForEnter() const;
+
+    template <typename T>
+    bool handleResultError(const common::result::Result<T>& result, std::string_view caller) {
+        if (result.isError()) {
+            ErrorRenderer::printErrorMessage(result.error(), caller);
+            waitForEnter();
+            return true;
+        }
+
+        return false;
+    }
 };
 
 } // namespace ui::cli
