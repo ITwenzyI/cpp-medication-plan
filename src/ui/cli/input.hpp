@@ -20,6 +20,8 @@ common::result::Result<int> readMenuChoice(std::string_view prompt, int min, int
 
 common::result::Result<bool> confirm(std::string_view prompt);
 
+common::result::Result<std::optional<std::string>> readOptionalBirthDate(std::string_view prompt);
+
 common::result::Result<std::optional<domain::Nationality>> readOptionalNationality(
     std::string_view prompt);
 
