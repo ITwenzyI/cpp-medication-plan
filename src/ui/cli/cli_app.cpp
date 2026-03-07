@@ -2,17 +2,11 @@
 #include "common/result/result.hpp"
 #include "error_renderer.hpp"
 #include "input.hpp"
+#include "patient_printer.hpp"
 #include <iostream>
 #include <limits>
+#include <string>
 #include <string_view>
-
-// CliApp ctor run()
-
-//     mainMenuLoop() showMainMenu() patientsMenuLoop()...
-
-//     cmdListPatients() cmdCreatePatient()...
-
-//     readInt() waitForEnter()
 
 namespace ui::cli {
 CliApp::CliApp(infrastructure::db::Database& db)
@@ -200,6 +194,51 @@ void CliApp::showIntakePlansMenu() const {
 // Patient Commands
 
 void CliApp::cmdCreatePatient() {
+    std::cout << "===== Create Patient =====" << "\n\n";
+
+    auto name = input::readNonEmpty("Enter the Name of the Patient: ");
+    if (name.isError()) {
+        ErrorRenderer::printErrorMessage(name.error(), "CliApp::cmdCreatePatient");
+        waitForEnter();
+        return;
+    }
+
+    auto birth_date = input::readOptionalBirthDate("Enter the BirthDate of the Patient: ");
+    if (birth_date.isError()) {
+        ErrorRenderer::printErrorMessage(birth_date.error(), "CliApp::cmdCreatePatient");
+        waitForEnter();
+        return;
+    }
+
+    auto nationality = input::readOptionalNationality("Enter the Nationality of the Patient: ");
+    if (nationality.isError()) {
+        ErrorRenderer::printErrorMessage(nationality.error(), "CliApp::cmdCreatePatient");
+        waitForEnter();
+        return;
+    }
+
+    domain::Patient patient;
+
+    patient.id = 0;
+    patient.name = name.value();
+    auto birthDateOpt = birth_date.value();
+    if (birthDateOpt) {
+        patient.birth_date = *birthDateOpt;
+    }
+    auto nationalityOpt = nationality.value();
+    if (nationalityOpt) {
+        patient.nationality = *nationalityOpt;
+    }
+
+    auto result = patientRepo_.createPatient(patient);
+    if (result.isError()) {
+        ErrorRenderer::printErrorMessage(result.error(), "CliApp::cmdCreatePatient");
+        waitForEnter();
+        return;
+    }
+    std::cout << "Patient created successfully (ID: " << std::to_string(result.value().id)
+              << ").\n";
+    waitForEnter();
 }
 
 // Utility
