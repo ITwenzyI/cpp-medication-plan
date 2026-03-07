@@ -197,25 +197,16 @@ void CliApp::cmdCreatePatient() {
     std::cout << "===== Create Patient =====" << "\n\n";
 
     auto name = input::readNonEmpty("Enter the Name of the Patient: ");
-    if (name.isError()) {
-        ErrorRenderer::printErrorMessage(name.error(), "CliApp::cmdCreatePatient");
-        waitForEnter();
+    if (handleResultError(name, "CliApp::cmdCreatePatient"))
         return;
-    }
 
     auto birth_date = input::readOptionalBirthDate("Enter the BirthDate of the Patient: ");
-    if (birth_date.isError()) {
-        ErrorRenderer::printErrorMessage(birth_date.error(), "CliApp::cmdCreatePatient");
-        waitForEnter();
+    if (handleResultError(birth_date, "CliApp::cmdCreatePatient"))
         return;
-    }
 
     auto nationality = input::readOptionalNationality("Enter the Nationality of the Patient: ");
-    if (nationality.isError()) {
-        ErrorRenderer::printErrorMessage(nationality.error(), "CliApp::cmdCreatePatient");
-        waitForEnter();
+    if (handleResultError(nationality, "CliApp::cmdCreatePatient"))
         return;
-    }
 
     domain::Patient patient;
 
@@ -231,11 +222,8 @@ void CliApp::cmdCreatePatient() {
     }
 
     auto result = patientRepo_.createPatient(patient);
-    if (result.isError()) {
-        ErrorRenderer::printErrorMessage(result.error(), "CliApp::cmdCreatePatient");
-        waitForEnter();
+    if (handleResultError(result, "CliApp::cmdCreatePatient"))
         return;
-    }
     std::cout << "Patient created successfully (ID: " << std::to_string(result.value().id)
               << ").\n";
     waitForEnter();
