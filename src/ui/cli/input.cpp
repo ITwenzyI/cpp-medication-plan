@@ -1,6 +1,7 @@
 #include "input.hpp"
 #include "common/result/result.hpp"
 #include "common/strings/string_utils.hpp"
+#include "common/validation/birth_date_validation.hpp"
 #include "domain/patient.hpp"
 #include "infrastructure/persistence/sqlite/nationality_mapper_sqlite.hpp"
 #include "infrastructure/persistence/sqlite/time_of_day_mapper_sqlite.hpp"
@@ -105,6 +106,22 @@ common::result::Result<bool> confirm(std::string_view prompt) {
         }
         std::cout << "Please enter 'y' or 'n'.\n";
     }
+}
+
+common::result::Result<std::optional<std::string>> readOptionalBirthDate(std::string_view prompt) {
+    auto input = readLine(prompt);
+    auto trimmed = common::strings::trim(input);
+
+    if (trimmed.empty()) {
+        return common::result::Result<std::optional<std::string>>::ok(std::nullopt);
+    }
+
+    if (!common::validation::isValidBirthDate(trimmed)) {
+        return common::result::Result<std::optional<std::string>>::fail(
+            common::result::ErrorCode::InvalidArgument, "Invalid birth date. Format: YYYY-MM-DD.",
+            "ui::cli::input::readOptionalBirthDate");
+    }
+    return common::result::Result<std::optional<std::string>>::ok(trimmed);
 }
 
 common::result::Result<std::optional<domain::Nationality>> readOptionalNationality(
