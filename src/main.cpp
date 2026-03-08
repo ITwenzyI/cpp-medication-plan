@@ -1,8 +1,11 @@
 #include "domain/patient.hpp"
 #include "infrastructure/db/database.hpp"
 #include "infrastructure/db/init_db.hpp"
+#include "infrastructure/persistence/sqlite/intake_plan_repository_sqlite.hpp"
+#include "infrastructure/persistence/sqlite/medication_repository_sqlite.hpp"
 #include "infrastructure/persistence/sqlite/patient_repository_sqlite.hpp"
 #include "ui/cli/patient_printer.hpp"
+#include "ui/cli/printer/medication_printer.hpp"
 
 #include <iostream>
 #include <stdexcept>
@@ -31,7 +34,25 @@ int main() {
         // ui::cli::printPatientTableHeader();
         // ui::cli::printPatientRow(p1);
         // ui::cli::printPatientRow(p2);
-        ui::cli::printPatientsTable(allPatients.value());
+        // ui::cli::printPatientsTable(allPatients.value());
+
+        infrastructure::persistence::sqlite::MedicationRepositorySqlite medication_repository(db);
+
+        domain::Medication seed_medication{0, "Ibuprofen", "400mg",
+            "Do not use if you have stomach ulcers or severe kidney problems."};
+        domain::Medication secondary_medication{
+            0, "Paracetamol", "500 mg", "Do not exceed 4,000 mg in 24 hours"};
+
+        // auto m1_created = medication_repository.createMedication(seed_medication);
+        // auto m2_created = medication_repository.createMedication(secondary_medication);
+
+        auto allMedications = medication_repository.getAllMedications();
+
+        // ui::cli::printer::printMedicationDetails(seed_medication);
+        // ui::cli::printer::printMedicationTableHeader();
+        // ui::cli::printer::printMedicationRow(seed_medication);
+        // ui::cli::printer::printMedicationRow(secondary_medication);
+        ui::cli::printer::printMedicationsTable(allMedications.value());
 
     } catch (const std::exception& e) {
         std::cerr << e.what() << std::endl;
