@@ -48,6 +48,11 @@ void printMedicationRow(const domain::Medication& medication) {
 }
 
 void printMedicationsTable(const std::vector<domain::Medication>& medications) {
+    printMedicationTableHeader();
+
+    for (auto medication : medications) {
+        printMedicationRow(medication);
+    }
 }
 
 void printMedicationDetails(const domain::Medication& medication) {
