@@ -25,9 +25,9 @@ std::string patientNationalityToString(const domain::Patient& patient) {
 }
 
 constexpr int titleWidth = 25;
-constexpr int idWidth = 6;
-constexpr int nameWidth = 20;
-constexpr int birthDateWidth = 14;
+constexpr int idWidth = 8;
+constexpr int nameWidth = 24;
+constexpr int birthDateWidth = 16;
 constexpr int nationalityWidth = 12;
 constexpr int seperation_line = 60;
 
@@ -54,6 +54,11 @@ void printPatientTableHeader() {
 }
 
 void printPatientRow(const domain::Patient& patient) {
+    const std::string nationality = patientNationalityToString(patient);
+
+    std::cout << std::left << std::setw(idWidth) << patient.id << std::setw(nameWidth)
+              << patient.name << std::setw(birthDateWidth) << formatField(patient.birth_date)
+              << std::setw(nationalityWidth) << formatField(nationality) << "\n";
 }
 
 void printPatientsTable(const std::vector<domain::Patient>& patients) {
