@@ -62,6 +62,10 @@ void printPatientRow(const domain::Patient& patient) {
 }
 
 void printPatientsTable(const std::vector<domain::Patient>& patients) {
+    printPatientTableHeader();
+    for (auto patient : patients) {
+        printPatientRow(patient);
+    }
 }
 
 void printPatientDetails(const domain::Patient& patient) {
