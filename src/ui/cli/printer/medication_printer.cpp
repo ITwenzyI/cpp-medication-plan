@@ -15,7 +15,7 @@ std::string formatField(const std::string& field) {
 
 constexpr int titleWidth = 25;
 constexpr int idWidth = 8;
-constexpr int nameWidth = 15;
+constexpr int nameWidth = 18;
 constexpr int strengthWidth = 14;
 constexpr int warningsWidth = 25;
 constexpr int seperation_line = 64;
@@ -42,6 +42,9 @@ void printMedicationTableHeader() {
 }
 
 void printMedicationRow(const domain::Medication& medication) {
+    std::cout << std::left << std::setw(idWidth) << medication.id << std::setw(nameWidth)
+              << medication.name << std::setw(strengthWidth) << medication.strength
+              << std::setw(warningsWidth) << medication.warnings << "\n";
 }
 
 void printMedicationsTable(const std::vector<domain::Medication>& medications) {
