@@ -3,7 +3,12 @@
 #include <vector>
 
 namespace ui::cli {
-void printPatient(const domain::Patient& p);
 
-void printPatients(const std::vector<domain::Patient>& patients);
+void printPatientTableHeader();
+
+void printPatientRow(const domain::Patient& patient);
+
+void printPatientsTable(const std::vector<domain::Patient>& patients);
+
+void printPatientDetails(const domain::Patient& patient);
 } // namespace ui::cli
