@@ -18,17 +18,34 @@ std::string intakePlanTimeOfDayToString(const domain::IntakePlan& intake_plan) {
     return infrastructure::persistence::sqlite::timeOfDayToDbString(intake_plan.time_of_day);
 }
 
-constexpr int title_width = 25;
-constexpr int patient_id_width = 8;
-constexpr int medication_id_width = 8;
+constexpr int title_width = 26;
+constexpr int id_width = 8;
+constexpr int patient_id_width = 15;
+constexpr int medication_id_width = 18;
 constexpr int dose_width = 14;
 constexpr int time_of_day_width = 16;
-constexpr int seperation_line = 55;
+constexpr int seperation_line = 66;
 } // namespace
 
 namespace ui::cli::printer {
 
 void printIntakePlanTableHeader() {
+    for (int i = 0; i < title_width; i++) {
+        std::cout << "=";
+    }
+    std::cout << " IntakePlans ";
+    for (int i = 0; i < title_width; i++) {
+        std::cout << "=";
+    }
+    std::cout << "\n\n";
+    std::cout << std::left << std::setw(id_width) << "ID" << std::setw(patient_id_width)
+              << "PatientID" << std::setw(medication_id_width) << "MedicationID"
+              << std::setw(dose_width) << "Dose" << std::setw(time_of_day_width) << "TimeOfDay"
+              << "\n";
+    for (int i = 0; i < seperation_line; i++) {
+        std::cout << "-";
+    }
+    std::cout << "\n";
 }
 
 void printIntakePlanRow(const domain::IntakePlan& intake_plan) {
