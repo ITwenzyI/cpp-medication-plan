@@ -21,4 +21,20 @@ constexpr int warningsWidth = 25;
 constexpr int seperation_line = 60;
 } // namespace
 
-namespace ui::cli::printer {}
+namespace ui::cli::printer {
+
+void printMedicationTableHeader() {
+}
+
+void printMedicationRow(const domain::Medication& medication) {
+}
+
+void printMedicationsTable(const std::vector<domain::Medication>& medications) {
+}
+
+void printMedicationDetails(const domain::Medication& medication) {
+    std::cout << "ID: " << medication.id << "\nName: " << medication.name
+              << "\nStrength: " << formatField(medication.strength)
+              << "\nWarnings: " << formatField(medication.warnings) << "\n";
+}
+} // namespace ui::cli::printer
