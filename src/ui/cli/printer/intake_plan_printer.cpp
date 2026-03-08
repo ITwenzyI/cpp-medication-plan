@@ -58,6 +58,11 @@ void printIntakePlanRow(const domain::IntakePlan& intake_plan) {
 }
 
 void printIntakePlansTable(const std::vector<domain::IntakePlan>& intake_plans) {
+    printIntakePlanTableHeader();
+
+    for (auto intake_plan : intake_plans) {
+        printIntakePlanRow(intake_plan);
+    }
 }
 
 void printIntakePlanDetails(const domain::IntakePlan& intake_plan) {
