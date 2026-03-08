@@ -24,16 +24,33 @@ std::string patientNationalityToString(const domain::Patient& patient) {
     }
 }
 
-constexpr int idWidth = 2;
-constexpr int nameWidth = 12;
-constexpr int birthDateWidth = 10;
-constexpr int nationalityWidth = 5;
+constexpr int titleWidth = 25;
+constexpr int idWidth = 6;
+constexpr int nameWidth = 20;
+constexpr int birthDateWidth = 14;
+constexpr int nationalityWidth = 12;
+constexpr int seperation_line = 60;
 
 } // namespace
 
 namespace ui::cli {
 
 void printPatientTableHeader() {
+    for (int i = 0; i < titleWidth; i++) {
+        std::cout << "=";
+    }
+    std::cout << " Patients ";
+    for (int i = 0; i < titleWidth; i++) {
+        std::cout << "=";
+    }
+    std::cout << "\n\n";
+    std::cout << std::left << std::setw(idWidth) << "ID" << std::setw(nameWidth) << "Name"
+              << std::setw(birthDateWidth) << "BirthDate" << std::setw(nationalityWidth)
+              << "Nationality" << "\n";
+    for (int i = 0; i < seperation_line; i++) {
+        std::cout << "-";
+    }
+    std::cout << "\n";
 }
 
 void printPatientRow(const domain::Patient& patient) {
