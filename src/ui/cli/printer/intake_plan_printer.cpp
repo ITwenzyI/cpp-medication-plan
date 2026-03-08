@@ -49,6 +49,12 @@ void printIntakePlanTableHeader() {
 }
 
 void printIntakePlanRow(const domain::IntakePlan& intake_plan) {
+    const std::string time_of_day = intakePlanTimeOfDayToString(intake_plan);
+
+    std::cout << std::left << std::setw(id_width) << intake_plan.id << std::setw(patient_id_width)
+              << intake_plan.patient_id << std::setw(medication_id_width)
+              << intake_plan.medication_id << std::setw(dose_width) << intake_plan.dose
+              << std::setw(time_of_day_width) << time_of_day << "\n";
 }
 
 void printIntakePlansTable(const std::vector<domain::IntakePlan>& intake_plans) {
