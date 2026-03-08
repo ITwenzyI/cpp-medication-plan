@@ -2,7 +2,8 @@
 #include "common/result/result.hpp"
 #include "error_renderer.hpp"
 #include "input.hpp"
-#include "patient_printer.hpp"
+#include "printer/medication_printer.hpp"
+#include "printer/patient_printer.hpp"
 #include <iostream>
 #include <limits>
 #include <string>

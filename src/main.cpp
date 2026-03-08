@@ -4,8 +4,8 @@
 #include "infrastructure/persistence/sqlite/intake_plan_repository_sqlite.hpp"
 #include "infrastructure/persistence/sqlite/medication_repository_sqlite.hpp"
 #include "infrastructure/persistence/sqlite/patient_repository_sqlite.hpp"
-#include "ui/cli/patient_printer.hpp"
 #include "ui/cli/printer/medication_printer.hpp"
+#include "ui/cli/printer/patient_printer.hpp"
 
 #include <iostream>
 #include <stdexcept>
@@ -31,10 +31,10 @@ int main() {
         // auto p4_created = repo.createPatient(p4);
         auto allPatients = repo.getAllPatients();
 
-        // ui::cli::printPatientTableHeader();
-        // ui::cli::printPatientRow(p1);
-        // ui::cli::printPatientRow(p2);
-        // ui::cli::printPatientsTable(allPatients.value());
+        // ui::cli::printer::printPatientTableHeader();
+        // ui::cli::printer::printPatientRow(p1);
+        // ui::cli::printer::printPatientRow(p2);
+        // ui::cli::printer::printPatientsTable(allPatients.value());
 
         infrastructure::persistence::sqlite::MedicationRepositorySqlite medication_repository(db);
 
