@@ -28,7 +28,10 @@ int main() {
         // auto p4_created = repo.createPatient(p4);
         auto allPatients = repo.getAllPatients();
 
-        ui::cli::printPatients(allPatients.value());
+        // ui::cli::printPatientTableHeader();
+        // ui::cli::printPatientRow(p1);
+        // ui::cli::printPatientRow(p2);
+        ui::cli::printPatientsTable(allPatients.value());
 
     } catch (const std::exception& e) {
         std::cerr << e.what() << std::endl;
