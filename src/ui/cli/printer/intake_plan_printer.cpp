@@ -38,6 +38,12 @@ void printIntakePlansTable(const std::vector<domain::IntakePlan>& intake_plans) 
 }
 
 void printIntakePlanDetails(const domain::IntakePlan& intake_plan) {
+    const std::string time_of_day = intakePlanTimeOfDayToString(intake_plan);
+
+    std::cout << "ID: " << intake_plan.id << "\nPatientID: " << intake_plan.patient_id
+              << "\nMedicationID: " << intake_plan.medication_id << "\nDose: " << intake_plan.dose
+              << "\nTimeOfDay: " << formatField(time_of_day)
+              << "\nNotes: " << formatField(intake_plan.notes) << "\n";
 }
 
 } // namespace ui::cli::printer
