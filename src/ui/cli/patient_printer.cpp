@@ -1,11 +1,13 @@
 #include "patient_printer.hpp"
 #include "infrastructure/persistence/sqlite/nationality_mapper_sqlite.hpp"
+#include <iomanip>
 #include <iostream>
 #include <string>
 #include <vector>
 
-namespace ui::cli {
-static std::string formatField(const std::string& field) {
+namespace {
+
+std::string formatField(const std::string& field) {
     if (field.empty()) {
         return "-";
     }
@@ -13,19 +15,65 @@ static std::string formatField(const std::string& field) {
     return field;
 }
 
-void printPatient(const domain::Patient& p) {
-    const std::string nationality = p.nationality.has_value()
-        ? infrastructure::persistence::sqlite::nationalityToDbString(p.nationality.value())
-        : "";
-
-    std::cout << "ID: " << p.id << " Name: " << formatField(p.name)
-              << " BirthDate: " << formatField(p.birth_date)
-              << " Nationality: " << formatField(nationality) << "\n";
-}
-
-void printPatients(const std::vector<domain::Patient>& patients) {
-    for (const domain::Patient& p : patients) {
-        printPatient(p);
+std::string patientNationalityToString(const domain::Patient& patient) {
+    if (patient.nationality.has_value()) {
+        return infrastructure::persistence::sqlite::nationalityToDbString(
+            patient.nationality.value());
+    } else {
+        return "";
     }
 }
+
+constexpr int titleWidth = 25;
+constexpr int idWidth = 8;
+constexpr int nameWidth = 24;
+constexpr int birthDateWidth = 16;
+constexpr int nationalityWidth = 12;
+constexpr int seperation_line = 60;
+
+} // namespace
+
+namespace ui::cli {
+
+void printPatientTableHeader() {
+    for (int i = 0; i < titleWidth; i++) {
+        std::cout << "=";
+    }
+    std::cout << " Patients ";
+    for (int i = 0; i < titleWidth; i++) {
+        std::cout << "=";
+    }
+    std::cout << "\n\n";
+    std::cout << std::left << std::setw(idWidth) << "ID" << std::setw(nameWidth) << "Name"
+              << std::setw(birthDateWidth) << "BirthDate" << std::setw(nationalityWidth)
+              << "Nationality" << "\n";
+    for (int i = 0; i < seperation_line; i++) {
+        std::cout << "-";
+    }
+    std::cout << "\n";
+}
+
+void printPatientRow(const domain::Patient& patient) {
+    const std::string nationality = patientNationalityToString(patient);
+
+    std::cout << std::left << std::setw(idWidth) << patient.id << std::setw(nameWidth)
+              << patient.name << std::setw(birthDateWidth) << formatField(patient.birth_date)
+              << std::setw(nationalityWidth) << formatField(nationality) << "\n";
+}
+
+void printPatientsTable(const std::vector<domain::Patient>& patients) {
+    printPatientTableHeader();
+    for (auto patient : patients) {
+        printPatientRow(patient);
+    }
+}
+
+void printPatientDetails(const domain::Patient& patient) {
+    const std::string nationality = patientNationalityToString(patient);
+
+    std::cout << "ID: " << patient.id << "\nName: " << formatField(patient.name)
+              << "\nBirthDate: " << formatField(patient.birth_date)
+              << "\nNationality: " << formatField(nationality) << "\n";
+}
+
 } // namespace ui::cli
