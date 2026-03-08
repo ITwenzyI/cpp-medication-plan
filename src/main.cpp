@@ -4,6 +4,7 @@
 #include "infrastructure/persistence/sqlite/intake_plan_repository_sqlite.hpp"
 #include "infrastructure/persistence/sqlite/medication_repository_sqlite.hpp"
 #include "infrastructure/persistence/sqlite/patient_repository_sqlite.hpp"
+#include "ui/cli/printer/intake_plan_printer.hpp"
 #include "ui/cli/printer/medication_printer.hpp"
 #include "ui/cli/printer/patient_printer.hpp"
 
@@ -52,7 +53,9 @@ int main() {
         // ui::cli::printer::printMedicationTableHeader();
         // ui::cli::printer::printMedicationRow(seed_medication);
         // ui::cli::printer::printMedicationRow(secondary_medication);
-        ui::cli::printer::printMedicationsTable(allMedications.value());
+        // ui::cli::printer::printMedicationsTable(allMedications.value());
+
+        // ui::cli::printer::printIntakePlanTableHeader();
 
     } catch (const std::exception& e) {
         std::cerr << e.what() << std::endl;
