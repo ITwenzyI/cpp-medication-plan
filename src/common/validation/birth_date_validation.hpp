@@ -7,7 +7,7 @@
 namespace common::validation {
 
 // Format: YYYY-MM-DD
-bool isValidBirthDate(std::string_view sv) {
+inline bool isValidBirthDate(std::string_view sv) {
     if (isEmptyOrBlank(sv)) {
         return false;
     }

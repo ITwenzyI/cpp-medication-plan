@@ -75,21 +75,21 @@ void CliApp::patientsMenuLoop() {
         case 2:
             cmdListPatients();
             break;
-        case 3:
-            cmdFindPatientById();
-            break;
-        case 4:
-            cmdDeletePatientById();
-            break;
-        case 5:
-            cmdUpdatePatientName();
-            break;
-        case 6:
-            cmdUpdatePatientBirthDate();
-            break;
-        case 7:
-            cmdUpdatePatientNationality();
-            break;
+            // case 3:
+            //     cmdFindPatientById();
+            //     break;
+            // case 4:
+            //     cmdDeletePatientById();
+            //     break;
+            // case 5:
+            //     cmdUpdatePatientName();
+            //     break;
+            // case 6:
+            //     cmdUpdatePatientBirthDate();
+            //     break;
+            // case 7:
+            //     cmdUpdatePatientNationality();
+            //     break;
     }
 }
 
@@ -119,12 +119,12 @@ void CliApp::medicationsMenuLoop() {
     switch (user_choice.value()) {
         case 0:
             return;
-        case 1:
-            cmdCreateMedication();
-            break;
-        case 2:
-            cmdListMedications();
-            break;
+        // case 1:
+        //     cmdCreateMedication();
+        //     break;
+        // case 2:
+        //     cmdListMedications();
+        //     break;
         case 3:
             break;
         case 4:
@@ -165,19 +165,19 @@ void CliApp::intakePlansMenuLoop() {
         case 0:
             return;
         case 1:
-            cmdCreateIntakePlan();
-            break;
-        case 2:
-            cmdListIntakePlansByPatientId();
-            break;
-        case 3:
-            cmdListIntakePlansByMedicationId();
-            break;
-        case 4:
-            cmdDeleteIntakePlanById();
-            break;
-        case 5:
-            cmdUpdateIntakePlan();
+            //     cmdCreateIntakePlan();
+            //     break;
+            // case 2:
+            //     cmdListIntakePlansByPatientId();
+            //     break;
+            // case 3:
+            //     cmdListIntakePlansByMedicationId();
+            //     break;
+            // case 4:
+            //     cmdDeleteIntakePlanById();
+            //     break;
+            // case 5:
+            //     cmdUpdateIntakePlan();
             break;
     }
 }
@@ -227,6 +227,22 @@ void CliApp::cmdCreatePatient() {
         return;
     std::cout << "Patient created successfully (ID: " << std::to_string(result.value().id)
               << ").\n";
+    waitForEnter();
+}
+
+void CliApp::cmdListPatients() {
+
+    auto all_patients = patientRepo_.getAllPatients();
+
+    if (handleResultError(all_patients, "CliApp::cmdListPatients"))
+        return;
+
+    if (all_patients.value().empty()) {
+        std::cout << "No patients found.";
+        return;
+    }
+
+    printPatientsTable(all_patients.value());
     waitForEnter();
 }
 
