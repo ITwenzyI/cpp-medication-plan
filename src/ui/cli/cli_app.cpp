@@ -78,9 +78,9 @@ void CliApp::patientsMenuLoop() {
             case 2:
                 cmdListPatients();
                 break;
-                // case 3:
-                //     cmdFindPatientById();
-                //     break;
+            case 3:
+                cmdFindPatientById();
+                break;
                 // case 4:
                 //     cmdDeletePatientById();
                 //     break;
@@ -251,6 +251,22 @@ void CliApp::cmdListPatients() {
     }
 
     printPatientsTable(all_patients.value());
+    waitForEnter();
+}
+
+void CliApp::cmdFindPatientById() {
+    std::cout << "===== Find Patient By ID =====" << "\n\n";
+
+    auto id = input::readInt("Enter the ID of the Patient: ");
+    if (handleResultError(id, "CliApp::cmdFindPatientById"))
+        return;
+
+    auto found_patient = patientRepo_.findPatientById(id.value());
+
+    if (handleResultError(found_patient, "CliApp::cmdFindPatientById"))
+        return;
+
+    printPatientDetails(found_patient.value());
     waitForEnter();
 }
 
