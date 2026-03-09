@@ -22,28 +22,30 @@ int CliApp::run() {
 // Menu
 
 void CliApp::mainMenuLoop() {
-    showMainMenu();
+    while (true) {
+        showMainMenu();
 
-    std::string_view prompt = "Enter your Menu choice: ";
-    auto user_choice = input::readMenuChoice(prompt, 0, 3);
+        std::string_view prompt = "Enter your Menu choice: ";
+        auto user_choice = input::readMenuChoice(prompt, 0, 3);
 
-    while (user_choice.isError()) {
-        ErrorRenderer::printErrorMessage(user_choice.error(), "CliApp::mainMenuLoop");
-        user_choice = input::readMenuChoice(prompt, 0, 3);
-    }
+        while (user_choice.isError()) {
+            ErrorRenderer::printErrorMessage(user_choice.error(), "CliApp::mainMenuLoop");
+            user_choice = input::readMenuChoice(prompt, 0, 3);
+        }
 
-    switch (user_choice.value()) {
-        case 0:
-            return;
-        case 1:
-            patientsMenuLoop();
-            break;
-        case 2:
-            medicationsMenuLoop();
-            break;
-        case 3:
-            intakePlansMenuLoop();
-            break;
+        switch (user_choice.value()) {
+            case 0:
+                return;
+            case 1:
+                patientsMenuLoop();
+                break;
+            case 2:
+                medicationsMenuLoop();
+                break;
+            case 3:
+                intakePlansMenuLoop();
+                break;
+        }
     }
 }
 
@@ -56,40 +58,42 @@ void CliApp::showMainMenu() const {
 }
 
 void CliApp::patientsMenuLoop() {
-    showPatientsMenu();
+    while (true) {
+        showPatientsMenu();
 
-    std::string_view prompt = "Choice: ";
-    auto user_choice = input::readMenuChoice(prompt, 0, 3);
+        std::string_view prompt = "Choice: ";
+        auto user_choice = input::readMenuChoice(prompt, 0, 3);
 
-    while (user_choice.isError()) {
-        ErrorRenderer::printErrorMessage(user_choice.error(), "CliApp::patientsMenuLoop");
-        user_choice = input::readMenuChoice(prompt, 0, 7);
-    }
+        while (user_choice.isError()) {
+            ErrorRenderer::printErrorMessage(user_choice.error(), "CliApp::patientsMenuLoop");
+            user_choice = input::readMenuChoice(prompt, 0, 7);
+        }
 
-    switch (user_choice.value()) {
-        case 0:
-            return;
-        case 1:
-            cmdCreatePatient();
-            break;
-        case 2:
-            cmdListPatients();
-            break;
-            // case 3:
-            //     cmdFindPatientById();
-            //     break;
-            // case 4:
-            //     cmdDeletePatientById();
-            //     break;
-            // case 5:
-            //     cmdUpdatePatientName();
-            //     break;
-            // case 6:
-            //     cmdUpdatePatientBirthDate();
-            //     break;
-            // case 7:
-            //     cmdUpdatePatientNationality();
-            //     break;
+        switch (user_choice.value()) {
+            case 0:
+                return;
+            case 1:
+                cmdCreatePatient();
+                break;
+            case 2:
+                cmdListPatients();
+                break;
+                // case 3:
+                //     cmdFindPatientById();
+                //     break;
+                // case 4:
+                //     cmdDeletePatientById();
+                //     break;
+                // case 5:
+                //     cmdUpdatePatientName();
+                //     break;
+                // case 6:
+                //     cmdUpdatePatientBirthDate();
+                //     break;
+                // case 7:
+                //     cmdUpdatePatientNationality();
+                //     break;
+        }
     }
 }
 
@@ -102,39 +106,41 @@ void CliApp::showPatientsMenu() const {
     std::cout << "5. Update Patient Name" << "\n";
     std::cout << "6. Update Patient BirthDate" << "\n";
     std::cout << "7. Update Patient Nationality" << "\n";
-    std::cout << "0. Exit" << "\n";
+    std::cout << "0. Back" << "\n";
 }
 
 void CliApp::medicationsMenuLoop() {
-    showMedicationsMenu();
+    while (true) {
+        showMedicationsMenu();
 
-    std::string_view prompt = "Choice: ";
-    auto user_choice = input::readMenuChoice(prompt, 0, 3);
+        std::string_view prompt = "Choice: ";
+        auto user_choice = input::readMenuChoice(prompt, 0, 3);
 
-    while (user_choice.isError()) {
-        ErrorRenderer::printErrorMessage(user_choice.error(), "CliApp::medicationsMenuLoop");
-        user_choice = input::readMenuChoice(prompt, 0, 7);
-    }
+        while (user_choice.isError()) {
+            ErrorRenderer::printErrorMessage(user_choice.error(), "CliApp::medicationsMenuLoop");
+            user_choice = input::readMenuChoice(prompt, 0, 7);
+        }
 
-    switch (user_choice.value()) {
-        case 0:
-            return;
-        // case 1:
-        //     cmdCreateMedication();
-        //     break;
-        // case 2:
-        //     cmdListMedications();
-        //     break;
-        case 3:
-            break;
-        case 4:
-            break;
-        case 5:
-            break;
-        case 6:
-            break;
-        case 7:
-            break;
+        switch (user_choice.value()) {
+            case 0:
+                return;
+            // case 1:
+            //     cmdCreateMedication();
+            //     break;
+            // case 2:
+            //     cmdListMedications();
+            //     break;
+            case 3:
+                break;
+            case 4:
+                break;
+            case 5:
+                break;
+            case 6:
+                break;
+            case 7:
+                break;
+        }
     }
 }
 
@@ -147,38 +153,40 @@ void CliApp::showMedicationsMenu() const {
     std::cout << "5. Update Medication Name" << "\n";
     std::cout << "6. Update Medication Strength" << "\n";
     std::cout << "7. Update Medication Warnings" << "\n";
-    std::cout << "0. Exit" << "\n";
+    std::cout << "0. Back" << "\n";
 }
 
 void CliApp::intakePlansMenuLoop() {
-    showIntakePlansMenu();
+    while (true) {
+        showIntakePlansMenu();
 
-    std::string_view prompt = "Choice: ";
-    auto user_choice = ui::cli::input::readMenuChoice(prompt, 0, 3);
+        std::string_view prompt = "Choice: ";
+        auto user_choice = ui::cli::input::readMenuChoice(prompt, 0, 3);
 
-    while (user_choice.isError()) {
-        ErrorRenderer::printErrorMessage(user_choice.error(), "CliApp::intakePlansMenuLoop");
-        user_choice = input::readMenuChoice(prompt, 0, 5);
-    }
+        while (user_choice.isError()) {
+            ErrorRenderer::printErrorMessage(user_choice.error(), "CliApp::intakePlansMenuLoop");
+            user_choice = input::readMenuChoice(prompt, 0, 5);
+        }
 
-    switch (user_choice.value()) {
-        case 0:
-            return;
-        case 1:
-            //     cmdCreateIntakePlan();
-            //     break;
-            // case 2:
-            //     cmdListIntakePlansByPatientId();
-            //     break;
-            // case 3:
-            //     cmdListIntakePlansByMedicationId();
-            //     break;
-            // case 4:
-            //     cmdDeleteIntakePlanById();
-            //     break;
-            // case 5:
-            //     cmdUpdateIntakePlan();
-            break;
+        switch (user_choice.value()) {
+            case 0:
+                return;
+            case 1:
+                //     cmdCreateIntakePlan();
+                //     break;
+                // case 2:
+                //     cmdListIntakePlansByPatientId();
+                //     break;
+                // case 3:
+                //     cmdListIntakePlansByMedicationId();
+                //     break;
+                // case 4:
+                //     cmdDeleteIntakePlanById();
+                //     break;
+                // case 5:
+                //     cmdUpdateIntakePlan();
+                break;
+        }
     }
 }
 
@@ -189,7 +197,7 @@ void CliApp::showIntakePlansMenu() const {
     std::cout << "3. List IntakePlans by MedicationID" << "\n";
     std::cout << "4. Delete IntakePlan by ID" << "\n";
     std::cout << "5. Update IntakePlan" << "\n";
-    std::cout << "0. Exit" << "\n";
+    std::cout << "0. Back" << "\n";
 }
 
 // Patient Commands
