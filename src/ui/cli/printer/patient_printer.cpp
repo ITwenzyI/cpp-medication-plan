@@ -24,11 +24,11 @@ std::string patientNationalityToString(const domain::Patient& patient) {
     }
 }
 
-constexpr int titleWidth = 25;
-constexpr int idWidth = 8;
-constexpr int nameWidth = 24;
-constexpr int birthDateWidth = 16;
-constexpr int nationalityWidth = 12;
+constexpr int title_width = 25;
+constexpr int id_width = 8;
+constexpr int name_width = 24;
+constexpr int birth_date_width = 16;
+constexpr int nationality_width = 12;
 constexpr int seperation_line = 60;
 
 } // namespace
@@ -36,16 +36,16 @@ constexpr int seperation_line = 60;
 namespace ui::cli {
 
 void printPatientTableHeader() {
-    for (int i = 0; i < titleWidth; i++) {
+    for (int i = 0; i < title_width; i++) {
         std::cout << "=";
     }
     std::cout << " Patients ";
-    for (int i = 0; i < titleWidth; i++) {
+    for (int i = 0; i < title_width; i++) {
         std::cout << "=";
     }
     std::cout << "\n\n";
-    std::cout << std::left << std::setw(idWidth) << "ID" << std::setw(nameWidth) << "Name"
-              << std::setw(birthDateWidth) << "BirthDate" << std::setw(nationalityWidth)
+    std::cout << std::left << std::setw(id_width) << "ID" << std::setw(name_width) << "Name"
+              << std::setw(birth_date_width) << "BirthDate" << std::setw(nationality_width)
               << "Nationality" << "\n";
     for (int i = 0; i < seperation_line; i++) {
         std::cout << "-";
@@ -56,9 +56,9 @@ void printPatientTableHeader() {
 void printPatientRow(const domain::Patient& patient) {
     const std::string nationality = patientNationalityToString(patient);
 
-    std::cout << std::left << std::setw(idWidth) << patient.id << std::setw(nameWidth)
-              << patient.name << std::setw(birthDateWidth) << formatField(patient.birth_date)
-              << std::setw(nationalityWidth) << formatField(nationality) << "\n";
+    std::cout << std::left << std::setw(id_width) << patient.id << std::setw(name_width)
+              << patient.name << std::setw(birth_date_width) << formatField(patient.birth_date)
+              << std::setw(nationality_width) << formatField(nationality) << "\n";
 }
 
 void printPatientsTable(const std::vector<domain::Patient>& patients) {
