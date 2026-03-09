@@ -81,9 +81,9 @@ void CliApp::patientsMenuLoop() {
             case 3:
                 cmdFindPatientById();
                 break;
-                // case 4:
-                //     cmdDeletePatientById();
-                //     break;
+            case 4:
+                cmdDeletePatientById();
+                break;
                 // case 5:
                 //     cmdUpdatePatientName();
                 //     break;
@@ -267,6 +267,38 @@ void CliApp::cmdFindPatientById() {
         return;
 
     printPatientDetails(found_patient.value());
+    waitForEnter();
+}
+
+void CliApp::cmdDeletePatientById() {
+    std::cout << "===== Delete Patient By ID =====" << "\n\n";
+
+    auto id = input::readInt("Enter the ID of the Patient: ");
+    if (handleResultError(id, "CliApp::cmdDeletePatientById"))
+        return;
+
+    auto found_patient = patientRepo_.findPatientById(id.value());
+
+    if (handleResultError(found_patient, "CliApp::cmdDeletePatientById"))
+        return;
+
+    auto user_confirm = input::confirm(
+        "Are you sure you want to delete the patient with the ID: " + std::to_string(id.value()));
+
+    if (handleResultError(user_confirm, "CliApp::cmdDeletePatientById"))
+        return;
+
+    if (!user_confirm.value()) {
+        std::cout << "Patient with ID: " + std::to_string(id.value()) << " was not deleted.\n";
+        waitForEnter();
+        return;
+    }
+
+    auto deleted_patient = patientRepo_.deletePatientById(id.value());
+    if (handleResultError(deleted_patient, "CliApp::cmdDeletePatientById"))
+        return;
+
+    std::cout << "Successfully deleted Patient with ID: " + std::to_string(id.value()) << ".\n";
     waitForEnter();
 }
 
