@@ -13,27 +13,27 @@ std::string formatField(const std::string& field) {
     return field;
 }
 
-constexpr int titleWidth = 25;
-constexpr int idWidth = 8;
-constexpr int nameWidth = 18;
-constexpr int strengthWidth = 14;
-constexpr int warningsWidth = 25;
+constexpr int title_width = 25;
+constexpr int id_width = 8;
+constexpr int name_width = 18;
+constexpr int strength_width = 14;
+constexpr int warnings_width = 25;
 constexpr int seperation_line = 64;
 } // namespace
 
 namespace ui::cli::printer {
 
 void printMedicationTableHeader() {
-    for (int i = 0; i < titleWidth; i++) {
+    for (int i = 0; i < title_width; i++) {
         std::cout << "=";
     }
     std::cout << " Medications ";
-    for (int i = 0; i < titleWidth; i++) {
+    for (int i = 0; i < title_width; i++) {
         std::cout << "=";
     }
     std::cout << "\n\n";
-    std::cout << std::left << std::setw(idWidth) << "ID" << std::setw(nameWidth) << "Name"
-              << std::setw(strengthWidth) << "Strength" << std::setw(warningsWidth) << "Warnings"
+    std::cout << std::left << std::setw(id_width) << "ID" << std::setw(name_width) << "Name"
+              << std::setw(strength_width) << "Strength" << std::setw(warnings_width) << "Warnings"
               << "\n";
     for (int i = 0; i < seperation_line; i++) {
         std::cout << "-";
@@ -42,9 +42,9 @@ void printMedicationTableHeader() {
 }
 
 void printMedicationRow(const domain::Medication& medication) {
-    std::cout << std::left << std::setw(idWidth) << medication.id << std::setw(nameWidth)
-              << medication.name << std::setw(strengthWidth) << medication.strength
-              << std::setw(warningsWidth) << medication.warnings << "\n";
+    std::cout << std::left << std::setw(id_width) << medication.id << std::setw(name_width)
+              << medication.name << std::setw(strength_width) << medication.strength
+              << std::setw(warnings_width) << medication.warnings << "\n";
 }
 
 void printMedicationsTable(const std::vector<domain::Medication>& medications) {
