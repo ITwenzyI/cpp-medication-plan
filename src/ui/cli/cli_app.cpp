@@ -106,7 +106,7 @@ void CliApp::showPatientsMenu() const {
     std::cout << "5. Update Patient Name" << "\n";
     std::cout << "6. Update Patient BirthDate" << "\n";
     std::cout << "7. Update Patient Nationality" << "\n";
-    std::cout << "0. Exit" << "\n";
+    std::cout << "0. Back" << "\n";
 }
 
 void CliApp::medicationsMenuLoop() {
@@ -153,7 +153,7 @@ void CliApp::showMedicationsMenu() const {
     std::cout << "5. Update Medication Name" << "\n";
     std::cout << "6. Update Medication Strength" << "\n";
     std::cout << "7. Update Medication Warnings" << "\n";
-    std::cout << "0. Exit" << "\n";
+    std::cout << "0. Back" << "\n";
 }
 
 void CliApp::intakePlansMenuLoop() {
@@ -197,7 +197,7 @@ void CliApp::showIntakePlansMenu() const {
     std::cout << "3. List IntakePlans by MedicationID" << "\n";
     std::cout << "4. Delete IntakePlan by ID" << "\n";
     std::cout << "5. Update IntakePlan" << "\n";
-    std::cout << "0. Exit" << "\n";
+    std::cout << "0. Back" << "\n";
 }
 
 // Patient Commands
