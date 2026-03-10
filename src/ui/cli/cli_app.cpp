@@ -282,8 +282,7 @@ void CliApp::cmdDeletePatientById() {
     if (handleResultError(found_patient, "CliApp::cmdDeletePatientById"))
         return;
 
-    auto user_confirm = input::confirm(
-        "Are you sure you want to delete the patient with the ID: " + std::to_string(id.value()));
+    auto user_confirm = input::confirm("Delete patient with ID " + std::to_string(id.value()));
 
     if (handleResultError(user_confirm, "CliApp::cmdDeletePatientById"))
         return;
@@ -299,6 +298,42 @@ void CliApp::cmdDeletePatientById() {
         return;
 
     std::cout << "Successfully deleted Patient with ID: " + std::to_string(id.value()) << ".\n";
+    waitForEnter();
+}
+
+void CliApp::cmdUpdatePatientName() {
+    std::cout << "===== Update Patient Name =====" << "\n\n";
+
+    auto id = input::readInt("Enter patient ID: ");
+    if (handleResultError(id, "CliApp:cmdUpdatePatientName"))
+        return;
+
+    auto found_patient = patientRepo_.findPatientById(id.value());
+
+    if (handleResultError(found_patient, "CliApp:cmdUpdatePatientName"))
+        return;
+
+    auto old_name_patient = found_patient.value().name;
+    auto new_name_patient = input::readNonEmpty("New patient name: ");
+
+    auto user_confirm = input::confirm("Update patient name with ID " + std::to_string(id.value()));
+
+    if (handleResultError(user_confirm, "CliApp:cmdUpdatePatientName"))
+        return;
+
+    if (!user_confirm.value()) {
+        std::cout << "Patient with ID " << id.value() << " was not updated.\n";
+        waitForEnter();
+        return;
+    }
+
+    auto updated_patient = patientRepo_.updatePatientName(id.value(), new_name_patient.value());
+    if (handleResultError(updated_patient, "CliApp:cmdUpdatePatientName"))
+        return;
+
+    std::cout << "Patient " << id.value() << " updated.\n"
+              << "Old name: " << old_name_patient << "\n"
+              << "New name: " << new_name_patient.value() << "\n";
     waitForEnter();
 }
 
