@@ -233,8 +233,7 @@ void CliApp::cmdCreatePatient() {
     auto result = patientRepo_.createPatient(patient);
     if (handleResultError(result, "CliApp::cmdCreatePatient"))
         return;
-    std::cout << "Patient created successfully (ID: " << std::to_string(result.value().id)
-              << ").\n";
+    std::cout << "Patient created successfully (ID: " << result.value().id << ").\n";
     waitForEnter();
 }
 
@@ -288,7 +287,7 @@ void CliApp::cmdDeletePatientById() {
         return;
 
     if (!user_confirm.value()) {
-        std::cout << "Patient with ID: " + std::to_string(id.value()) << " was not deleted.\n";
+        std::cout << "Patient with ID: " << id.value() << " was not deleted.\n";
         waitForEnter();
         return;
     }
