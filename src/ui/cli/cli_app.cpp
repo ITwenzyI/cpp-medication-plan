@@ -337,6 +337,44 @@ void CliApp::cmdUpdatePatientName() {
     waitForEnter();
 }
 
+void CliApp::cmdUpdatePatientBirthDate() {
+    std::cout << "===== Update Patient BirthDate =====" << "\n\n";
+
+    auto id = input::readInt("Enter patient ID: ");
+    if (handleResultError(id, "CliApp::cmdUpdatePatientBirthDate"))
+        return;
+
+    auto found_patient = patientRepo_.findPatientById(id.value());
+
+    if (handleResultError(found_patient, "CliApp::cmdUpdatePatientBirthDate"))
+        return;
+
+    auto old_birth_date_patient = found_patient.value().birth_date;
+    auto new_birth_date_patient = input::readNonEmpty("New patient birthdate: ");
+
+    auto user_confirm =
+        input::confirm("Update patient birthdate with ID " + std::to_string(id.value()));
+
+    if (handleResultError(user_confirm, "CliApp::cmdUpdatePatientBirthDate"))
+        return;
+
+    if (!user_confirm.value()) {
+        std::cout << "Patient with ID " << id.value() << " was not updated.\n";
+        waitForEnter();
+        return;
+    }
+
+    auto updated_patient =
+        patientRepo_.updatePatientBirthdate(id.value(), new_birth_date_patient.value());
+    if (handleResultError(updated_patient, "CliApp::cmdUpdatePatientBirthDate"))
+        return;
+
+    std::cout << "Patient " << id.value() << " updated.\n"
+              << "Old birthdate: " << old_birth_date_patient << "\n"
+              << "New birthdate: " << new_birth_date_patient.value() << "\n";
+    waitForEnter();
+}
+
 // Utility
 
 void CliApp::waitForEnter() const {
