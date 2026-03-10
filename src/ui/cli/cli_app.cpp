@@ -1,6 +1,7 @@
 #include "cli_app.hpp"
 #include "common/result/result.hpp"
 #include "error_renderer.hpp"
+#include "infrastructure/persistence/sqlite/nationality_mapper_sqlite.hpp"
 #include "input.hpp"
 #include "printer/medication_printer.hpp"
 #include "printer/patient_printer.hpp"
@@ -81,9 +82,9 @@ void CliApp::patientsMenuLoop() {
             case 3:
                 cmdFindPatientById();
                 break;
-                // case 4:
-                //     cmdDeletePatientById();
-                //     break;
+            case 4:
+                cmdDeletePatientById();
+                break;
                 // case 5:
                 //     cmdUpdatePatientName();
                 //     break;
@@ -205,15 +206,15 @@ void CliApp::showIntakePlansMenu() const {
 void CliApp::cmdCreatePatient() {
     std::cout << "===== Create Patient =====" << "\n\n";
 
-    auto name = input::readNonEmpty("Enter the Name of the Patient: ");
+    auto name = input::readNonEmpty("Enter patient name: ");
     if (handleResultError(name, "CliApp::cmdCreatePatient"))
         return;
 
-    auto birth_date = input::readOptionalBirthDate("Enter the BirthDate of the Patient: ");
+    auto birth_date = input::readOptionalBirthDate("Enter patient birthdate: ");
     if (handleResultError(birth_date, "CliApp::cmdCreatePatient"))
         return;
 
-    auto nationality = input::readOptionalNationality("Enter the Nationality of the Patient: ");
+    auto nationality = input::readOptionalNationality("Enter patient nationality: ");
     if (handleResultError(nationality, "CliApp::cmdCreatePatient"))
         return;
 
@@ -233,8 +234,7 @@ void CliApp::cmdCreatePatient() {
     auto result = patientRepo_.createPatient(patient);
     if (handleResultError(result, "CliApp::cmdCreatePatient"))
         return;
-    std::cout << "Patient created successfully (ID: " << std::to_string(result.value().id)
-              << ").\n";
+    std::cout << "Patient created successfully (ID: " << result.value().id << ").\n";
     waitForEnter();
 }
 
@@ -257,7 +257,7 @@ void CliApp::cmdListPatients() {
 void CliApp::cmdFindPatientById() {
     std::cout << "===== Find Patient By ID =====" << "\n\n";
 
-    auto id = input::readInt("Enter the ID of the Patient: ");
+    auto id = input::readInt("Enter patient ID: ");
     if (handleResultError(id, "CliApp::cmdFindPatientById"))
         return;
 
@@ -267,6 +267,164 @@ void CliApp::cmdFindPatientById() {
         return;
 
     printPatientDetails(found_patient.value());
+    waitForEnter();
+}
+
+void CliApp::cmdDeletePatientById() {
+    std::cout << "===== Delete Patient By ID =====" << "\n\n";
+
+    auto id = input::readInt("Enter patient ID: ");
+    if (handleResultError(id, "CliApp::cmdDeletePatientById"))
+        return;
+
+    auto found_patient = patientRepo_.findPatientById(id.value());
+
+    if (handleResultError(found_patient, "CliApp::cmdDeletePatientById"))
+        return;
+
+    auto user_confirm = input::confirm("Delete patient with ID " + std::to_string(id.value()));
+
+    if (handleResultError(user_confirm, "CliApp::cmdDeletePatientById"))
+        return;
+
+    if (!user_confirm.value()) {
+        std::cout << "Patient with ID: " << id.value() << " was not deleted.\n";
+        waitForEnter();
+        return;
+    }
+
+    auto deleted_patient = patientRepo_.deletePatientById(id.value());
+    if (handleResultError(deleted_patient, "CliApp::cmdDeletePatientById"))
+        return;
+
+    std::cout << "Deleted patient with ID: " + std::to_string(id.value()) << ".\n";
+    waitForEnter();
+}
+
+void CliApp::cmdUpdatePatientName() {
+    std::cout << "===== Update Patient Name =====" << "\n\n";
+
+    auto id = input::readInt("Enter patient ID: ");
+    if (handleResultError(id, "CliApp:cmdUpdatePatientName"))
+        return;
+
+    auto found_patient = patientRepo_.findPatientById(id.value());
+
+    if (handleResultError(found_patient, "CliApp:cmdUpdatePatientName"))
+        return;
+
+    auto old_name_patient = found_patient.value().name;
+    auto new_name_patient = input::readNonEmpty("New patient name: ");
+
+    auto user_confirm = input::confirm("Update patient name with ID " + std::to_string(id.value()));
+
+    if (handleResultError(user_confirm, "CliApp:cmdUpdatePatientName"))
+        return;
+
+    if (!user_confirm.value()) {
+        std::cout << "Patient with ID " << id.value() << " was not updated.\n";
+        waitForEnter();
+        return;
+    }
+
+    auto updated_patient = patientRepo_.updatePatientName(id.value(), new_name_patient.value());
+    if (handleResultError(updated_patient, "CliApp:cmdUpdatePatientName"))
+        return;
+
+    std::cout << "Patient " << id.value() << " updated.\n"
+              << "Old name: " << old_name_patient << "\n"
+              << "New name: " << new_name_patient.value() << "\n";
+    waitForEnter();
+}
+
+void CliApp::cmdUpdatePatientBirthDate() {
+    std::cout << "===== Update Patient BirthDate =====" << "\n\n";
+
+    auto id = input::readInt("Enter patient ID: ");
+    if (handleResultError(id, "CliApp::cmdUpdatePatientBirthDate"))
+        return;
+
+    auto found_patient = patientRepo_.findPatientById(id.value());
+
+    if (handleResultError(found_patient, "CliApp::cmdUpdatePatientBirthDate"))
+        return;
+
+    auto old_birth_date_patient = found_patient.value().birth_date;
+    auto input_new_birth_date_patient = input::readOptionalBirthDate("New patient birthdate: ");
+    if (handleResultError(input_new_birth_date_patient, "CliApp::cmdUpdatePatientBirthDate"))
+        return;
+    auto new_birth_date_patient = input_new_birth_date_patient.value();
+
+    auto user_confirm =
+        input::confirm("Update patient birthdate with ID " + std::to_string(id.value()));
+
+    if (handleResultError(user_confirm, "CliApp::cmdUpdatePatientBirthDate"))
+        return;
+
+    if (!user_confirm.value()) {
+        std::cout << "Patient with ID " << id.value() << " was not updated.\n";
+        waitForEnter();
+        return;
+    }
+
+    auto updated_patient =
+        patientRepo_.updatePatientBirthdate(id.value(), new_birth_date_patient.value());
+    if (handleResultError(updated_patient, "CliApp::cmdUpdatePatientBirthDate"))
+        return;
+
+    std::cout << "Patient " << id.value() << " updated.\n"
+              << "Old birthdate: " << old_birth_date_patient << "\n"
+              << "New birthdate: " << new_birth_date_patient.value() << "\n";
+    waitForEnter();
+}
+
+void CliApp::cmdUpdatePatientNationality() {
+    std::cout << "===== Update Patient Nationality =====" << "\n\n";
+
+    auto id = input::readInt("Enter patient ID: ");
+    if (handleResultError(id, "CliApp::cmdUpdatePatientNationality"))
+        return;
+
+    auto found_patient = patientRepo_.findPatientById(id.value());
+
+    if (handleResultError(found_patient, "CliApp::cmdUpdatePatientNationality"))
+        return;
+
+    auto old_nationality_patient = found_patient.value().nationality;
+
+    auto input_new_nationality_patient =
+        input::readOptionalNationality("New patient nationality: ");
+    if (handleResultError(input_new_nationality_patient, "CliApp::cmdUpdatePatientNationality"))
+        return;
+    auto new_nationality_patient = input_new_nationality_patient.value();
+
+    auto user_confirm =
+        input::confirm("Update patient nationality with ID " + std::to_string(id.value()));
+
+    if (handleResultError(user_confirm, "CliApp::cmdUpdatePatientNationality"))
+        return;
+
+    if (!user_confirm.value()) {
+        std::cout << "Patient with ID " << id.value() << " was not updated.\n";
+        waitForEnter();
+        return;
+    }
+
+    auto updated_patient = patientRepo_.updatePatientNationality(id.value(),
+        infrastructure::persistence::sqlite::nationalityToDbString(
+            new_nationality_patient.value()));
+    if (handleResultError(updated_patient, "CliApp::cmdUpdatePatientNationality"))
+        return;
+
+    std::cout << "Patient " << id.value() << " updated.\n"
+              << "Old birthdate: "
+              << infrastructure::persistence::sqlite::nationalityToDbString(
+                     old_nationality_patient.value())
+              << "\n"
+              << "New birthdate: "
+              << infrastructure::persistence::sqlite::nationalityToDbString(
+                     new_nationality_patient.value())
+              << "\n";
     waitForEnter();
 }
 
