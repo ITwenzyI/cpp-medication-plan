@@ -205,15 +205,15 @@ void CliApp::showIntakePlansMenu() const {
 void CliApp::cmdCreatePatient() {
     std::cout << "===== Create Patient =====" << "\n\n";
 
-    auto name = input::readNonEmpty("Enter the Name of the Patient: ");
+    auto name = input::readNonEmpty("Enter patient name: ");
     if (handleResultError(name, "CliApp::cmdCreatePatient"))
         return;
 
-    auto birth_date = input::readOptionalBirthDate("Enter the BirthDate of the Patient: ");
+    auto birth_date = input::readOptionalBirthDate("Enter patient birthdate: ");
     if (handleResultError(birth_date, "CliApp::cmdCreatePatient"))
         return;
 
-    auto nationality = input::readOptionalNationality("Enter the Nationality of the Patient: ");
+    auto nationality = input::readOptionalNationality("Enter patient nationality: ");
     if (handleResultError(nationality, "CliApp::cmdCreatePatient"))
         return;
 
@@ -257,7 +257,7 @@ void CliApp::cmdListPatients() {
 void CliApp::cmdFindPatientById() {
     std::cout << "===== Find Patient By ID =====" << "\n\n";
 
-    auto id = input::readInt("Enter the ID of the Patient: ");
+    auto id = input::readInt("Enter patient ID: ");
     if (handleResultError(id, "CliApp::cmdFindPatientById"))
         return;
 
@@ -273,7 +273,7 @@ void CliApp::cmdFindPatientById() {
 void CliApp::cmdDeletePatientById() {
     std::cout << "===== Delete Patient By ID =====" << "\n\n";
 
-    auto id = input::readInt("Enter the ID of the Patient: ");
+    auto id = input::readInt("Enter patient ID: ");
     if (handleResultError(id, "CliApp::cmdDeletePatientById"))
         return;
 
@@ -297,7 +297,7 @@ void CliApp::cmdDeletePatientById() {
     if (handleResultError(deleted_patient, "CliApp::cmdDeletePatientById"))
         return;
 
-    std::cout << "Successfully deleted Patient with ID: " + std::to_string(id.value()) << ".\n";
+    std::cout << "Deleted patient with ID: " + std::to_string(id.value()) << ".\n";
     waitForEnter();
 }
 
