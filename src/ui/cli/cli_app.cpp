@@ -1,6 +1,7 @@
 #include "cli_app.hpp"
 #include "common/result/result.hpp"
 #include "error_renderer.hpp"
+#include "infrastructure/persistence/sqlite/nationality_mapper_sqlite.hpp"
 #include "input.hpp"
 #include "printer/medication_printer.hpp"
 #include "printer/patient_printer.hpp"
@@ -371,6 +372,56 @@ void CliApp::cmdUpdatePatientBirthDate() {
     std::cout << "Patient " << id.value() << " updated.\n"
               << "Old birthdate: " << old_birth_date_patient << "\n"
               << "New birthdate: " << new_birth_date_patient.value() << "\n";
+    waitForEnter();
+}
+
+void CliApp::cmdUpdatePatientNationality() {
+    std::cout << "===== Update Patient Nationality =====" << "\n\n";
+
+    auto id = input::readInt("Enter patient ID: ");
+    if (handleResultError(id, "CliApp::cmdUpdatePatientNationality"))
+        return;
+
+    auto found_patient = patientRepo_.findPatientById(id.value());
+
+    if (handleResultError(found_patient, "CliApp::cmdUpdatePatientNationality"))
+        return;
+
+    auto old_nationality_patient = found_patient.value().nationality;
+
+    auto input_new_nationality_patient =
+        input::readOptionalNationality("New patient nationality: ");
+    if (handleResultError(input_new_nationality_patient, "CliApp::cmdUpdatePatientNationality"))
+        return;
+    auto new_nationality_patient = input_new_nationality_patient.value();
+
+    auto user_confirm =
+        input::confirm("Update patient nationality with ID " + std::to_string(id.value()));
+
+    if (handleResultError(user_confirm, "CliApp::cmdUpdatePatientNationality"))
+        return;
+
+    if (!user_confirm.value()) {
+        std::cout << "Patient with ID " << id.value() << " was not updated.\n";
+        waitForEnter();
+        return;
+    }
+
+    auto updated_patient = patientRepo_.updatePatientNationality(id.value(),
+        infrastructure::persistence::sqlite::nationalityToDbString(
+            new_nationality_patient.value()));
+    if (handleResultError(updated_patient, "CliApp::cmdUpdatePatientNationality"))
+        return;
+
+    std::cout << "Patient " << id.value() << " updated.\n"
+              << "Old birthdate: "
+              << infrastructure::persistence::sqlite::nationalityToDbString(
+                     old_nationality_patient.value())
+              << "\n"
+              << "New birthdate: "
+              << infrastructure::persistence::sqlite::nationalityToDbString(
+                     new_nationality_patient.value())
+              << "\n";
     waitForEnter();
 }
 
