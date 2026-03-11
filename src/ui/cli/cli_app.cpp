@@ -448,7 +448,7 @@ void CliApp::cmdCreateMedication() {
     if (handleResultError(strength, "CliApp::cmdCreateMedication"))
         return;
 
-    auto warnings = input::readOptionalString("Enter optional medication warnings: ");
+    auto warnings = input::readOptionalString("Enter medication warnings (optional): ");
 
     domain::Medication medication;
 
@@ -622,7 +622,8 @@ void CliApp::cmdUpdateMedicationWarnings() {
         return;
 
     auto old_warnings_medication = found_medication.value().warnings;
-    auto new_warnings_medication = input::readOptionalString("New medication warnings: ");
+    auto new_warnings_medication =
+        input::readOptionalString("New medication warnings (optional): ");
 
     auto user_confirm =
         input::confirm("Update medication warnings with ID " + std::to_string(id.value()));
