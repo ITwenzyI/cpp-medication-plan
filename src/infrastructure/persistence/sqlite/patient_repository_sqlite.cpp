@@ -7,6 +7,20 @@
 #include <stdexcept>
 
 namespace infrastructure::persistence::sqlite {
+static common::result::Result<void> mapWriteStepFailure(
+    int rc, std::string_view operation_name, std::string_view caller) {
+    switch (rc) {
+        case SQLITE_BUSY:
+        case SQLITE_LOCKED:
+            return common::result::Result<void>::fail(common::result::ErrorCode::DatabaseError,
+                std::string(operation_name) + " failed because the database is busy or locked",
+                std::string(caller));
+        default:
+            return common::result::Result<void>::fail(common::result::ErrorCode::DatabaseError,
+                std::string(operation_name) + " failed", std::string(caller));
+    }
+}
+
 static common::result::Result<domain::Patient> mapPatient(
     const infrastructure::db::Statement& stmt) {
     domain::Patient temp;
@@ -145,6 +159,10 @@ common::result::Result<void> PatientRepositorySqlite::deletePatientById(int pati
 
     int rc = stmt.step();
 
+    if (rc != SQLITE_DONE) {
+        return mapWriteStepFailure(rc, "DELETE", "PatientRepositorySqlite::deletePatientById");
+    }
+
     if (db_.changes() == 0) {
         return common::result::Result<void>::fail(common::result::ErrorCode::NotFound,
             "No patient with id: " + std::to_string(patient_id),
@@ -171,6 +189,10 @@ common::result::Result<void> PatientRepositorySqlite::updatePatientName(
     stmt.bindInt(2, patient_id);
 
     int rc = stmt.step();
+
+    if (rc != SQLITE_DONE) {
+        return mapWriteStepFailure(rc, "UPDATE", "PatientRepositorySqlite::updatePatientName");
+    }
 
     if (db_.changes() == 0) {
         auto existing = findPatientById(patient_id);
@@ -211,6 +233,10 @@ common::result::Result<void> PatientRepositorySqlite::updatePatientBirthdate(
 
     int rc = stmt.step();
 
+    if (rc != SQLITE_DONE) {
+        return mapWriteStepFailure(rc, "UPDATE", "PatientRepositorySqlite::updatePatientBirthdate");
+    }
+
     if (db_.changes() == 0) {
         auto existing = findPatientById(patient_id);
         if (existing.isError()) {
@@ -249,6 +275,11 @@ common::result::Result<void> PatientRepositorySqlite::updatePatientNationality(
     stmt.bindInt(2, patient_id);
 
     int rc = stmt.step();
+
+    if (rc != SQLITE_DONE) {
+        return mapWriteStepFailure(
+            rc, "UPDATE", "PatientRepositorySqlite::updatePatientNationality");
+    }
 
     if (db_.changes() == 0) {
         auto existing = findPatientById(patient_id);
