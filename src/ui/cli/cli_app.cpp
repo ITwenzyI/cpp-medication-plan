@@ -783,6 +783,32 @@ void CliApp::cmdListIntakePlansByMedicationId() {
     waitForEnter();
 }
 
+void CliApp::cmdDeleteIntakePlanById() {
+    std::cout << "===== Delete IntakePlan By ID =====" << "\n\n";
+
+    auto id = input::readInt("Enter IntakePlan ID: ");
+    if (handleResultError(id, "CliApp::cmdDeleteIntakePlanById"))
+        return;
+
+    auto user_confirm = input::confirm("Delete IntakePlan with ID " + std::to_string(id.value()));
+
+    if (handleResultError(user_confirm, "CliApp::cmdDeleteIntakePlanById"))
+        return;
+
+    if (!user_confirm.value()) {
+        std::cout << "IntakePlan with ID: " << id.value() << " was not deleted.\n";
+        waitForEnter();
+        return;
+    }
+
+    auto deleted_intake_plan = intakePlanRepo_.deleteIntakePlanById(id.value());
+    if (handleResultError(deleted_intake_plan, "CliApp::cmdDeleteIntakePlanById"))
+        return;
+
+    std::cout << "Deleted IntakePlan with ID: " << id.value() << ".\n";
+    waitForEnter();
+}
+
 // Utility
 
 void CliApp::waitForEnter() const {
