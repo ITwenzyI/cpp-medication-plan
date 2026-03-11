@@ -175,26 +175,23 @@ void CliApp::intakePlansMenuLoop() {
 
         while (user_choice.isError()) {
             ErrorRenderer::printErrorMessage(user_choice.error(), "CliApp::intakePlansMenuLoop");
-            user_choice = input::readMenuChoice(prompt, 0, 5);
+            user_choice = input::readMenuChoice(prompt, 0, 4);
         }
 
         switch (user_choice.value()) {
             case 0:
                 return;
             case 1:
-                //     cmdCreateIntakePlan();
-                //     break;
-                // case 2:
-                //     cmdListIntakePlansByPatientId();
-                //     break;
-                // case 3:
-                //     cmdListIntakePlansByMedicationId();
-                //     break;
-                // case 4:
-                //     cmdDeleteIntakePlanById();
-                //     break;
-                // case 5:
-                //     cmdUpdateIntakePlan();
+                cmdCreateIntakePlan();
+                break;
+            case 2:
+                cmdListIntakePlansByPatientId();
+                break;
+            case 3:
+                cmdListIntakePlansByMedicationId();
+                break;
+            case 4:
+                cmdDeleteIntakePlanById();
                 break;
         }
     }
@@ -206,7 +203,6 @@ void CliApp::showIntakePlansMenu() const {
     std::cout << "2. List IntakePlans by PatientID" << "\n";
     std::cout << "3. List IntakePlans by MedicationID" << "\n";
     std::cout << "4. Delete IntakePlan by ID" << "\n";
-    std::cout << "5. Update IntakePlan" << "\n";
     std::cout << "0. Back" << "\n";
 }
 
