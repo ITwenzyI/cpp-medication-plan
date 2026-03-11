@@ -475,6 +475,22 @@ void CliApp::cmdListMedications() {
     waitForEnter();
 }
 
+void CliApp::cmdFindMedicationById() {
+    std::cout << "===== Find Medication By ID =====" << "\n\n";
+
+    auto id = input::readInt("Enter medication ID: ");
+    if (handleResultError(id, "CliApp::cmdFindMedicationById"))
+        return;
+
+    auto found_medication = medicationRepo_.findMedicationById(id.value());
+
+    if (handleResultError(found_medication, "CliApp::cmdFindMedicationById"))
+        return;
+
+    printer::printMedicationDetails(found_medication.value());
+    waitForEnter();
+}
+
 // Utility
 
 void CliApp::waitForEnter() const {
