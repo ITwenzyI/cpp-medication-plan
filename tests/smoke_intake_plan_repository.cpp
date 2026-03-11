@@ -102,7 +102,7 @@ int main() {
 
     // finds the correct intake_plan of the two existing in database
     for (auto no_notes_plan : plans_by_patient_id.value()) {
-        if (no_notes_plan.id == no_notes_intake_plan.id) {
+        if (no_notes_plan.id == created_no_notes_plan.value().id) {
             expect(no_notes_plan.notes == "", "notes should be empty");
         }
     }
@@ -150,33 +150,39 @@ int main() {
 
     // ======= UPDATE INTAKE_PLAN ======
     domain::Patient update_patient{0, "Before Update", "1999-01-01", domain::Nationality::FR};
-    auto created_update_patient = repo_patient.createPatient(secondary_patient);
+    auto created_update_patient = repo_patient.createPatient(update_patient);
     expect(created_update_patient.isOk(), "create patient before update should succeed.");
 
     domain::Medication update_medication{
         0, "Paracetamol", "1000 mg", "Do not exceed 4,000 mg in 24 hours"};
-    auto created_update_medication = repo_med.createMedication(secondary_medication);
+    auto created_update_medication = repo_med.createMedication(update_medication);
     expect(created_update_medication.isOk(), "create medication before update should succeed");
 
     domain::IntakePlan intake_plan_before_update{0, created_update_patient.value().id,
         created_update_medication.value().id, "1000 mg", domain::TimeOfDay::Morning};
-    auto created_plan_before_update = repo_plan.createIntakePlan(secondary_intake_plan);
+    auto created_plan_before_update = repo_plan.createIntakePlan(intake_plan_before_update);
     expect(created_plan_before_update.isOk(), "create intake_plan before update should succeed");
 
     auto plans_by_medication_id_before_update =
-        repo_plan.getIntakePlansByMedicationId(created_secondary_medication.value().id);
+        repo_plan.getIntakePlansByMedicationId(created_update_medication.value().id);
     expect(plans_by_medication_id_before_update.isOk(),
-        "get new_intake_plans by medication_id should succeed");
+        "get intake_plans before update by medication_id should succeed");
     expect(plans_by_medication_id_before_update.value().size() == 1,
-        "expected one intake_plan in test database with this new medication_id");
+        "expected one intake_plan in test database with the update medication_id");
     auto updated_plan = plans_by_medication_id_before_update.value()[0];
+    expect(updated_plan.id == created_plan_before_update.value().id,
+        "fetched intake_plan before update should match created plan");
     updated_plan.dose = "1mg";
     updated_plan.time_of_day = domain::TimeOfDay::Night;
 
     auto update_intake_plan_result = repo_plan.updateIntakePlan(updated_plan);
     expect(update_intake_plan_result.isOk(), "update intake_plan should succeed");
     auto plans_by_medication_id_after_update =
-        repo_plan.getIntakePlansByMedicationId(created_secondary_medication.value().id);
+        repo_plan.getIntakePlansByMedicationId(created_update_medication.value().id);
+    expect(plans_by_medication_id_after_update.isOk(),
+        "get intake_plans after update by medication_id should succeed");
+    expect(plans_by_medication_id_after_update.value().size() == 1,
+        "expected one intake_plan after update for the update medication_id");
     expect(updated_plan.dose == "1mg", "dose should match after update");
     expect(updated_plan.dose == plans_by_medication_id_after_update.value()[0].dose,
         "dose should match after update");
