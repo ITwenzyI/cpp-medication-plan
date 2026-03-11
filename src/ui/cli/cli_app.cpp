@@ -660,6 +660,46 @@ void CliApp::cmdUpdateMedicationWarnings() {
 
 // IntakePlans Commands
 
+void CliApp::cmdCreateIntakePlan() {
+    std::cout << "===== Create IntakePlan =====" << "\n\n";
+
+    auto patient_id = input::readInt("Enter patient ID: ");
+    if (handleResultError(patient_id, "CliApp::cmdCreateIntakePlan"))
+        return;
+
+    auto medication_id = input::readInt("Enter medication ID: ");
+    if (handleResultError(medication_id, "CliApp::cmdCreateIntakePlan"))
+        return;
+
+    auto dose = input::readNonEmpty("Enter dose: ");
+    if (handleResultError(dose, "CliApp::cmdCreateIntakePlan"))
+        return;
+
+    auto time_of_day = input::readTimeOfDay("Enter time of day (Morning, Noon, Evening, Night): ");
+    if (handleResultError(time_of_day, "CliApp::cmdCreateIntakePlan"))
+        return;
+
+    auto notes = input::readOptionalString("Enter notes for intakeplan (optional): ");
+
+    domain::IntakePlan intake_plan;
+
+    intake_plan.id = 0;
+    intake_plan.patient_id = patient_id.value();
+    intake_plan.medication_id = medication_id.value();
+    intake_plan.dose = dose.value();
+    intake_plan.time_of_day = time_of_day.value();
+
+    if (notes.has_value()) {
+        intake_plan.notes = notes.value();
+    }
+
+    auto result = intakePlanRepo_.createIntakePlan(intake_plan);
+    if (handleResultError(result, "CliApp::cmdCreateIntakePlan"))
+        return;
+    std::cout << "IntakePlan created successfully (ID: " << result.value().id << ").\n";
+    waitForEnter();
+}
+
 // Utility
 
 void CliApp::waitForEnter() const {
