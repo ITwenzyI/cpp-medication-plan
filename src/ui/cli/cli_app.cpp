@@ -652,6 +652,13 @@ void CliApp::cmdUpdateMedicationWarnings() {
             return;
     }
 
+    if (!new_warnings_medication.has_value()) {
+        new_warnings_medication = "-";
+    }
+    if (old_warnings_medication.empty()) {
+        old_warnings_medication = "-";
+    }
+
     std::cout << "Medication " << id.value() << " updated.\n"
               << "Old warnings: " << old_warnings_medication << "\n"
               << "New warnings: " << new_warnings_medication.value() << "\n";
