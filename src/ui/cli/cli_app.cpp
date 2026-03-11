@@ -673,7 +673,7 @@ void CliApp::cmdCreateIntakePlan() {
     if (handleResultError(patient_id, "CliApp::cmdCreateIntakePlan"))
         return;
     auto found_patient = patientRepo_.findPatientById(patient_id.value());
-    if (handleResultError(found_patient, "CliApp::cmdFindPatientById"))
+    if (handleResultError(found_patient, "CliApp::cmdCreateIntakePlan"))
         return;
 
     user_confirm = input::confirm("Print out all medications?");
@@ -715,6 +715,30 @@ void CliApp::cmdCreateIntakePlan() {
     if (handleResultError(result, "CliApp::cmdCreateIntakePlan"))
         return;
     std::cout << "IntakePlan created successfully (ID: " << result.value().id << ").\n";
+    waitForEnter();
+}
+
+void CliApp::cmdListIntakePlansByPatientId() {
+    std::cout << "===== List IntakePlans By Patient ID =====" << "\n\n";
+
+    auto patient_id = input::readInt("Enter patient ID: ");
+    if (handleResultError(patient_id, "CliApp::cmdListIntakePlansByPatientId"))
+        return;
+    auto found_patient = patientRepo_.findPatientById(patient_id.value());
+    if (handleResultError(found_patient, "CliApp::cmdListIntakePlansByPatientId"))
+        return;
+
+    auto intake_plans_patient = intakePlanRepo_.getIntakePlansByPatientId(patient_id.value());
+    if (handleResultError(intake_plans_patient, "CliApp::cmdListIntakePlansByPatientId"))
+        return;
+
+    if (intake_plans_patient.value().empty()) {
+        std::cout << "No IntakePlans found for PatientID " << patient_id.value();
+        waitForEnter();
+        return;
+    }
+
+    printer::printIntakePlansTable(intake_plans_patient.value());
     waitForEnter();
 }
 
