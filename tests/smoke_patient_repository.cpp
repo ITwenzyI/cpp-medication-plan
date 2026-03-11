@@ -109,6 +109,37 @@ int main() {
             common::result::ErrorCode::InvalidArgument,
         "invalid birth_date should return InvalidArgument");
 
+    auto update_birthdate_invalid_month_result =
+        patient_repository.updatePatientBirthdate(created_patient.value().id, "1999-13-06");
+    expect(update_birthdate_invalid_month_result.isError(),
+        "updatePatientBirthDate with invalid month should fail");
+    expect(update_birthdate_invalid_month_result.error().code ==
+            common::result::ErrorCode::InvalidArgument,
+        "invalid month should return InvalidArgument");
+
+    auto update_birthdate_invalid_day_result =
+        patient_repository.updatePatientBirthdate(created_patient.value().id, "1999-02-30");
+    expect(update_birthdate_invalid_day_result.isError(),
+        "updatePatientBirthDate with invalid day should fail");
+    expect(update_birthdate_invalid_day_result.error().code ==
+            common::result::ErrorCode::InvalidArgument,
+        "invalid day should return InvalidArgument");
+
+    domain::Patient invalid_birthdate_patient{
+        0, "Invalid Birthdate", "1999-02-29", domain::Nationality::DE};
+    auto invalid_birthdate_create_result =
+        patient_repository.createPatient(invalid_birthdate_patient);
+    expect(invalid_birthdate_create_result.isError(),
+        "createPatient with invalid non-leap-year date should fail");
+    expect(
+        invalid_birthdate_create_result.error().code == common::result::ErrorCode::InvalidArgument,
+        "invalid create birthdate should return InvalidArgument");
+
+    domain::Patient leap_year_patient{0, "Leap Year", "2000-02-29", domain::Nationality::DE};
+    auto leap_year_create_result = patient_repository.createPatient(leap_year_patient);
+    expect(
+        leap_year_create_result.isOk(), "createPatient with valid leap-year date should succeed");
+
     // ======= UPDATE PATIENT NATIONALITY ======
 
     // Update Patient Nationality

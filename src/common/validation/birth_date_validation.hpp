@@ -6,6 +6,16 @@
 
 namespace common::validation {
 
+inline bool isLeapYear(int year) {
+    if (year % 400 == 0) {
+        return true;
+    }
+    if (year % 100 == 0) {
+        return false;
+    }
+    return year % 4 == 0;
+}
+
 // Format: YYYY-MM-DD
 inline bool isValidBirthDate(std::string_view sv) {
     if (isEmptyOrBlank(sv)) {
@@ -44,18 +54,33 @@ inline bool isValidBirthDate(std::string_view sv) {
         return false;
     }
 
-    if (year >= 1900 && year <= 2027) {
-        return true;
+    if (year < 1900 || year > 2027) {
+        return false;
     }
 
     if (month < 1 || month > 12) {
         return false;
     }
 
-    if (day < 1 || day > 31) {
+    if (day < 1) {
         return false;
     }
 
-    return true;
+    int max_day = 31;
+    switch (month) {
+        case 2:
+            max_day = isLeapYear(year) ? 29 : 28;
+            break;
+        case 4:
+        case 6:
+        case 9:
+        case 11:
+            max_day = 30;
+            break;
+        default:
+            break;
+    }
+
+    return day <= max_day;
 }
 } // namespace common::validation
