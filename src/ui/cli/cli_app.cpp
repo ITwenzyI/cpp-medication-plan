@@ -522,6 +522,44 @@ void CliApp::cmdDeleteMedicationById() {
     waitForEnter();
 }
 
+void CliApp::cmdUpdateMedicationName() {
+    std::cout << "===== Update Medication Name =====" << "\n\n";
+
+    auto id = input::readInt("Enter medication ID: ");
+    if (handleResultError(id, "CliApp:cmdUpdateMedicationName"))
+        return;
+
+    auto found_medication = medicationRepo_.findMedicationById(id.value());
+
+    if (handleResultError(found_medication, "CliApp:cmdUpdateMedicationName"))
+        return;
+
+    auto old_name_medication = found_medication.value().name;
+    auto new_name_medication = input::readNonEmpty("New medication name: ");
+
+    auto user_confirm =
+        input::confirm("Update medication name with ID " + std::to_string(id.value()));
+
+    if (handleResultError(user_confirm, "CliApp:cmdUpdateMedicationName"))
+        return;
+
+    if (!user_confirm.value()) {
+        std::cout << "Medication with ID " << id.value() << " was not updated.\n";
+        waitForEnter();
+        return;
+    }
+
+    auto updated_medication =
+        medicationRepo_.updateMedicationName(id.value(), new_name_medication.value());
+    if (handleResultError(updated_medication, "CliApp:cmdUpdateMedicationName"))
+        return;
+
+    std::cout << "Medication " << id.value() << " updated.\n"
+              << "Old name: " << old_name_medication << "\n"
+              << "New name: " << new_name_medication.value() << "\n";
+    waitForEnter();
+}
+
 // Utility
 
 void CliApp::waitForEnter() const {
