@@ -723,6 +723,13 @@ void CliApp::cmdCreateIntakePlan() {
 void CliApp::cmdListIntakePlansByPatientId() {
     std::cout << "===== List IntakePlans By Patient ID =====" << "\n\n";
 
+    auto user_confirm = input::confirm("Print out all patients?");
+    if (handleResultError(user_confirm, "CliApp::cmdListIntakePlansByPatientId"))
+        return;
+    if (user_confirm.value()) {
+        cmdListPatients();
+    }
+
     auto patient_id = input::readInt("Enter patient ID: ");
     if (handleResultError(patient_id, "CliApp::cmdListIntakePlansByPatientId"))
         return;
@@ -746,6 +753,13 @@ void CliApp::cmdListIntakePlansByPatientId() {
 
 void CliApp::cmdListIntakePlansByMedicationId() {
     std::cout << "===== List IntakePlans By Medication ID =====" << "\n\n";
+
+    auto user_confirm = input::confirm("Print out all medications?");
+    if (handleResultError(user_confirm, "CliApp::cmdListIntakePlansByMedicationId"))
+        return;
+    if (user_confirm.value()) {
+        cmdListMedications();
+    }
 
     auto medication_id = input::readInt("Enter medication ID: ");
     if (handleResultError(medication_id, "CliApp::cmdListIntakePlansByMedicationId"))
