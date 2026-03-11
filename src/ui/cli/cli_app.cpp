@@ -1,8 +1,12 @@
 #include "cli_app.hpp"
 #include "common/result/result.hpp"
+#include "domain/intake_plan.hpp"
+#include "domain/medication.hpp"
+#include "domain/patient.hpp"
 #include "error_renderer.hpp"
 #include "infrastructure/persistence/sqlite/nationality_mapper_sqlite.hpp"
 #include "input.hpp"
+#include "printer/intake_plan_printer.hpp"
 #include "printer/medication_printer.hpp"
 #include "printer/patient_printer.hpp"
 #include <iostream>
@@ -653,6 +657,8 @@ void CliApp::cmdUpdateMedicationWarnings() {
               << "New warnings: " << new_warnings_medication.value() << "\n";
     waitForEnter();
 }
+
+// IntakePlans Commands
 
 // Utility
 
