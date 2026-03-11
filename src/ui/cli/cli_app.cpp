@@ -744,6 +744,31 @@ void CliApp::cmdListIntakePlansByPatientId() {
     waitForEnter();
 }
 
+void CliApp::cmdListIntakePlansByMedicationId() {
+    std::cout << "===== List IntakePlans By Medication ID =====" << "\n\n";
+
+    auto medication_id = input::readInt("Enter medication ID: ");
+    if (handleResultError(medication_id, "CliApp::cmdListIntakePlansByMedicationId"))
+        return;
+    auto found_medication = medicationRepo_.findMedicationById(medication_id.value());
+    if (handleResultError(found_medication, "CliApp::cmdListIntakePlansByMedicationId"))
+        return;
+
+    auto intake_plans_medication =
+        intakePlanRepo_.getIntakePlansByMedicationId(medication_id.value());
+    if (handleResultError(intake_plans_medication, "CliApp::cmdListIntakePlansByMedicationId"))
+        return;
+
+    if (intake_plans_medication.value().empty()) {
+        std::cout << "No IntakePlans found for MedicationID " << medication_id.value();
+        waitForEnter();
+        return;
+    }
+
+    printer::printIntakePlansTable(intake_plans_medication.value());
+    waitForEnter();
+}
+
 // Utility
 
 void CliApp::waitForEnter() const {
