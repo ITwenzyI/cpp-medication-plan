@@ -2,7 +2,7 @@
 #include "domain/patient.hpp"
 #include <vector>
 
-namespace ui::cli {
+namespace ui::cli::printer {
 
 void printPatientTableHeader();
 

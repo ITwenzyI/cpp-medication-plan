@@ -85,15 +85,15 @@ void CliApp::patientsMenuLoop() {
             case 4:
                 cmdDeletePatientById();
                 break;
-                // case 5:
-                //     cmdUpdatePatientName();
-                //     break;
-                // case 6:
-                //     cmdUpdatePatientBirthDate();
-                //     break;
-                // case 7:
-                //     cmdUpdatePatientNationality();
-                //     break;
+            case 5:
+                cmdUpdatePatientName();
+                break;
+            case 6:
+                cmdUpdatePatientBirthDate();
+                break;
+            case 7:
+                cmdUpdatePatientNationality();
+                break;
         }
     }
 }
@@ -125,21 +125,26 @@ void CliApp::medicationsMenuLoop() {
         switch (user_choice.value()) {
             case 0:
                 return;
-            // case 1:
-            //     cmdCreateMedication();
-            //     break;
-            // case 2:
-            //     cmdListMedications();
-            //     break;
+            case 1:
+                cmdCreateMedication();
+                break;
+            case 2:
+                cmdListMedications();
+                break;
             case 3:
+                cmdFindMedicationById();
                 break;
             case 4:
+                cmdDeleteMedicationById();
                 break;
             case 5:
+                cmdUpdateMedicationName();
                 break;
             case 6:
+                cmdUpdateMedicationStrength();
                 break;
             case 7:
+                cmdUpdateMedicationWarnings();
                 break;
         }
     }
@@ -250,7 +255,7 @@ void CliApp::cmdListPatients() {
         return;
     }
 
-    printPatientsTable(all_patients.value());
+    printer::printPatientsTable(all_patients.value());
     waitForEnter();
 }
 
@@ -266,7 +271,7 @@ void CliApp::cmdFindPatientById() {
     if (handleResultError(found_patient, "CliApp::cmdFindPatientById"))
         return;
 
-    printPatientDetails(found_patient.value());
+    printer::printPatientDetails(found_patient.value());
     waitForEnter();
 }
 
@@ -315,6 +320,8 @@ void CliApp::cmdUpdatePatientName() {
 
     auto old_name_patient = found_patient.value().name;
     auto new_name_patient = input::readNonEmpty("New patient name: ");
+    if (handleResultError(new_name_patient, "CliApp:cmdUpdateMedicationStrength"))
+        return;
 
     auto user_confirm = input::confirm("Update patient name with ID " + std::to_string(id.value()));
 
@@ -425,6 +432,224 @@ void CliApp::cmdUpdatePatientNationality() {
               << infrastructure::persistence::sqlite::nationalityToDbString(
                      new_nationality_patient.value())
               << "\n";
+    waitForEnter();
+}
+
+// Medication Commands
+
+void CliApp::cmdCreateMedication() {
+    std::cout << "===== Create Medication =====" << "\n\n";
+
+    auto name = input::readNonEmpty("Enter medication name: ");
+    if (handleResultError(name, "CliApp::cmdCreateMedication"))
+        return;
+
+    auto strength = input::readNonEmpty("Enter medication strength: ");
+    if (handleResultError(strength, "CliApp::cmdCreateMedication"))
+        return;
+
+    auto warnings = input::readOptionalString("Enter optional medication warnings: ");
+
+    domain::Medication medication;
+
+    medication.id = 0;
+    medication.name = name.value();
+    medication.strength = strength.value();
+    if (warnings.has_value()) {
+        medication.warnings = warnings.value();
+    }
+
+    auto result = medicationRepo_.createMedication(medication);
+    if (handleResultError(result, "CliApp::cmdCreateMedication"))
+        return;
+    std::cout << "Medication created successfully (ID: " << result.value().id << ").\n";
+    waitForEnter();
+}
+
+void CliApp::cmdListMedications() {
+
+    auto all_medications = medicationRepo_.getAllMedications();
+
+    if (handleResultError(all_medications, "CliApp::cmdListMedications"))
+        return;
+
+    if (all_medications.value().empty()) {
+        std::cout << "No medications found.";
+        return;
+    }
+
+    printer::printMedicationsTable(all_medications.value());
+    waitForEnter();
+}
+
+void CliApp::cmdFindMedicationById() {
+    std::cout << "===== Find Medication By ID =====" << "\n\n";
+
+    auto id = input::readInt("Enter medication ID: ");
+    if (handleResultError(id, "CliApp::cmdFindMedicationById"))
+        return;
+
+    auto found_medication = medicationRepo_.findMedicationById(id.value());
+
+    if (handleResultError(found_medication, "CliApp::cmdFindMedicationById"))
+        return;
+
+    printer::printMedicationDetails(found_medication.value());
+    waitForEnter();
+}
+
+void CliApp::cmdDeleteMedicationById() {
+    std::cout << "===== Delete Medication By ID =====" << "\n\n";
+
+    auto id = input::readInt("Enter medication ID: ");
+    if (handleResultError(id, "CliApp::cmdDeleteMedicationById"))
+        return;
+
+    auto found_medication = medicationRepo_.findMedicationById(id.value());
+
+    if (handleResultError(found_medication, "CliApp::cmdDeleteMedicationById"))
+        return;
+
+    auto user_confirm = input::confirm("Delete medication with ID " + std::to_string(id.value()));
+
+    if (handleResultError(user_confirm, "CliApp::cmdDeleteMedicationById"))
+        return;
+
+    if (!user_confirm.value()) {
+        std::cout << "Medication with ID: " << id.value() << " was not deleted.\n";
+        waitForEnter();
+        return;
+    }
+
+    auto deleted_medication = medicationRepo_.deleteMedicationById(id.value());
+    if (handleResultError(deleted_medication, "CliApp::cmdDeleteMedicationById"))
+        return;
+
+    std::cout << "Deleted medication with ID: " + std::to_string(id.value()) << ".\n";
+    waitForEnter();
+}
+
+void CliApp::cmdUpdateMedicationName() {
+    std::cout << "===== Update Medication Name =====" << "\n\n";
+
+    auto id = input::readInt("Enter medication ID: ");
+    if (handleResultError(id, "CliApp:cmdUpdateMedicationName"))
+        return;
+
+    auto found_medication = medicationRepo_.findMedicationById(id.value());
+
+    if (handleResultError(found_medication, "CliApp:cmdUpdateMedicationName"))
+        return;
+
+    auto old_name_medication = found_medication.value().name;
+    auto new_name_medication = input::readNonEmpty("New medication name: ");
+    if (handleResultError(new_name_medication, "CliApp:cmdUpdateMedicationStrength"))
+        return;
+
+    auto user_confirm =
+        input::confirm("Update medication name with ID " + std::to_string(id.value()));
+
+    if (handleResultError(user_confirm, "CliApp:cmdUpdateMedicationName"))
+        return;
+
+    if (!user_confirm.value()) {
+        std::cout << "Medication with ID " << id.value() << " was not updated.\n";
+        waitForEnter();
+        return;
+    }
+
+    auto updated_medication =
+        medicationRepo_.updateMedicationName(id.value(), new_name_medication.value());
+    if (handleResultError(updated_medication, "CliApp:cmdUpdateMedicationName"))
+        return;
+
+    std::cout << "Medication " << id.value() << " updated.\n"
+              << "Old name: " << old_name_medication << "\n"
+              << "New name: " << new_name_medication.value() << "\n";
+    waitForEnter();
+}
+
+void CliApp::cmdUpdateMedicationStrength() {
+    std::cout << "===== Update Medication Strength =====" << "\n\n";
+
+    auto id = input::readInt("Enter medication ID: ");
+    if (handleResultError(id, "CliApp:cmdUpdateMedicationStrength"))
+        return;
+
+    auto found_medication = medicationRepo_.findMedicationById(id.value());
+
+    if (handleResultError(found_medication, "CliApp:cmdUpdateMedicationStrength"))
+        return;
+
+    auto old_strength_medication = found_medication.value().strength;
+    auto new_strength_medication = input::readNonEmpty("New medication strength: ");
+    if (handleResultError(new_strength_medication, "CliApp:cmdUpdateMedicationStrength"))
+        return;
+
+    auto user_confirm =
+        input::confirm("Update medication strength with ID " + std::to_string(id.value()));
+
+    if (handleResultError(user_confirm, "CliApp:cmdUpdateMedicationStrength"))
+        return;
+
+    if (!user_confirm.value()) {
+        std::cout << "Medication with ID " << id.value() << " was not updated.\n";
+        waitForEnter();
+        return;
+    }
+
+    auto updated_medication =
+        medicationRepo_.updateMedicationStrength(id.value(), new_strength_medication.value());
+    if (handleResultError(updated_medication, "CliApp:cmdUpdateMedicationStrength"))
+        return;
+
+    std::cout << "Medication " << id.value() << " updated.\n"
+              << "Old strength: " << old_strength_medication << "\n"
+              << "New strength: " << new_strength_medication.value() << "\n";
+    waitForEnter();
+}
+
+void CliApp::cmdUpdateMedicationWarnings() {
+    std::cout << "===== Update Medication Warnings =====" << "\n\n";
+
+    auto id = input::readInt("Enter medication ID: ");
+    if (handleResultError(id, "CliApp:cmdUpdateMedicationWarnings"))
+        return;
+
+    auto found_medication = medicationRepo_.findMedicationById(id.value());
+
+    if (handleResultError(found_medication, "CliApp:cmdUpdateMedicationWarnings"))
+        return;
+
+    auto old_warnings_medication = found_medication.value().warnings;
+    auto new_warnings_medication = input::readOptionalString("New medication warnings: ");
+
+    auto user_confirm =
+        input::confirm("Update medication warnings with ID " + std::to_string(id.value()));
+
+    if (handleResultError(user_confirm, "CliApp:cmdUpdateMedicationWarnings"))
+        return;
+
+    if (!user_confirm.value()) {
+        std::cout << "Medication with ID " << id.value() << " was not updated.\n";
+        waitForEnter();
+        return;
+    }
+
+    if (new_warnings_medication.has_value()) {
+        auto updated_medication =
+            medicationRepo_.updateMedicationWarnings(id.value(), new_warnings_medication.value());
+        if (handleResultError(updated_medication, "CliApp:cmdUpdateMedicationWarnings"))
+            return;
+    } else {
+        auto updated_medication = medicationRepo_.updateMedicationWarnings(id.value(), "");
+        if (handleResultError(updated_medication, "CliApp:cmdUpdateMedicationWarnings"))
+            return;
+    }
+
+    std::cout << "Medication " << id.value() << " updated.\n"
+              << "Old warnings: " << old_warnings_medication << "\n"
+              << "New warnings: " << new_warnings_medication.value() << "\n";
     waitForEnter();
 }
 
