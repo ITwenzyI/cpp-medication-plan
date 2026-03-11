@@ -219,11 +219,12 @@ void CliApp::cmdCreatePatient() {
     if (handleResultError(name, "CliApp::cmdCreatePatient"))
         return;
 
-    auto birth_date = input::readOptionalBirthDate("Enter patient birthdate: ");
+    auto birth_date = input::readOptionalBirthDate("Enter patient birthdate (YYYY-MM-DD): ");
     if (handleResultError(birth_date, "CliApp::cmdCreatePatient"))
         return;
 
-    auto nationality = input::readOptionalNationality("Enter patient nationality: ");
+    auto nationality =
+        input::readOptionalNationality("Enter patient nationality (DE, US, GB, FR, ...): ");
     if (handleResultError(nationality, "CliApp::cmdCreatePatient"))
         return;
 
@@ -233,11 +234,11 @@ void CliApp::cmdCreatePatient() {
     patient.name = name.value();
     auto birthDateOpt = birth_date.value();
     if (birthDateOpt) {
-        patient.birth_date = *birthDateOpt;
+        patient.birth_date = birthDateOpt.value();
     }
     auto nationalityOpt = nationality.value();
     if (nationalityOpt) {
-        patient.nationality = *nationalityOpt;
+        patient.nationality = nationalityOpt.value();
     }
 
     auto result = patientRepo_.createPatient(patient);
