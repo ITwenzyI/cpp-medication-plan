@@ -205,15 +205,15 @@ common::result::Result<void> MedicationRepositorySqlite::updateMedicationWarning
             "medication_id must be positive",
             "MedicationRepositorySqlite::updateMedicationWarnings");
     }
-    if (common::validation::isEmptyOrBlank(new_warnings)) {
-        return common::result::Result<void>::fail(common::result::ErrorCode::InvalidArgument,
-            "new_warnings must not be empty",
-            "MedicationRepositorySqlite::updateMedicationWarnings");
-    }
 
     auto stmt = db_.prepare("UPDATE medications SET warnings = ? WHERE id = ?;");
 
-    stmt.bindText(1, new_warnings);
+    if (!new_warnings.empty()) {
+        stmt.bindText(1, new_warnings);
+    } else {
+        stmt.bindNull(1);
+    }
+
     stmt.bindInt(2, medication_id);
 
     int rc = stmt.step();

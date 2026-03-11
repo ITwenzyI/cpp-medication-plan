@@ -67,7 +67,7 @@ void CliApp::patientsMenuLoop() {
         showPatientsMenu();
 
         std::string_view prompt = "Choice: ";
-        auto user_choice = input::readMenuChoice(prompt, 0, 3);
+        auto user_choice = input::readMenuChoice(prompt, 0, 7);
 
         while (user_choice.isError()) {
             ErrorRenderer::printErrorMessage(user_choice.error(), "CliApp::patientsMenuLoop");
@@ -119,7 +119,7 @@ void CliApp::medicationsMenuLoop() {
         showMedicationsMenu();
 
         std::string_view prompt = "Choice: ";
-        auto user_choice = input::readMenuChoice(prompt, 0, 3);
+        auto user_choice = input::readMenuChoice(prompt, 0, 7);
 
         while (user_choice.isError()) {
             ErrorRenderer::printErrorMessage(user_choice.error(), "CliApp::medicationsMenuLoop");
@@ -171,30 +171,27 @@ void CliApp::intakePlansMenuLoop() {
         showIntakePlansMenu();
 
         std::string_view prompt = "Choice: ";
-        auto user_choice = ui::cli::input::readMenuChoice(prompt, 0, 3);
+        auto user_choice = ui::cli::input::readMenuChoice(prompt, 0, 4);
 
         while (user_choice.isError()) {
             ErrorRenderer::printErrorMessage(user_choice.error(), "CliApp::intakePlansMenuLoop");
-            user_choice = input::readMenuChoice(prompt, 0, 5);
+            user_choice = input::readMenuChoice(prompt, 0, 4);
         }
 
         switch (user_choice.value()) {
             case 0:
                 return;
             case 1:
-                //     cmdCreateIntakePlan();
-                //     break;
-                // case 2:
-                //     cmdListIntakePlansByPatientId();
-                //     break;
-                // case 3:
-                //     cmdListIntakePlansByMedicationId();
-                //     break;
-                // case 4:
-                //     cmdDeleteIntakePlanById();
-                //     break;
-                // case 5:
-                //     cmdUpdateIntakePlan();
+                cmdCreateIntakePlan();
+                break;
+            case 2:
+                cmdListIntakePlansByPatientId();
+                break;
+            case 3:
+                cmdListIntakePlansByMedicationId();
+                break;
+            case 4:
+                cmdDeleteIntakePlanById();
                 break;
         }
     }
@@ -206,7 +203,6 @@ void CliApp::showIntakePlansMenu() const {
     std::cout << "2. List IntakePlans by PatientID" << "\n";
     std::cout << "3. List IntakePlans by MedicationID" << "\n";
     std::cout << "4. Delete IntakePlan by ID" << "\n";
-    std::cout << "5. Update IntakePlan" << "\n";
     std::cout << "0. Back" << "\n";
 }
 
@@ -219,11 +215,12 @@ void CliApp::cmdCreatePatient() {
     if (handleResultError(name, "CliApp::cmdCreatePatient"))
         return;
 
-    auto birth_date = input::readOptionalBirthDate("Enter patient birthdate: ");
+    auto birth_date = input::readOptionalBirthDate("Enter patient birthdate (YYYY-MM-DD): ");
     if (handleResultError(birth_date, "CliApp::cmdCreatePatient"))
         return;
 
-    auto nationality = input::readOptionalNationality("Enter patient nationality: ");
+    auto nationality =
+        input::readOptionalNationality("Enter patient nationality (DE, US, GB, FR, ...): ");
     if (handleResultError(nationality, "CliApp::cmdCreatePatient"))
         return;
 
@@ -233,11 +230,11 @@ void CliApp::cmdCreatePatient() {
     patient.name = name.value();
     auto birthDateOpt = birth_date.value();
     if (birthDateOpt) {
-        patient.birth_date = *birthDateOpt;
+        patient.birth_date = birthDateOpt.value();
     }
     auto nationalityOpt = nationality.value();
     if (nationalityOpt) {
-        patient.nationality = *nationalityOpt;
+        patient.nationality = nationalityOpt.value();
     }
 
     auto result = patientRepo_.createPatient(patient);
@@ -307,7 +304,7 @@ void CliApp::cmdDeletePatientById() {
     if (handleResultError(deleted_patient, "CliApp::cmdDeletePatientById"))
         return;
 
-    std::cout << "Deleted patient with ID: " + std::to_string(id.value()) << ".\n";
+    std::cout << "Deleted patient with ID: " << id.value() << ".\n";
     waitForEnter();
 }
 
@@ -362,7 +359,8 @@ void CliApp::cmdUpdatePatientBirthDate() {
         return;
 
     auto old_birth_date_patient = found_patient.value().birth_date;
-    auto input_new_birth_date_patient = input::readOptionalBirthDate("New patient birthdate: ");
+    auto input_new_birth_date_patient =
+        input::readOptionalBirthDate("New patient birthdate (YYYY-MM-DD): ");
     if (handleResultError(input_new_birth_date_patient, "CliApp::cmdUpdatePatientBirthDate"))
         return;
     auto new_birth_date_patient = input_new_birth_date_patient.value();
@@ -405,7 +403,7 @@ void CliApp::cmdUpdatePatientNationality() {
     auto old_nationality_patient = found_patient.value().nationality;
 
     auto input_new_nationality_patient =
-        input::readOptionalNationality("New patient nationality: ");
+        input::readOptionalNationality("New patient nationality (DE, US, GB, FR, ...): ");
     if (handleResultError(input_new_nationality_patient, "CliApp::cmdUpdatePatientNationality"))
         return;
     auto new_nationality_patient = input_new_nationality_patient.value();
@@ -531,7 +529,7 @@ void CliApp::cmdDeleteMedicationById() {
     if (handleResultError(deleted_medication, "CliApp::cmdDeleteMedicationById"))
         return;
 
-    std::cout << "Deleted medication with ID: " + std::to_string(id.value()) << ".\n";
+    std::cout << "Deleted medication with ID: " << id.value() << ".\n";
     waitForEnter();
 }
 
@@ -654,6 +652,13 @@ void CliApp::cmdUpdateMedicationWarnings() {
             return;
     }
 
+    if (!new_warnings_medication.has_value()) {
+        new_warnings_medication = "-";
+    }
+    if (old_warnings_medication.empty()) {
+        old_warnings_medication = "-";
+    }
+
     std::cout << "Medication " << id.value() << " updated.\n"
               << "Old warnings: " << old_warnings_medication << "\n"
               << "New warnings: " << new_warnings_medication.value() << "\n";
@@ -699,7 +704,7 @@ void CliApp::cmdCreateIntakePlan() {
     if (handleResultError(time_of_day, "CliApp::cmdCreateIntakePlan"))
         return;
 
-    auto notes = input::readOptionalString("Enter notes for intakeplan (optional): ");
+    auto notes = input::readOptionalString("Enter notes (optional): ");
 
     domain::IntakePlan intake_plan;
 
