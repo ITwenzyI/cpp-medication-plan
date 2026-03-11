@@ -560,6 +560,44 @@ void CliApp::cmdUpdateMedicationName() {
     waitForEnter();
 }
 
+void CliApp::cmdUpdateMedicationStrength() {
+    std::cout << "===== Update Medication Strength =====" << "\n\n";
+
+    auto id = input::readInt("Enter medication ID: ");
+    if (handleResultError(id, "CliApp:cmdUpdateMedicationStrength"))
+        return;
+
+    auto found_medication = medicationRepo_.findMedicationById(id.value());
+
+    if (handleResultError(found_medication, "CliApp:cmdUpdateMedicationStrength"))
+        return;
+
+    auto old_strength_medication = found_medication.value().strength;
+    auto new_strength_medication = input::readNonEmpty("New medication strength: ");
+
+    auto user_confirm =
+        input::confirm("Update medication strength with ID " + std::to_string(id.value()));
+
+    if (handleResultError(user_confirm, "CliApp:cmdUpdateMedicationStrength"))
+        return;
+
+    if (!user_confirm.value()) {
+        std::cout << "Medication with ID " << id.value() << " was not updated.\n";
+        waitForEnter();
+        return;
+    }
+
+    auto updated_medication =
+        medicationRepo_.updateMedicationStrength(id.value(), new_strength_medication.value());
+    if (handleResultError(updated_medication, "CliApp:cmdUpdateMedicationStrength"))
+        return;
+
+    std::cout << "Medication " << id.value() << " updated.\n"
+              << "Old strength: " << old_strength_medication << "\n"
+              << "New strength: " << new_strength_medication.value() << "\n";
+    waitForEnter();
+}
+
 // Utility
 
 void CliApp::waitForEnter() const {
