@@ -663,12 +663,30 @@ void CliApp::cmdUpdateMedicationWarnings() {
 void CliApp::cmdCreateIntakePlan() {
     std::cout << "===== Create IntakePlan =====" << "\n\n";
 
+    auto user_confirm = input::confirm("Print out all patients?");
+    if (handleResultError(user_confirm, "CliApp::cmdCreateIntakePlan"))
+        return;
+    if (user_confirm.value()) {
+        cmdListPatients();
+    }
     auto patient_id = input::readInt("Enter patient ID: ");
     if (handleResultError(patient_id, "CliApp::cmdCreateIntakePlan"))
         return;
+    auto found_patient = patientRepo_.findPatientById(patient_id.value());
+    if (handleResultError(found_patient, "CliApp::cmdFindPatientById"))
+        return;
 
+    user_confirm = input::confirm("Print out all medications?");
+    if (handleResultError(user_confirm, "CliApp::cmdCreateIntakePlan"))
+        return;
+    if (user_confirm.value()) {
+        cmdListMedications();
+    }
     auto medication_id = input::readInt("Enter medication ID: ");
     if (handleResultError(medication_id, "CliApp::cmdCreateIntakePlan"))
+        return;
+    auto found_medication = medicationRepo_.findMedicationById(medication_id.value());
+    if (handleResultError(found_medication, "CliApp::cmdCreateIntakePlan"))
         return;
 
     auto dose = input::readNonEmpty("Enter dose: ");
