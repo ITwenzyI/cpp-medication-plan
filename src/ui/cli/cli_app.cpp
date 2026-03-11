@@ -359,7 +359,8 @@ void CliApp::cmdUpdatePatientBirthDate() {
         return;
 
     auto old_birth_date_patient = found_patient.value().birth_date;
-    auto input_new_birth_date_patient = input::readOptionalBirthDate("New patient birthdate: ");
+    auto input_new_birth_date_patient =
+        input::readOptionalBirthDate("New patient birthdate (YYYY-MM-DD): ");
     if (handleResultError(input_new_birth_date_patient, "CliApp::cmdUpdatePatientBirthDate"))
         return;
     auto new_birth_date_patient = input_new_birth_date_patient.value();
