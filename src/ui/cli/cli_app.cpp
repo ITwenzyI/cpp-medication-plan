@@ -1,8 +1,12 @@
 #include "cli_app.hpp"
 #include "common/result/result.hpp"
+#include "domain/intake_plan.hpp"
+#include "domain/medication.hpp"
+#include "domain/patient.hpp"
 #include "error_renderer.hpp"
 #include "infrastructure/persistence/sqlite/nationality_mapper_sqlite.hpp"
 #include "input.hpp"
+#include "printer/intake_plan_printer.hpp"
 #include "printer/medication_printer.hpp"
 #include "printer/patient_printer.hpp"
 #include <iostream>
@@ -252,6 +256,7 @@ void CliApp::cmdListPatients() {
 
     if (all_patients.value().empty()) {
         std::cout << "No patients found.";
+        waitForEnter();
         return;
     }
 
@@ -475,6 +480,7 @@ void CliApp::cmdListMedications() {
 
     if (all_medications.value().empty()) {
         std::cout << "No medications found.";
+        waitForEnter();
         return;
     }
 
@@ -651,6 +657,155 @@ void CliApp::cmdUpdateMedicationWarnings() {
     std::cout << "Medication " << id.value() << " updated.\n"
               << "Old warnings: " << old_warnings_medication << "\n"
               << "New warnings: " << new_warnings_medication.value() << "\n";
+    waitForEnter();
+}
+
+// IntakePlans Commands
+
+void CliApp::cmdCreateIntakePlan() {
+    std::cout << "===== Create IntakePlan =====" << "\n\n";
+
+    auto user_confirm = input::confirm("Print out all patients?");
+    if (handleResultError(user_confirm, "CliApp::cmdCreateIntakePlan"))
+        return;
+    if (user_confirm.value()) {
+        cmdListPatients();
+    }
+    auto patient_id = input::readInt("Enter patient ID: ");
+    if (handleResultError(patient_id, "CliApp::cmdCreateIntakePlan"))
+        return;
+    auto found_patient = patientRepo_.findPatientById(patient_id.value());
+    if (handleResultError(found_patient, "CliApp::cmdCreateIntakePlan"))
+        return;
+
+    user_confirm = input::confirm("Print out all medications?");
+    if (handleResultError(user_confirm, "CliApp::cmdCreateIntakePlan"))
+        return;
+    if (user_confirm.value()) {
+        cmdListMedications();
+    }
+    auto medication_id = input::readInt("Enter medication ID: ");
+    if (handleResultError(medication_id, "CliApp::cmdCreateIntakePlan"))
+        return;
+    auto found_medication = medicationRepo_.findMedicationById(medication_id.value());
+    if (handleResultError(found_medication, "CliApp::cmdCreateIntakePlan"))
+        return;
+
+    auto dose = input::readNonEmpty("Enter dose: ");
+    if (handleResultError(dose, "CliApp::cmdCreateIntakePlan"))
+        return;
+
+    auto time_of_day = input::readTimeOfDay("Enter time of day (Morning, Noon, Evening, Night): ");
+    if (handleResultError(time_of_day, "CliApp::cmdCreateIntakePlan"))
+        return;
+
+    auto notes = input::readOptionalString("Enter notes for intakeplan (optional): ");
+
+    domain::IntakePlan intake_plan;
+
+    intake_plan.id = 0;
+    intake_plan.patient_id = patient_id.value();
+    intake_plan.medication_id = medication_id.value();
+    intake_plan.dose = dose.value();
+    intake_plan.time_of_day = time_of_day.value();
+
+    if (notes.has_value()) {
+        intake_plan.notes = notes.value();
+    }
+
+    auto result = intakePlanRepo_.createIntakePlan(intake_plan);
+    if (handleResultError(result, "CliApp::cmdCreateIntakePlan"))
+        return;
+    std::cout << "IntakePlan created successfully (ID: " << result.value().id << ").\n";
+    waitForEnter();
+}
+
+void CliApp::cmdListIntakePlansByPatientId() {
+    std::cout << "===== List IntakePlans By Patient ID =====" << "\n\n";
+
+    auto user_confirm = input::confirm("Print out all patients?");
+    if (handleResultError(user_confirm, "CliApp::cmdListIntakePlansByPatientId"))
+        return;
+    if (user_confirm.value()) {
+        cmdListPatients();
+    }
+
+    auto patient_id = input::readInt("Enter patient ID: ");
+    if (handleResultError(patient_id, "CliApp::cmdListIntakePlansByPatientId"))
+        return;
+    auto found_patient = patientRepo_.findPatientById(patient_id.value());
+    if (handleResultError(found_patient, "CliApp::cmdListIntakePlansByPatientId"))
+        return;
+
+    auto intake_plans_patient = intakePlanRepo_.getIntakePlansByPatientId(patient_id.value());
+    if (handleResultError(intake_plans_patient, "CliApp::cmdListIntakePlansByPatientId"))
+        return;
+
+    if (intake_plans_patient.value().empty()) {
+        std::cout << "No IntakePlans found for PatientID " << patient_id.value();
+        waitForEnter();
+        return;
+    }
+
+    printer::printIntakePlansTable(intake_plans_patient.value());
+    waitForEnter();
+}
+
+void CliApp::cmdListIntakePlansByMedicationId() {
+    std::cout << "===== List IntakePlans By Medication ID =====" << "\n\n";
+
+    auto user_confirm = input::confirm("Print out all medications?");
+    if (handleResultError(user_confirm, "CliApp::cmdListIntakePlansByMedicationId"))
+        return;
+    if (user_confirm.value()) {
+        cmdListMedications();
+    }
+
+    auto medication_id = input::readInt("Enter medication ID: ");
+    if (handleResultError(medication_id, "CliApp::cmdListIntakePlansByMedicationId"))
+        return;
+    auto found_medication = medicationRepo_.findMedicationById(medication_id.value());
+    if (handleResultError(found_medication, "CliApp::cmdListIntakePlansByMedicationId"))
+        return;
+
+    auto intake_plans_medication =
+        intakePlanRepo_.getIntakePlansByMedicationId(medication_id.value());
+    if (handleResultError(intake_plans_medication, "CliApp::cmdListIntakePlansByMedicationId"))
+        return;
+
+    if (intake_plans_medication.value().empty()) {
+        std::cout << "No IntakePlans found for MedicationID " << medication_id.value();
+        waitForEnter();
+        return;
+    }
+
+    printer::printIntakePlansTable(intake_plans_medication.value());
+    waitForEnter();
+}
+
+void CliApp::cmdDeleteIntakePlanById() {
+    std::cout << "===== Delete IntakePlan By ID =====" << "\n\n";
+
+    auto id = input::readInt("Enter IntakePlan ID: ");
+    if (handleResultError(id, "CliApp::cmdDeleteIntakePlanById"))
+        return;
+
+    auto user_confirm = input::confirm("Delete IntakePlan with ID " + std::to_string(id.value()));
+
+    if (handleResultError(user_confirm, "CliApp::cmdDeleteIntakePlanById"))
+        return;
+
+    if (!user_confirm.value()) {
+        std::cout << "IntakePlan with ID: " << id.value() << " was not deleted.\n";
+        waitForEnter();
+        return;
+    }
+
+    auto deleted_intake_plan = intakePlanRepo_.deleteIntakePlanById(id.value());
+    if (handleResultError(deleted_intake_plan, "CliApp::cmdDeleteIntakePlanById"))
+        return;
+
+    std::cout << "Deleted IntakePlan with ID: " << id.value() << ".\n";
     waitForEnter();
 }
 
