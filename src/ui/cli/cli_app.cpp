@@ -315,6 +315,8 @@ void CliApp::cmdUpdatePatientName() {
 
     auto old_name_patient = found_patient.value().name;
     auto new_name_patient = input::readNonEmpty("New patient name: ");
+    if (handleResultError(new_name_patient, "CliApp:cmdUpdateMedicationStrength"))
+        return;
 
     auto user_confirm = input::confirm("Update patient name with ID " + std::to_string(id.value()));
 
@@ -536,6 +538,8 @@ void CliApp::cmdUpdateMedicationName() {
 
     auto old_name_medication = found_medication.value().name;
     auto new_name_medication = input::readNonEmpty("New medication name: ");
+    if (handleResultError(new_name_medication, "CliApp:cmdUpdateMedicationStrength"))
+        return;
 
     auto user_confirm =
         input::confirm("Update medication name with ID " + std::to_string(id.value()));
@@ -574,6 +578,8 @@ void CliApp::cmdUpdateMedicationStrength() {
 
     auto old_strength_medication = found_medication.value().strength;
     auto new_strength_medication = input::readNonEmpty("New medication strength: ");
+    if (handleResultError(new_strength_medication, "CliApp:cmdUpdateMedicationStrength"))
+        return;
 
     auto user_confirm =
         input::confirm("Update medication strength with ID " + std::to_string(id.value()));
