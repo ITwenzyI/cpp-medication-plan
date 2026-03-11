@@ -85,15 +85,15 @@ void CliApp::patientsMenuLoop() {
             case 4:
                 cmdDeletePatientById();
                 break;
-                // case 5:
-                //     cmdUpdatePatientName();
-                //     break;
-                // case 6:
-                //     cmdUpdatePatientBirthDate();
-                //     break;
-                // case 7:
-                //     cmdUpdatePatientNationality();
-                //     break;
+            case 5:
+                cmdUpdatePatientName();
+                break;
+            case 6:
+                cmdUpdatePatientBirthDate();
+                break;
+            case 7:
+                cmdUpdatePatientNationality();
+                break;
         }
     }
 }
@@ -125,21 +125,26 @@ void CliApp::medicationsMenuLoop() {
         switch (user_choice.value()) {
             case 0:
                 return;
-            // case 1:
-            //     cmdCreateMedication();
-            //     break;
-            // case 2:
-            //     cmdListMedications();
-            //     break;
+            case 1:
+                cmdCreateMedication();
+                break;
+            case 2:
+                cmdListMedications();
+                break;
             case 3:
+                cmdFindMedicationById();
                 break;
             case 4:
+                cmdDeleteMedicationById();
                 break;
             case 5:
+                cmdUpdateMedicationName();
                 break;
             case 6:
+                cmdUpdateMedicationStrength();
                 break;
             case 7:
+                cmdUpdateMedicationWarnings();
                 break;
         }
     }
