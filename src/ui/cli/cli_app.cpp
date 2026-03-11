@@ -67,7 +67,7 @@ void CliApp::patientsMenuLoop() {
         showPatientsMenu();
 
         std::string_view prompt = "Choice: ";
-        auto user_choice = input::readMenuChoice(prompt, 0, 3);
+        auto user_choice = input::readMenuChoice(prompt, 0, 7);
 
         while (user_choice.isError()) {
             ErrorRenderer::printErrorMessage(user_choice.error(), "CliApp::patientsMenuLoop");
@@ -119,7 +119,7 @@ void CliApp::medicationsMenuLoop() {
         showMedicationsMenu();
 
         std::string_view prompt = "Choice: ";
-        auto user_choice = input::readMenuChoice(prompt, 0, 3);
+        auto user_choice = input::readMenuChoice(prompt, 0, 7);
 
         while (user_choice.isError()) {
             ErrorRenderer::printErrorMessage(user_choice.error(), "CliApp::medicationsMenuLoop");
@@ -171,7 +171,7 @@ void CliApp::intakePlansMenuLoop() {
         showIntakePlansMenu();
 
         std::string_view prompt = "Choice: ";
-        auto user_choice = ui::cli::input::readMenuChoice(prompt, 0, 3);
+        auto user_choice = ui::cli::input::readMenuChoice(prompt, 0, 4);
 
         while (user_choice.isError()) {
             ErrorRenderer::printErrorMessage(user_choice.error(), "CliApp::intakePlansMenuLoop");
