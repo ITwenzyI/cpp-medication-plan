@@ -697,7 +697,7 @@ void CliApp::cmdCreateIntakePlan() {
     if (handleResultError(time_of_day, "CliApp::cmdCreateIntakePlan"))
         return;
 
-    auto notes = input::readOptionalString("Enter notes for intakeplan (optional): ");
+    auto notes = input::readOptionalString("Enter notes (optional): ");
 
     domain::IntakePlan intake_plan;
 
