@@ -33,7 +33,7 @@ constexpr int seperation_line = 60;
 
 } // namespace
 
-namespace ui::cli {
+namespace ui::cli::printer {
 
 void printPatientTableHeader() {
     for (int i = 0; i < title_width; i++) {
@@ -76,4 +76,4 @@ void printPatientDetails(const domain::Patient& patient) {
               << "\nNationality: " << formatField(nationality) << "\n";
 }
 
-} // namespace ui::cli
+} // namespace ui::cli::printer

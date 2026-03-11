@@ -250,7 +250,7 @@ void CliApp::cmdListPatients() {
         return;
     }
 
-    printPatientsTable(all_patients.value());
+    printer::printPatientsTable(all_patients.value());
     waitForEnter();
 }
 
@@ -266,7 +266,7 @@ void CliApp::cmdFindPatientById() {
     if (handleResultError(found_patient, "CliApp::cmdFindPatientById"))
         return;
 
-    printPatientDetails(found_patient.value());
+    printer::printPatientDetails(found_patient.value());
     waitForEnter();
 }
 
