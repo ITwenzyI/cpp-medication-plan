@@ -604,6 +604,50 @@ void CliApp::cmdUpdateMedicationStrength() {
     waitForEnter();
 }
 
+void CliApp::cmdUpdateMedicationWarnings() {
+    std::cout << "===== Update Medication Warnings =====" << "\n\n";
+
+    auto id = input::readInt("Enter medication ID: ");
+    if (handleResultError(id, "CliApp:cmdUpdateMedicationWarnings"))
+        return;
+
+    auto found_medication = medicationRepo_.findMedicationById(id.value());
+
+    if (handleResultError(found_medication, "CliApp:cmdUpdateMedicationWarnings"))
+        return;
+
+    auto old_warnings_medication = found_medication.value().warnings;
+    auto new_warnings_medication = input::readOptionalString("New medication warnings: ");
+
+    auto user_confirm =
+        input::confirm("Update medication warnings with ID " + std::to_string(id.value()));
+
+    if (handleResultError(user_confirm, "CliApp:cmdUpdateMedicationWarnings"))
+        return;
+
+    if (!user_confirm.value()) {
+        std::cout << "Medication with ID " << id.value() << " was not updated.\n";
+        waitForEnter();
+        return;
+    }
+
+    if (new_warnings_medication.has_value()) {
+        auto updated_medication =
+            medicationRepo_.updateMedicationWarnings(id.value(), new_warnings_medication.value());
+        if (handleResultError(updated_medication, "CliApp:cmdUpdateMedicationWarnings"))
+            return;
+    } else {
+        auto updated_medication = medicationRepo_.updateMedicationWarnings(id.value(), "");
+        if (handleResultError(updated_medication, "CliApp:cmdUpdateMedicationWarnings"))
+            return;
+    }
+
+    std::cout << "Medication " << id.value() << " updated.\n"
+              << "Old warnings: " << old_warnings_medication << "\n"
+              << "New warnings: " << new_warnings_medication.value() << "\n";
+    waitForEnter();
+}
+
 // Utility
 
 void CliApp::waitForEnter() const {
