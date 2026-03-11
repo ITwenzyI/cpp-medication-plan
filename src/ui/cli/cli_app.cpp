@@ -491,6 +491,37 @@ void CliApp::cmdFindMedicationById() {
     waitForEnter();
 }
 
+void CliApp::cmdDeleteMedicationById() {
+    std::cout << "===== Delete Medication By ID =====" << "\n\n";
+
+    auto id = input::readInt("Enter medication ID: ");
+    if (handleResultError(id, "CliApp::cmdDeleteMedicationById"))
+        return;
+
+    auto found_medication = medicationRepo_.findMedicationById(id.value());
+
+    if (handleResultError(found_medication, "CliApp::cmdDeleteMedicationById"))
+        return;
+
+    auto user_confirm = input::confirm("Delete medication with ID " + std::to_string(id.value()));
+
+    if (handleResultError(user_confirm, "CliApp::cmdDeleteMedicationById"))
+        return;
+
+    if (!user_confirm.value()) {
+        std::cout << "Medication with ID: " << id.value() << " was not deleted.\n";
+        waitForEnter();
+        return;
+    }
+
+    auto deleted_medication = medicationRepo_.deleteMedicationById(id.value());
+    if (handleResultError(deleted_medication, "CliApp::cmdDeleteMedicationById"))
+        return;
+
+    std::cout << "Deleted medication with ID: " + std::to_string(id.value()) << ".\n";
+    waitForEnter();
+}
+
 // Utility
 
 void CliApp::waitForEnter() const {
