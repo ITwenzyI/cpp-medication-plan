@@ -428,6 +428,37 @@ void CliApp::cmdUpdatePatientNationality() {
     waitForEnter();
 }
 
+// Medication Commands
+
+void CliApp::cmdCreateMedication() {
+    std::cout << "===== Create Medication =====" << "\n\n";
+
+    auto name = input::readNonEmpty("Enter medication name: ");
+    if (handleResultError(name, "CliApp::cmdCreateMedication"))
+        return;
+
+    auto strength = input::readNonEmpty("Enter medication strength: ");
+    if (handleResultError(strength, "CliApp::cmdCreateMedication"))
+        return;
+
+    auto warnings = input::readOptionalString("Enter optional medication warnings: ");
+
+    domain::Medication medication;
+
+    medication.id = 0;
+    medication.name = name.value();
+    medication.strength = strength.value();
+    if (warnings.has_value()) {
+        medication.warnings = warnings.value();
+    }
+
+    auto result = medicationRepo_.createMedication(medication);
+    if (handleResultError(result, "CliApp::cmdCreateMedication"))
+        return;
+    std::cout << "Medication created successfully (ID: " << result.value().id << ").\n";
+    waitForEnter();
+}
+
 // Utility
 
 void CliApp::waitForEnter() const {
