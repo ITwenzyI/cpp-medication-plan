@@ -459,6 +459,22 @@ void CliApp::cmdCreateMedication() {
     waitForEnter();
 }
 
+void CliApp::cmdListMedications() {
+
+    auto all_medications = medicationRepo_.getAllMedications();
+
+    if (handleResultError(all_medications, "CliApp::cmdListMedications"))
+        return;
+
+    if (all_medications.value().empty()) {
+        std::cout << "No medications found.";
+        return;
+    }
+
+    printer::printMedicationsTable(all_medications.value());
+    waitForEnter();
+}
+
 // Utility
 
 void CliApp::waitForEnter() const {
