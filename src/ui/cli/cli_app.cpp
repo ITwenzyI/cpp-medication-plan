@@ -307,7 +307,7 @@ void CliApp::cmdDeletePatientById() {
     if (handleResultError(deleted_patient, "CliApp::cmdDeletePatientById"))
         return;
 
-    std::cout << "Deleted patient with ID: " + std::to_string(id.value()) << ".\n";
+    std::cout << "Deleted patient with ID: " << id.value() << ".\n";
     waitForEnter();
 }
 
@@ -531,7 +531,7 @@ void CliApp::cmdDeleteMedicationById() {
     if (handleResultError(deleted_medication, "CliApp::cmdDeleteMedicationById"))
         return;
 
-    std::cout << "Deleted medication with ID: " + std::to_string(id.value()) << ".\n";
+    std::cout << "Deleted medication with ID: " << id.value() << ".\n";
     waitForEnter();
 }
 
