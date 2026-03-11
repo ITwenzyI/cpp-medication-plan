@@ -193,7 +193,8 @@ common::result::Result<void> PatientRepositorySqlite::updatePatientBirthdate(
         return common::result::Result<void>::fail(common::result::ErrorCode::InvalidArgument,
             "patient_id must be positive", "PatientRepositorySqlite::updatePatientBirthdate");
     }
-    if (!common::validation::isValidBirthDate(new_birth_date)) {
+    if (!common::validation::isEmptyOrBlank(new_birth_date) &&
+        !common::validation::isValidBirthDate(new_birth_date)) {
         return common::result::Result<void>::fail(common::result::ErrorCode::InvalidArgument,
             "birth_date format is invalid (YYYY-MM-DD)",
             "PatientRepositorySqlite::updatePatientBirthdate");
@@ -201,7 +202,11 @@ common::result::Result<void> PatientRepositorySqlite::updatePatientBirthdate(
 
     auto stmt = db_.prepare("UPDATE patients SET birth_date = ? WHERE id = ?;");
 
-    stmt.bindText(1, new_birth_date);
+    if (common::validation::isEmptyOrBlank(new_birth_date)) {
+        stmt.bindNull(1);
+    } else {
+        stmt.bindText(1, new_birth_date);
+    }
     stmt.bindInt(2, patient_id);
 
     int rc = stmt.step();

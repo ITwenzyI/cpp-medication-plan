@@ -377,14 +377,16 @@ void CliApp::cmdUpdatePatientBirthDate() {
         return;
     }
 
-    auto updated_patient =
-        patientRepo_.updatePatientBirthdate(id.value(), new_birth_date_patient.value());
+    const std::string new_birth_date_value = new_birth_date_patient.value_or("");
+    auto updated_patient = patientRepo_.updatePatientBirthdate(id.value(), new_birth_date_value);
     if (handleResultError(updated_patient, "CliApp::cmdUpdatePatientBirthDate"))
         return;
 
     std::cout << "Patient " << id.value() << " updated.\n"
-              << "Old birthdate: " << old_birth_date_patient << "\n"
-              << "New birthdate: " << new_birth_date_patient.value() << "\n";
+              << "Old birthdate: "
+              << (old_birth_date_patient.empty() ? "-" : old_birth_date_patient) << "\n"
+              << "New birthdate: " << (new_birth_date_value.empty() ? "-" : new_birth_date_value)
+              << "\n";
     waitForEnter();
 }
 
@@ -420,21 +422,24 @@ void CliApp::cmdUpdatePatientNationality() {
         return;
     }
 
-    auto updated_patient = patientRepo_.updatePatientNationality(id.value(),
-        infrastructure::persistence::sqlite::nationalityToDbString(
-            new_nationality_patient.value()));
+    const std::string new_nationality_value = new_nationality_patient.has_value()
+        ? infrastructure::persistence::sqlite::nationalityToDbString(
+              new_nationality_patient.value())
+        : "";
+    const std::string old_nationality_value = old_nationality_patient.has_value()
+        ? infrastructure::persistence::sqlite::nationalityToDbString(
+              old_nationality_patient.value())
+        : "";
+
+    auto updated_patient = patientRepo_.updatePatientNationality(id.value(), new_nationality_value);
     if (handleResultError(updated_patient, "CliApp::cmdUpdatePatientNationality"))
         return;
 
     std::cout << "Patient " << id.value() << " updated.\n"
-              << "Old birthdate: "
-              << infrastructure::persistence::sqlite::nationalityToDbString(
-                     old_nationality_patient.value())
-              << "\n"
-              << "New birthdate: "
-              << infrastructure::persistence::sqlite::nationalityToDbString(
-                     new_nationality_patient.value())
-              << "\n";
+              << "Old nationality: "
+              << (old_nationality_value.empty() ? "-" : old_nationality_value) << "\n"
+              << "New nationality: "
+              << (new_nationality_value.empty() ? "-" : new_nationality_value) << "\n";
     waitForEnter();
 }
 
