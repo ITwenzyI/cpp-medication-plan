@@ -5,6 +5,20 @@
 #include <stdexcept>
 
 namespace infrastructure::persistence::sqlite {
+static common::result::Result<void> mapWriteStepFailure(
+    int rc, std::string_view operation_name, std::string_view caller) {
+    switch (rc) {
+        case SQLITE_BUSY:
+        case SQLITE_LOCKED:
+            return common::result::Result<void>::fail(common::result::ErrorCode::DatabaseError,
+                std::string(operation_name) + " failed because the database is busy or locked",
+                std::string(caller));
+        default:
+            return common::result::Result<void>::fail(common::result::ErrorCode::DatabaseError,
+                std::string(operation_name) + " failed", std::string(caller));
+    }
+}
+
 static domain::Medication mapMedication(const infrastructure::db::Statement& stmt) {
     domain::Medication temp;
     temp.id = stmt.getInt(0);
@@ -121,6 +135,11 @@ common::result::Result<void> MedicationRepositorySqlite::deleteMedicationById(in
 
     int rc = stmt.step();
 
+    if (rc != SQLITE_DONE) {
+        return mapWriteStepFailure(
+            rc, "DELETE", "MedicationRepositorySqlite::deleteMedicationById");
+    }
+
     if (db_.changes() == 0) {
         return common::result::Result<void>::fail(common::result::ErrorCode::NotFound,
             "No medication with id: " + std::to_string(medication_id),
@@ -147,6 +166,11 @@ common::result::Result<void> MedicationRepositorySqlite::updateMedicationName(
     stmt.bindInt(2, medication_id);
 
     int rc = stmt.step();
+
+    if (rc != SQLITE_DONE) {
+        return mapWriteStepFailure(
+            rc, "UPDATE", "MedicationRepositorySqlite::updateMedicationName");
+    }
 
     if (db_.changes() == 0) {
         auto existing = findMedicationById(medication_id);
@@ -183,6 +207,11 @@ common::result::Result<void> MedicationRepositorySqlite::updateMedicationStrengt
 
     int rc = stmt.step();
 
+    if (rc != SQLITE_DONE) {
+        return mapWriteStepFailure(
+            rc, "UPDATE", "MedicationRepositorySqlite::updateMedicationStrength");
+    }
+
     if (db_.changes() == 0) {
         auto existing = findMedicationById(medication_id);
         if (existing.isError()) {
@@ -217,6 +246,11 @@ common::result::Result<void> MedicationRepositorySqlite::updateMedicationWarning
     stmt.bindInt(2, medication_id);
 
     int rc = stmt.step();
+
+    if (rc != SQLITE_DONE) {
+        return mapWriteStepFailure(
+            rc, "UPDATE", "MedicationRepositorySqlite::updateMedicationWarnings");
+    }
 
     if (db_.changes() == 0) {
         auto existing = findMedicationById(medication_id);
