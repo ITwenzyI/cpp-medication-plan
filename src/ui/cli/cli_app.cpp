@@ -403,7 +403,7 @@ void CliApp::cmdUpdatePatientNationality() {
     auto old_nationality_patient = found_patient.value().nationality;
 
     auto input_new_nationality_patient =
-        input::readOptionalNationality("New patient nationality: ");
+        input::readOptionalNationality("New patient nationality (DE, US, GB, FR, ...): ");
     if (handleResultError(input_new_nationality_patient, "CliApp::cmdUpdatePatientNationality"))
         return;
     auto new_nationality_patient = input_new_nationality_patient.value();
