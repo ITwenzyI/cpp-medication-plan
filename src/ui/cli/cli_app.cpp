@@ -256,6 +256,7 @@ void CliApp::cmdListPatients() {
 
     if (all_patients.value().empty()) {
         std::cout << "No patients found.";
+        waitForEnter();
         return;
     }
 
@@ -479,6 +480,7 @@ void CliApp::cmdListMedications() {
 
     if (all_medications.value().empty()) {
         std::cout << "No medications found.";
+        waitForEnter();
         return;
     }
 
