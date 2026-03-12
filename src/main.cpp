@@ -15,10 +15,13 @@
 
 int main() {
     try {
-        infrastructure::db::Database db("data/medication.db");
+        // prepare the first-run filesystem state before opening SQLite.
+        const auto dbPath = infrastructure::db::ensureDatabasePath("data/medication.db");
+        infrastructure::db::Database db(dbPath.string());
 
-        //infrastructure::db::initDatabase(db, "sql/schema.sql");
-        //std::cout << "Database initalized\n";
+        // load the schema from either the source tree or the build directory.
+        infrastructure::db::initDatabase(db, infrastructure::db::findSchemaPath());
+        std::cout << "Database initalized\n";
         ui::cli::CliApp printer{db};
 
         auto run = printer.run();
