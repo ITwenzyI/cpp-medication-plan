@@ -16,7 +16,7 @@ static void expect(bool condition, std::string_view message) {
 int main() {
 
     infrastructure::db::Database db(":memory:");
-    infrastructure::db::initDatabase(db, "sql/schema.sql");
+    infrastructure::db::initDatabase(db, infrastructure::db::findSchemaPath());
 
     infrastructure::persistence::sqlite::PatientRepositorySqlite patient_repository(db);
 
