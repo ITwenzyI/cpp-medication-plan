@@ -7,8 +7,13 @@
 //
 #pragma once
 #include "database.hpp"
+#include <filesystem>
 #include <string>
 
 namespace infrastructure::db {
-void initDatabase(Database& db, const std::string& schemaPath);
+std::filesystem::path ensureDatabasePath(const std::filesystem::path& dbPath);
+
+std::filesystem::path findSchemaPath();
+
+void initDatabase(Database& db, const std::filesystem::path& schemaPath);
 } // namespace infrastructure::db
