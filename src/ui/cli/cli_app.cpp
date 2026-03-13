@@ -5,10 +5,13 @@
 #include "domain/patient.hpp"
 #include "error_renderer.hpp"
 #include "infrastructure/persistence/sqlite/nationality_mapper_sqlite.hpp"
+#include "infrastructure/persistence/sqlite/time_of_day_mapper_sqlite.hpp"
 #include "input.hpp"
 #include "printer/intake_plan_printer.hpp"
 #include "printer/medication_printer.hpp"
 #include "printer/patient_printer.hpp"
+#include "ui/cli/input.hpp"
+#include "ui/cli/printer/intake_plan_printer.hpp"
 #include <iostream>
 #include <limits>
 #include <string>
@@ -171,11 +174,11 @@ void CliApp::intakePlansMenuLoop() {
         showIntakePlansMenu();
 
         std::string_view prompt = "Choice: ";
-        auto user_choice = ui::cli::input::readMenuChoice(prompt, 0, 4);
+        auto user_choice = ui::cli::input::readMenuChoice(prompt, 0, 6);
 
         while (user_choice.isError()) {
             ErrorRenderer::printErrorMessage(user_choice.error(), "CliApp::intakePlansMenuLoop");
-            user_choice = input::readMenuChoice(prompt, 0, 4);
+            user_choice = input::readMenuChoice(prompt, 0, 6);
         }
 
         switch (user_choice.value()) {
@@ -185,13 +188,19 @@ void CliApp::intakePlansMenuLoop() {
                 cmdCreateIntakePlan();
                 break;
             case 2:
-                cmdListIntakePlansByPatientId();
+                cmdFindIntakePlanById();
                 break;
             case 3:
-                cmdListIntakePlansByMedicationId();
+                cmdListIntakePlansByPatientId();
                 break;
             case 4:
+                cmdListIntakePlansByMedicationId();
+                break;
+            case 5:
                 cmdDeleteIntakePlanById();
+                break;
+            case 6:
+                cmdUpdateIntakePlan();
                 break;
         }
     }
@@ -200,9 +209,11 @@ void CliApp::intakePlansMenuLoop() {
 void CliApp::showIntakePlansMenu() const {
     std::cout << "===== IntakePlan Menu =====" << "\n";
     std::cout << "1. Create IntakePlan" << "\n";
-    std::cout << "2. List IntakePlans by PatientID" << "\n";
-    std::cout << "3. List IntakePlans by MedicationID" << "\n";
-    std::cout << "4. Delete IntakePlan by ID" << "\n";
+    std::cout << "2. Find IntakePlan by ID" << "\n";
+    std::cout << "3. List IntakePlans by PatientID" << "\n";
+    std::cout << "4. List IntakePlans by MedicationID" << "\n";
+    std::cout << "5. Delete IntakePlan by ID" << "\n";
+    std::cout << "6. Update IntakePlan" << "\n";
     std::cout << "0. Back" << "\n";
 }
 
@@ -816,6 +827,98 @@ void CliApp::cmdDeleteIntakePlanById() {
         return;
 
     std::cout << "Deleted IntakePlan with ID: " << id.value() << ".\n";
+    waitForEnter();
+}
+
+void CliApp::cmdFindIntakePlanById() {
+    std::cout << "===== Find IntakePlan By ID =====" << "\n\n";
+
+    auto id = input::readInt("Enter IntakePlan ID: ");
+    if (handleResultError(id, "CliApp::cmdFindIntakePlanById"))
+        return;
+
+    auto found_intake_plan = intakePlanRepo_.findIntakePlanById(id.value());
+
+    if (handleResultError(found_intake_plan, "CliApp::cmdFindIntakePlanById"))
+        return;
+
+    printer::printIntakePlanDetails(found_intake_plan.value());
+    waitForEnter();
+}
+
+void CliApp::cmdUpdateIntakePlan() {
+    std::cout << "===== Update IntakePlan =====" << "\n\n";
+
+    auto id = input::readInt("Enter IntakePlan ID: ");
+    if (handleResultError(id, "CliApp:cmdUpdateIntakePlan"))
+        return;
+
+    auto found_intake_plan = intakePlanRepo_.findIntakePlanById(id.value());
+
+    if (handleResultError(found_intake_plan, "CliApp:cmdUpdateIntakePlan"))
+        return;
+
+    auto old_intake_plan = found_intake_plan.value();
+
+    auto new_intake_plan = found_intake_plan.value();
+
+    auto user_confirm = input::confirm("Update dose " + new_intake_plan.dose);
+    if (handleResultError(user_confirm, "CliApp:cmdUpdateIntakePlan"))
+        return;
+    if (user_confirm.value()) {
+        auto new_dose = input::readNonEmpty("Enter new dose: ");
+        if (handleResultError(new_dose, "CliApp:cmdUpdateIntakePlan"))
+            return;
+        new_intake_plan.dose = new_dose.value();
+    }
+
+    user_confirm = input::confirm("Update time of day " +
+        infrastructure::persistence::sqlite::timeOfDayToDbString(new_intake_plan.time_of_day));
+    if (handleResultError(user_confirm, "CliApp:cmdUpdateIntakePlan"))
+        return;
+    if (user_confirm.value()) {
+        auto new_time_of_day =
+            input::readTimeOfDay("Enter new time of day (Morning, Noon, Evening, Night): ");
+        if (handleResultError(new_time_of_day, "CliApp:cmdUpdateIntakePlan"))
+            return;
+        new_intake_plan.time_of_day = new_time_of_day.value();
+    }
+
+    user_confirm = input::confirm("Update notes (optional) " + new_intake_plan.notes);
+    if (handleResultError(user_confirm, "CliApp:cmdUpdateIntakePlan"))
+        return;
+    if (user_confirm.value()) {
+        auto new_notes = input::readOptionalString("Enter new notes: ");
+        if (new_notes.has_value()) {
+            new_intake_plan.notes = new_notes.value();
+        } else {
+            new_intake_plan.notes = "";
+        }
+    }
+
+    auto user_confirm_update =
+        input::confirm("Update IntakePlan with ID " + std::to_string(id.value()));
+
+    if (handleResultError(user_confirm_update, "CliApp:cmdUpdateIntakePlan"))
+        return;
+
+    if (!user_confirm.value()) {
+        std::cout << "IntakePlan with ID " << id.value() << " was not updated.\n";
+        waitForEnter();
+        return;
+    }
+
+    auto updated_intake_plan = intakePlanRepo_.updateIntakePlan(new_intake_plan);
+    if (handleResultError(updated_intake_plan, "CliApp:cmdUpdateIntakePlan"))
+        return;
+
+    std::cout << "IntakePlan " << id.value() << " updated.\n";
+    std::cout << "-----------------------\n";
+    std::cout << "Old IntakePlan: \n";
+    printer::printIntakePlanDetails(old_intake_plan);
+    std::cout << "-----------------------\n";
+    std::cout << "New IntakePlan: \n";
+    printer::printIntakePlanDetails(new_intake_plan);
     waitForEnter();
 }
 
