@@ -111,8 +111,8 @@ int main() {
     domain::Patient secondary_patient{0, "Kilian Cpp", "2000-12-12", domain::Nationality::DE};
     auto created_secondary_patient = repo_patient.createPatient(secondary_patient);
     expect(created_secondary_patient.isOk(), "create new patient should succeed.");
-    domain::Medication secondary_medication{
-        0, "Paracetamol", "500 mg", "Do not exceed 4,000 mg in 24 hours"};
+    domain::Medication secondary_medication{0, "Paracetamol", "500 mg",
+        "Do not exceed 4,000 mg in 24 hours"};
 
     auto created_secondary_medication = repo_med.createMedication(secondary_medication);
     expect(created_secondary_medication.isOk(), "create new medication should succeed");
@@ -137,6 +137,14 @@ int main() {
             created_secondary_plan.value().medication_id,
         "medication_id should match");
 
+    // ======= FIND INTAKE_PLAN BY ID ======
+
+    auto plan_by_id = repo_plan.findIntakePlanById(1);
+    expect(plan_by_id.isOk(), "find should succeed");
+
+    auto plan_by_invalid_id = repo_plan.findIntakePlanById(99);
+    expect(plan_by_invalid_id.isError(), "find with invalid id should not succeed");
+
     // ======= DELETE INTAKE_PLAN BY ID ======
     auto delete_secondary_plan_result =
         repo_plan.deleteIntakePlanById(created_secondary_plan.value().id);
@@ -153,8 +161,8 @@ int main() {
     auto created_update_patient = repo_patient.createPatient(update_patient);
     expect(created_update_patient.isOk(), "create patient before update should succeed.");
 
-    domain::Medication update_medication{
-        0, "Paracetamol", "1000 mg", "Do not exceed 4,000 mg in 24 hours"};
+    domain::Medication update_medication{0, "Paracetamol", "1000 mg",
+        "Do not exceed 4,000 mg in 24 hours"};
     auto created_update_medication = repo_med.createMedication(update_medication);
     expect(created_update_medication.isOk(), "create medication before update should succeed");
 
@@ -199,13 +207,13 @@ int main() {
         "update with invalid id should return NotFound");
 
     // ======= TEST UNIQUE CONFLICT UPDATE ======
-    domain::Patient unique_conflict_patient{
-        0, "Unique Conflict", "1999-01-01", domain::Nationality::FR};
+    domain::Patient unique_conflict_patient{0, "Unique Conflict", "1999-01-01",
+        domain::Nationality::FR};
     auto created_unique_conflict_patient = repo_patient.createPatient(unique_conflict_patient);
     expect(created_unique_conflict_patient.isOk(), "create patient should succeed.");
 
-    domain::Medication unique_conflict_medication{
-        0, "Paracetamol", "1000 mg", "Do not exceed 4,000 mg in 24 hours"};
+    domain::Medication unique_conflict_medication{0, "Paracetamol", "1000 mg",
+        "Do not exceed 4,000 mg in 24 hours"};
     auto created_unique_conflict_medication = repo_med.createMedication(secondary_medication);
     expect(created_unique_conflict_medication.isOk(), "create medication should succeed");
 
