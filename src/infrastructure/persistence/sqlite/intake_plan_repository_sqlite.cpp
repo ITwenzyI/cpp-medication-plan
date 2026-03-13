@@ -2,8 +2,9 @@
 #include "common/result/result.hpp"
 #include "common/validation/id_validation.hpp"
 #include "common/validation/string_validation.hpp"
+#include "domain/intake_plan.hpp"
 #include "time_of_day_mapper_sqlite.hpp"
-#include <stdexcept>
+#include <vector>
 
 namespace infrastructure::persistence::sqlite {
 static common::result::Result<domain::IntakePlan> mapIntakePlan(
@@ -243,6 +244,47 @@ IntakePlanRepositorySqlite::getIntakePlansByMedicationId(int medication_id) cons
                     common::result::ErrorCode::DatabaseError, "SELECT failed",
                     "IntakePlanRepositorySqlite::getIntakePlansByMedicationId");
         }
+    }
+}
+
+common::result::Result<domain::IntakePlan> IntakePlanRepositorySqlite::findIntakePlanById(
+    int id) const {
+    if (!common::validation::validateId(id)) {
+        return common::result::Result<domain::IntakePlan>::fail(
+            common::result::ErrorCode::InvalidArgument, "id must be positive",
+            "IntakePlanRepositorySqlite::findIntakePlanById");
+    }
+
+    auto stmt = db_.prepare("SELECT id, patient_id, medication_id, dose, "
+                            "time_of_day, notes FROM intake_plans WHERE id = ?;");
+
+    stmt.bindInt(1, id);
+
+    domain::IntakePlan result;
+    const int rc = stmt.step();
+
+    switch (rc) {
+        case SQLITE_DONE:
+            return common::result::Result<domain::IntakePlan>::fail(
+                common::result::ErrorCode::NotFound, "No IntakePlan with id: " + std::to_string(id),
+                "IntakePlanRepositorySqlite::findIntakePlanById");
+
+        case SQLITE_ROW: {
+            auto mapped = mapIntakePlan(stmt);
+
+            if (mapped.isError()) {
+                return common::result::Result<domain::IntakePlan>::fail(mapped.error().code,
+                    mapped.error().message, "IntakePlanRepositorySqlite::findIntakePlanById");
+            }
+
+            result = mapped.value();
+            return common::result::Result<domain::IntakePlan>::ok(result);
+        }
+
+        default:
+            return common::result::Result<domain::IntakePlan>::fail(
+                common::result::ErrorCode::DatabaseError, "SELECT failed",
+                "IntakePlanRepositorySqlite::findIntakePlanById");
     }
 }
 

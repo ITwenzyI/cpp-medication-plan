@@ -18,6 +18,9 @@ class IntakePlanRepositorySqlite : public application::ports::IIntakePlanReposit
     [[nodiscard]] common::result::Result<std::vector<domain::IntakePlan>>
     getIntakePlansByMedicationId(int new_medication_id) const override;
 
+    [[nodiscard]] common::result::Result<domain::IntakePlan> findIntakePlanById(
+        int id) const override;
+
     [[nodiscard]] common::result::Result<void> deleteIntakePlanById(
         int new_intake_plan_id) override;
 
