@@ -51,7 +51,8 @@ Namespaces reflect the architectural boundaries.
 - List intake plans by patient ID
 - List intake plans by medication ID
 - Delete an intake plan by ID
-- Update intake plans in the repository layer
+- Find an intake plan by ID
+- Update intake plan (only dose, TimeOfDay and notes)
 
 ### Persistence and Error Handling
 
@@ -69,20 +70,20 @@ Namespaces reflect the architectural boundaries.
 - `Patient`
   - `id`
   - `name`
-  - `birth_date`
-  - `nationality`
+  - `birth_date`(optional)
+  - `nationality`(optional)
 - `Medication`
   - `id`
   - `name`
   - `strength`
-  - `warnings`
+  - `warnings`(optional)
 - `IntakePlan`
   - `id`
   - `patient_id`
   - `medication_id`
   - `dose`
   - `time_of_day`
-  - `notes`
+  - `notes`(optional)
 
 Enums currently used in the model:
 
@@ -161,6 +162,7 @@ src/
   domain/
   infrastructure/
   ui/
+  main.cpp
 tests/
 sql/
 external/sqlite/
@@ -191,7 +193,12 @@ The project is now in a solid first-release state:
 
 ## 🔜 Possible Next Steps
 
-- improve CLI ergonomics and navigation flow
-- add dedicated unit tests for validation and mappers
+- improve tests with dedicated unit tests for validation and mappers (google tests)
 - introduce transaction support for larger workflows
-- add richer update flows for intake plans directly in the CLI
+
+---
+
+## Author
+`Kilian`
+
+The software was fully developed in C++ using modern programming techniques.
