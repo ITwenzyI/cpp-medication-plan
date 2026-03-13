@@ -17,6 +17,8 @@ class IIntakePlanRepository {
     virtual common::result::Result<std::vector<domain::IntakePlan>> getIntakePlansByMedicationId(
         int new_medication_id) const = 0;
 
+    virtual common::result::Result<domain::IntakePlan> findIntakePlanById(int id) const = 0;
+
     virtual common::result::Result<void> deleteIntakePlanById(int new_intake_plan_id) = 0;
 
     virtual common::result::Result<void> updateIntakePlan(const domain::IntakePlan& new_plan) = 0;
