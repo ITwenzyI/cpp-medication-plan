@@ -171,11 +171,11 @@ void CliApp::intakePlansMenuLoop() {
         showIntakePlansMenu();
 
         std::string_view prompt = "Choice: ";
-        auto user_choice = ui::cli::input::readMenuChoice(prompt, 0, 4);
+        auto user_choice = ui::cli::input::readMenuChoice(prompt, 0, 6);
 
         while (user_choice.isError()) {
             ErrorRenderer::printErrorMessage(user_choice.error(), "CliApp::intakePlansMenuLoop");
-            user_choice = input::readMenuChoice(prompt, 0, 4);
+            user_choice = input::readMenuChoice(prompt, 0, 6);
         }
 
         switch (user_choice.value()) {
@@ -185,13 +185,18 @@ void CliApp::intakePlansMenuLoop() {
                 cmdCreateIntakePlan();
                 break;
             case 2:
-                cmdListIntakePlansByPatientId();
+                cmdFindIntakePlanById();
                 break;
             case 3:
-                cmdListIntakePlansByMedicationId();
+                cmdListIntakePlansByPatientId();
                 break;
             case 4:
+                cmdListIntakePlansByMedicationId();
+                break;
+            case 5:
                 cmdDeleteIntakePlanById();
+                break;
+            case 6:
                 break;
         }
     }
@@ -200,9 +205,11 @@ void CliApp::intakePlansMenuLoop() {
 void CliApp::showIntakePlansMenu() const {
     std::cout << "===== IntakePlan Menu =====" << "\n";
     std::cout << "1. Create IntakePlan" << "\n";
-    std::cout << "2. List IntakePlans by PatientID" << "\n";
-    std::cout << "3. List IntakePlans by MedicationID" << "\n";
-    std::cout << "4. Delete IntakePlan by ID" << "\n";
+    std::cout << "2. Find IntakePlan by ID" << "\n";
+    std::cout << "3. List IntakePlans by PatientID" << "\n";
+    std::cout << "4. List IntakePlans by MedicationID" << "\n";
+    std::cout << "5. Delete IntakePlan by ID" << "\n";
+    std::cout << "6. Update IntakePlan" << "\n";
     std::cout << "0. Back" << "\n";
 }
 
@@ -816,6 +823,22 @@ void CliApp::cmdDeleteIntakePlanById() {
         return;
 
     std::cout << "Deleted IntakePlan with ID: " << id.value() << ".\n";
+    waitForEnter();
+}
+
+void CliApp::cmdFindIntakePlanById() {
+    std::cout << "===== Find IntakePlan By ID =====" << "\n\n";
+
+    auto id = input::readInt("Enter IntakePlan ID: ");
+    if (handleResultError(id, "CliApp::cmdFindIntakePlanById"))
+        return;
+
+    auto found_intake_plan = intakePlanRepo_.findIntakePlanById(id.value());
+
+    if (handleResultError(found_intake_plan, "CliApp::cmdFindIntakePlanById"))
+        return;
+
+    printer::printIntakePlanDetails(found_intake_plan.value());
     waitForEnter();
 }
 

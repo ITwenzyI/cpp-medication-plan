@@ -53,6 +53,8 @@ class CliApp {
     void cmdListIntakePlansByPatientId();
     void cmdListIntakePlansByMedicationId();
     void cmdDeleteIntakePlanById();
+    void cmdFindIntakePlanById();
+    //void cmdUpdateIntakePlan();
 
     // Utility
     void waitForEnter() const;
