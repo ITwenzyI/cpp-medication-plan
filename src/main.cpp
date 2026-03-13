@@ -2,8 +2,8 @@
 #include "infrastructure/db/init_db.hpp"
 #include "ui/cli/cli_app.hpp"
 
+#include <exception>
 #include <iostream>
-#include <stdexcept>
 
 int main() {
     try {
